@@ -6,7 +6,7 @@ import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.WordGeneralRegister;
 import org.gameboy.instructions.targets.WordMemoryRegister;
 
-import static org.gameboy.instructions.targets.GenericOperationTarget.*;
+import static org.gameboy.instructions.targets.OperationTarget.*;
 
 public class Load implements Instruction {
     private final GenericOperationTarget destination;
@@ -30,15 +30,15 @@ public class Load implements Instruction {
     }
 
     public static Load load_register_imm8(ByteRegister destination) {
-        return new Load(destination.convert(), IMM_8);
+        return new Load(destination.convert(), IMM_8.direct());
     }
 
     public static Load load_imm16indirect_sp() {
-        return new Load(IMM_16_INDIRECT, SP);
+        return new Load(IMM_16.indirect(), SP.direct());
     }
 
     public static Load load_wordGeneralRegister_imm16(WordGeneralRegister register) {
-        return new Load(register.convert(), IMM_16);
+        return new Load(register.convert(), IMM_16.direct());
     }
 
     @Override

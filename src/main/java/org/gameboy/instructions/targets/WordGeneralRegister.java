@@ -8,10 +8,10 @@ public enum WordGeneralRegister {
 
     public GenericOperationTarget convert() {
         return switch(this) {
-            case BC -> GenericOperationTarget.BC;
-            case DE -> GenericOperationTarget.DE;
-            case HL -> GenericOperationTarget.HL;
-            case SP -> GenericOperationTarget.SP;
+            case BC -> OperationTarget.BC.direct();
+            case DE -> OperationTarget.DE.direct();
+            case HL -> OperationTarget.HL.direct();
+            case SP -> OperationTarget.SP.direct();
         };
     }
 }

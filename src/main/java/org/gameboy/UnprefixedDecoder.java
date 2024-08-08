@@ -54,8 +54,8 @@ public class UnprefixedDecoder implements Decoder {
             case b010 -> {
                 WordMemoryRegister register = WordMemoryRegister.values()[p.ordinal()];
                 yield switch(q) {
-                    case b0 -> Load.load_wordMemoryRegisterIndirect_A(register);
-                    case b1 -> Load.load_A_wordMemoryRegisterIndirect(register);
+                    case b0 -> Nop.NOP(); // Load.load_wordMemoryRegisterIndirect_A(register);
+                    case b1 -> Nop.NOP(); // Load.load_A_wordMemoryRegisterIndirect(register);
                 };
             }
             case b011 -> Nop.NOP();
