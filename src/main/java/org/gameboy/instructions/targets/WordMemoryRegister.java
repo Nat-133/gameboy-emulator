@@ -8,8 +8,8 @@ public enum WordMemoryRegister {
 
     public GenericOperationTarget convert() {
         return switch(this) {
-            case BC -> OperationTarget.BC.direct();
-            case DE -> OperationTarget.DE.direct();
+            case BC -> OperationTarget.BC.indirect();
+            case DE -> OperationTarget.DE.indirect();
             case HL_INC -> OperationTarget.HL_INC.indirect();
             case HL_DEC -> OperationTarget.HL_DEC.indirect();
         };
