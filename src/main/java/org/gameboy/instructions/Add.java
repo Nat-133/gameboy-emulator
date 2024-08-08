@@ -3,6 +3,7 @@ package org.gameboy.instructions;
 import org.gameboy.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.GenericOperationTarget;
+import org.gameboy.instructions.targets.OperationTarget;
 
 public class Add implements Instruction {
     private final GenericOperationTarget left;
@@ -14,7 +15,7 @@ public class Add implements Instruction {
     }
 
     public static Add AddA_register(ByteRegister right) {
-        return new Add(GenericOperationTarget.A, right.convert());
+        return new Add(OperationTarget.A.direct(), right.convert());
     }
 
     @Override

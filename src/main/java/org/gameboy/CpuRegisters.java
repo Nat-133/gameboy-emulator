@@ -11,13 +11,14 @@ public class CpuRegisters {
 
     private short instructionRegister;
 
-    public CpuRegisters(short af,
-                        short bc,
-                        short de,
-                        short hl,
-                        short sp,
-                        short pc,
-                        short instructionRegister) {
+    public CpuRegisters(
+            short af,
+            short bc,
+            short de,
+            short hl,
+            short sp,
+            short pc,
+            short instructionRegister) {
         this.af = af;
         this.bc = bc;
         this.de = de;
@@ -27,16 +28,16 @@ public class CpuRegisters {
 
         this.instructionRegister = instructionRegister;
     }
-    
+
     public CpuRegisters() {
         this(
-            (short) 0x0000,
-            (short) 0x0000,
-            (short) 0x0000,
-            (short) 0x0000,
-            (short) 0x0000,
-            (short) 0x0000,
-            (short) 0x0000
+                (short) 0x0000,
+                (short) 0x0000,
+                (short) 0x0000,
+                (short) 0x0000,
+                (short) 0x0000,
+                (short) 0x0000,
+                (short) 0x0000
         );
     }
 
@@ -160,8 +161,7 @@ public class CpuRegisters {
         af = (short) (af | value);
     }
 
-    private void setZ(boolean value)
-    {
+    private void setZ(boolean value) {
 
     }
 

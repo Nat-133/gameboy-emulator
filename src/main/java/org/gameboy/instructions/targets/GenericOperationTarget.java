@@ -1,8 +1,8 @@
 package org.gameboy.instructions.targets;
 
-public record GenericOperationTarget(DirectOperationTarget target, boolean indirect) {
+public record GenericOperationTarget(OperationTarget target, boolean isIndirect) {
     public String representation() {
-        return indirect
+        return isIndirect
                 ? "(" + target.representation() + ")"
                 : target.representation();
     }
