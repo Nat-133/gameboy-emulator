@@ -57,7 +57,13 @@ class UnprefixedDecoderTest {
 
         String targets = instructionData.operands().length > 0 ? " " : "";
         targets += Arrays.stream(instructionData.operands())
-                .map(operandData -> operandData.immediate() ? operandData.name() : "(" + operandData.name() + ")")
+                .map(operandData -> {
+                    String name = operandData.name();
+                    name += operandData.increment() ? "+" : "";
+                    name += operandData.decrement() ? "-" : "";
+                    name = operandData.immediate() ? name : "(" + name + ")";
+                    return name;
+                })
                 .collect(Collectors.joining(","));
 
         return instructionData.mnemonic() + targets;

@@ -17,6 +17,8 @@ record OpcodeJson(
 
     public record OperandData(
             String name,
+            boolean increment,
+            boolean decrement,
             boolean immediate
     ){}
 
