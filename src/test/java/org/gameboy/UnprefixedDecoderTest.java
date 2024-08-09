@@ -3,6 +3,7 @@ package org.gameboy;
 import com.google.gson.GsonBuilder;
 import org.gameboy.OpcodeJson.InstructionData;
 import org.gameboy.instructions.Instruction;
+import org.gameboy.instructions.Unimplemented;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,6 +20,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.gameboy.instructions.Unimplemented.UNIMPLEMENTED;
 import static org.gameboy.utils.BitUtilities.uint;
 
 class UnprefixedDecoderTest {
@@ -71,9 +73,19 @@ class UnprefixedDecoderTest {
 
     @ParameterizedTest(name="{1}")
     @MethodSource("getAllOpcodes")
-    public void givenNonPrefixedOpcode_whenDecode_thenCorrectInstructionGiven(byte opcode, String expectedResult) {
+    public void givenNonPrefixedOpcode_whenDecode_thenCorrectInstructionGivenOrUnimplemented(byte opcode, String expectedResult) {
         Instruction decodedInstruction = unprefixedDecoder.decode(opcode);
 
-        assertThat(decodedInstruction.representation()).isEqualTo(expectedResult);
+        if (decodedInstruction != UNIMPLEMENTED) {
+            assertThat(decodedInstruction.representation()).isEqualTo(expectedResult);
+        }
+    }
+
+    @ParameterizedTest(name="{1}")
+    @MethodSource("getAllOpcodes")
+    public void givenNonPrefixedOpcode_whenDecode_thenNotUnimplemented(byte opcode, String expectedResult) {
+        Instruction decodedInstruction = unprefixedDecoder.decode(opcode);
+
+        assertThat(decodedInstruction).isNotEqualTo(UNIMPLEMENTED);
     }
 }
