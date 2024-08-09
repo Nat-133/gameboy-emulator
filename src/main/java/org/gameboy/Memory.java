@@ -6,7 +6,7 @@ public class Memory {
     private final byte[] memory;
 
     public Memory() {
-        memory = new byte[0xFFFF];
+        memory = new byte[0xFFFF+1];
     }
 
     public short read(short address) {
@@ -23,6 +23,8 @@ public class Memory {
 
     public void write(short address, short value) {
         memory[uint(address)] = (byte) (value & 0x00FF);
-        memory[uint(address) + 1] = (byte) (value >> 8);
+        if (uint(address) + 1 < memory.length) {
+            memory[uint(address) + 1] = (byte) (value >> 8);
+        }
     }
 }

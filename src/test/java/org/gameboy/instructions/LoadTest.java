@@ -4,17 +4,18 @@ import org.gameboy.CpuRegisters;
 import org.gameboy.Memory;
 import org.gameboy.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.gameboy.utils.BitUtilities.lower_byte;
-import static org.gameboy.utils.BitUtilities.upper_byte;
+import static org.gameboy.utils.BitUtilities.*;
 
 class LoadTest {
     @ParameterizedTest
@@ -57,5 +58,42 @@ class LoadTest {
 
         byte registerValueAfter = (byte) accessor.getValue(destination.convert());
         assertThat(registerValueAfter).isEqualTo(lower_byte(immediateByte));
+    }
+
+    @ParameterizedTest
+    @ValueSource(bytes = {(byte) 0x00, (byte) 0xff, (byte) 0xaf, (byte) 0x67, (byte) 0x14})
+    void givenMemoryLocation_whenLoadIntoA_withIndirectC_thenRegisterUpdatedCorrectly(byte memoryLocation) {
+        Instruction instruction = Load.load_A_indirectC();
+        byte value = (byte) 0xFA;
+        CpuRegisters registers = new CpuRegisters();
+        Memory memory = new Memory();
+        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+
+        memory.write(set_lower_byte((short)0xff00, memoryLocation), value);
+        registers.setC(memoryLocation);
+
+        instruction.execute(accessor);
+
+        byte registerValueAfter = registers.A();
+        assertThat(registerValueAfter).isEqualTo(value);
+    }
+
+    @ParameterizedTest
+    @ValueSource(bytes = {(byte) 0x00, (byte) 0xff, (byte) 0xaf, (byte) 0x67, (byte) 0x14})
+    void givenMemoryLocation_whenLoadAIntoIndirectC_thenMemoryUpdatedCorrectly(byte memoryLocation) {
+        Instruction instruction = Load.load_indirectC_A();
+        byte value = (byte) 0xFA;
+        CpuRegisters registers = new CpuRegisters();
+        Memory memory = new Memory();
+        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+
+        registers.setC(memoryLocation);
+        registers.setA(value);
+
+        instruction.execute(accessor);
+
+        byte memoryValueAfter = (byte)memory.read(set_lower_byte((short) 0xff00, memoryLocation));
+
+        assertThat(memoryValueAfter).isEqualTo(value);
     }
 }

@@ -59,6 +59,11 @@ public class OperationTargetAccessor {
 
     private short getIndirectValue(OperationTarget target) {
         short directValue = getDirectValue(target);
+
+        if (target == OperationTarget.C) {
+            directValue = set_upper_byte(directValue, (byte) 0xFF);
+        }
+
         return memory.read(directValue);
     }
 
@@ -95,6 +100,11 @@ public class OperationTargetAccessor {
 
     private void setIndirectValue(OperationTarget target, short value) {
         short directValue = getDirectValue(target);
+
+        if (target == OperationTarget.C) {
+            directValue = set_upper_byte(directValue, (byte) 0xFF);
+        }
+
         memory.write(directValue, (byte) value);
     }
 }
