@@ -81,7 +81,16 @@ public class UnprefixedDecoder implements Decoder {
         return switch (ThreeBitValue.from(z)) {
             case b000 -> UNIMPLEMENTED;
             case b001 -> UNIMPLEMENTED;
-            case b010 -> UNIMPLEMENTED;
+            case b010 -> switch (ThreeBitValue.from(y)) {
+                case b000 -> UNIMPLEMENTED;
+                case b001 -> UNIMPLEMENTED;
+                case b010 -> UNIMPLEMENTED;
+                case b011 -> UNIMPLEMENTED;
+                case b100 -> Load.load_indirectC_A();
+                case b101 -> UNIMPLEMENTED;
+                case b110 -> Load.load_A_indirectC();
+                case b111 -> UNIMPLEMENTED;
+            };
             case b011 -> UNIMPLEMENTED;
             case b100 -> UNIMPLEMENTED;
             case b101 -> UNIMPLEMENTED;

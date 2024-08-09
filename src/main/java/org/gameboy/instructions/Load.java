@@ -41,6 +41,14 @@ public class Load implements Instruction {
         return new Load(indirectDestination.convert(), A.direct());
     }
 
+    public static Load load_indirectC_A() {
+        return new Load(C.indirect(), A.direct());
+    }
+
+    public static Load load_A_indirectC() {
+        return new Load(A.direct(), C.indirect());
+    }
+
     @Override
     public String representation() {
         return "LD " + this.destination.representation() + "," + this.source.representation();
