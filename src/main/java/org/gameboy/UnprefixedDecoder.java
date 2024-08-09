@@ -20,8 +20,6 @@ public class UnprefixedDecoder implements Decoder {
      * | x |  y  |  z  |
      * |   | p |q|     |
      */
-
-
     public Instruction decode(byte opcode) {
         int x = bit_range(7, 6, opcode);
         int y = bit_range(5, 3, opcode);
@@ -54,8 +52,8 @@ public class UnprefixedDecoder implements Decoder {
             case b010 -> {
                 WordMemoryRegister register = WordMemoryRegister.values()[p.ordinal()];
                 yield switch(q) {
-                    case b0 -> Nop.NOP(); // Load.load_wordMemoryRegisterIndirect_A(register);
-                    case b1 -> Nop.NOP(); // Load.load_A_wordMemoryRegisterIndirect(register);
+                    case b0 -> Load.load_indirectWordMemoryRegister_A(register); // Load.load_wordMemoryRegisterIndirect_A(register);
+                    case b1 -> Load.load_A_indirectWordMemoryRegister(register); // Load.load_A_wordMemoryRegisterIndirect(register);
                 };
             }
             case b011 -> Nop.NOP();

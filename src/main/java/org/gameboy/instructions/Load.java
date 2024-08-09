@@ -21,14 +21,6 @@ public class Load implements Instruction {
         return new Load(destination.convert(), source.convert());
     }
 
-    public static Load load_register_indirect(ByteRegister destination, WordMemoryRegister indirectSource) {
-        return new Load(destination.convert(), indirectSource.convert());
-    }
-
-    public static Load load_indirect_register(WordMemoryRegister indirectDestination, ByteRegister source) {
-        return new Load(indirectDestination.convert(), source.convert());
-    }
-
     public static Load load_register_imm8(ByteRegister destination) {
         return new Load(destination.convert(), IMM_8.direct());
     }
@@ -41,6 +33,14 @@ public class Load implements Instruction {
         return new Load(register.convert(), IMM_16.direct());
     }
 
+    public static Load load_A_indirectWordMemoryRegister(WordMemoryRegister indirectSource) {
+        return new Load(A.direct(), indirectSource.convert());
+    }
+
+    public static Load load_indirectWordMemoryRegister_A(WordMemoryRegister indirectDestination) {
+        return new Load(indirectDestination.convert(), A.direct());
+    }
+
     @Override
     public String representation() {
         return "LD " + this.destination.representation() + "," + this.source.representation();
@@ -50,5 +50,10 @@ public class Load implements Instruction {
     public void execute(OperationTargetAccessor operationTargetAccessor) {
         short loaded_value = operationTargetAccessor.getValue(this.source);
         operationTargetAccessor.setValue(this.destination, loaded_value);
+    }
+
+    @Override
+    public String toString() {
+        return representation();
     }
 }
