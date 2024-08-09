@@ -1,9 +1,6 @@
 package org.gameboy;
 
-import org.gameboy.instructions.Halt;
-import org.gameboy.instructions.Instruction;
-import org.gameboy.instructions.Load;
-import org.gameboy.instructions.Nop;
+import org.gameboy.instructions.*;
 import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.WordGeneralRegister;
 import org.gameboy.instructions.targets.WordMemoryRegister;
@@ -11,6 +8,7 @@ import org.gameboy.utils.MultiBitValue.OneBitValue;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
+import static org.gameboy.instructions.Unimplemented.UNIMPLEMENTED;
 import static org.gameboy.utils.BitUtilities.*;
 
 public class UnprefixedDecoder implements Decoder {
@@ -41,13 +39,13 @@ public class UnprefixedDecoder implements Decoder {
             case b000 -> switch(y) {
                 case 0 -> Nop.NOP();
                 case 1 -> Load.load_imm16indirect_sp();
-                case 2 -> Nop.NOP(); // STOP
-                case 3 -> Nop.NOP(); // JR imm8; imm8 signed
-                default -> Nop.NOP(); // JR condition[y-4], imm8; imm8 signed
+                case 2 -> UNIMPLEMENTED; // STOP
+                case 3 -> UNIMPLEMENTED; // JR imm8; imm8 signed
+                default -> UNIMPLEMENTED; // JR condition[y-4], imm8; imm8 signed
             };
             case b001 -> switch(q){
                 case b0 -> Load.load_wordGeneralRegister_imm16(WordGeneralRegister.values()[p.ordinal()]);
-                case b1 -> Nop.NOP(); // Add.add_HL_wordGeneralRegister
+                case b1 -> UNIMPLEMENTED; // Add.add_HL_wordGeneralRegister
             };
             case b010 -> {
                 WordMemoryRegister register = WordMemoryRegister.values()[p.ordinal()];
@@ -56,11 +54,11 @@ public class UnprefixedDecoder implements Decoder {
                     case b1 -> Load.load_A_indirectWordMemoryRegister(register); // Load.load_A_wordMemoryRegisterIndirect(register);
                 };
             }
-            case b011 -> Nop.NOP();
-            case b100 -> Nop.NOP();
-            case b101 -> Nop.NOP();
-            case b110 -> Nop.NOP();
-            case b111 -> Nop.NOP();
+            case b011 -> UNIMPLEMENTED;
+            case b100 -> UNIMPLEMENTED;
+            case b101 -> UNIMPLEMENTED;
+            case b110 -> Load.load_register_imm8(ByteRegister.values()[y]);
+            case b111 -> UNIMPLEMENTED;
         };
     }
 
@@ -73,10 +71,22 @@ public class UnprefixedDecoder implements Decoder {
     }
 
     private Instruction decodeBlock2(int y, int z) {
-        return Nop.NOP();
+        return UNIMPLEMENTED;
     }
 
     private Instruction decodeBlock3(int y, int z) {
-        return Nop.NOP();
+        OneBitValue q = OneBitValue.from(y);
+        TwoBitValue p = TwoBitValue.from(y >> 1);
+
+        return switch (ThreeBitValue.from(z)) {
+            case b000 -> UNIMPLEMENTED;
+            case b001 -> UNIMPLEMENTED;
+            case b010 -> UNIMPLEMENTED;
+            case b011 -> UNIMPLEMENTED;
+            case b100 -> UNIMPLEMENTED;
+            case b101 -> UNIMPLEMENTED;
+            case b110 -> UNIMPLEMENTED;
+            case b111 -> UNIMPLEMENTED;
+        };
     }
 }
