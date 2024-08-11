@@ -1,6 +1,7 @@
 package org.gameboy.instructions.targets;
 
 public enum ByteRegister {
+    // r8
     B,
     C,
     D,

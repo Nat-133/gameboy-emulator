@@ -17,36 +17,48 @@ public class Load implements Instruction {
         this.source = source;
     }
 
-    public static Load load_register_register(ByteRegister destination, ByteRegister source) {
+    public static Load ld_r8_r8(ByteRegister destination, ByteRegister source) {
         return new Load(destination.convert(), source.convert());
     }
 
-    public static Load load_register_imm8(ByteRegister destination) {
+    public static Load ld_r8_imm8(ByteRegister destination) {
         return new Load(destination.convert(), IMM_8.direct());
     }
 
-    public static Load load_imm16indirect_sp() {
+    public static Load ld_imm16indirect_sp() {
         return new Load(IMM_16.indirect(), SP.direct());
     }
 
-    public static Load load_wordGeneralRegister_imm16(WordGeneralRegister register) {
+    public static Load ld_r16_imm16(WordGeneralRegister register) {
         return new Load(register.convert(), IMM_16.direct());
     }
 
-    public static Load load_A_indirectWordMemoryRegister(WordMemoryRegister indirectSource) {
+    public static Load ld_A_mem16indirect(WordMemoryRegister indirectSource) {
         return new Load(A.direct(), indirectSource.convert());
     }
 
-    public static Load load_indirectWordMemoryRegister_A(WordMemoryRegister indirectDestination) {
+    public static Load ld_mem16indirect_A(WordMemoryRegister indirectDestination) {
         return new Load(indirectDestination.convert(), A.direct());
     }
 
-    public static Load load_indirectC_A() {
+    public static Load ld_indirectC_A() {
         return new Load(C.indirect(), A.direct());
     }
 
-    public static Load load_A_indirectC() {
+    public static Load ld_A_indirectC() {
         return new Load(A.direct(), C.indirect());
+    }
+
+    public static Instruction load_HL_SP_OFFSET() {
+        return new Load(HL.direct(), SP_OFFSET.direct());
+    }
+
+    public static Instruction ld_imm16indirect_A() {
+        return new Load(IMM_16.indirect(), A.direct());
+    }
+
+    public static Instruction ld_A_imm16indirect() {
+        return new Load(A.direct(), IMM_16.indirect());
     }
 
     @Override

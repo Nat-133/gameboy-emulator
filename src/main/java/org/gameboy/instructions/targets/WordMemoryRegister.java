@@ -1,6 +1,7 @@
 package org.gameboy.instructions.targets;
 
 public enum WordMemoryRegister {
+    // mem16
     BC,
     DE,
     HL_INC,

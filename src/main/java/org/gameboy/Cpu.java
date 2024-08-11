@@ -15,7 +15,7 @@ public class Cpu {
 
     public static void main(String[] args) {
         System.out.println("Hello, World!");
-        Instruction instruction = Load.load_register_register(ByteRegister.A, ByteRegister.B);
+        Instruction instruction = Load.ld_r8_r8(ByteRegister.A, ByteRegister.B);
         System.out.println(instruction.representation());
     }
 

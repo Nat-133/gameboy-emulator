@@ -54,13 +54,14 @@ public class OperationTargetAccessor {
             }
             case IMM_8 -> upper_byte(cpuRegisters.instructionRegister());
             case IMM_16 -> memory.read((short)(cpuRegisters.PC()+1));  // todo: unchecked
+            case SP_OFFSET -> (short) (cpuRegisters.SP() + upper_byte(cpuRegisters.instructionRegister()));
         };
     }
 
     private short getIndirectValue(OperationTarget target) {
         short directValue = getDirectValue(target);
 
-        if (target == OperationTarget.C) {
+        if (target == OperationTarget.C || target == OperationTarget.IMM_8) {
             directValue = set_upper_byte(directValue, (byte) 0xFF);
         }
 
@@ -92,7 +93,7 @@ public class OperationTargetAccessor {
                 cpuRegisters.setHL((short)(val - 1));
                 memory.write(val, byteValue);
             }
-            case IMM_8, IMM_16 -> {
+            case IMM_8, IMM_16, SP_OFFSET -> {
                 // not needed
             }
         }
@@ -101,7 +102,7 @@ public class OperationTargetAccessor {
     private void setIndirectValue(OperationTarget target, short value) {
         short directValue = getDirectValue(target);
 
-        if (target == OperationTarget.C) {
+        if (target == OperationTarget.C || target == OperationTarget.IMM_8) {
             directValue = set_upper_byte(directValue, (byte) 0xFF);
         }
 
