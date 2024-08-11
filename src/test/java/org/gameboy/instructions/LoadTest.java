@@ -4,7 +4,6 @@ import org.gameboy.CpuRegisters;
 import org.gameboy.Memory;
 import org.gameboy.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -24,7 +23,7 @@ class LoadTest {
         short immediateByte = (short) 0xFA01;
         byte zero = (byte) 0;
         CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, zero, immediateByte);
-        Instruction instruction = Load.load_register_imm8(register);
+        Instruction instruction = Load.ld_r8_imm8(register);
         OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
 
         instruction.execute(accessor);
@@ -50,7 +49,7 @@ class LoadTest {
         short immediateByte = (short) 0xFA;
         byte zero = (byte) 0;
         CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, zero, zero);
-        Instruction instruction = Load.load_register_register(destination, source);
+        Instruction instruction = Load.ld_r8_r8(destination, source);
         OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
         accessor.setValue(source.convert(), immediateByte);
 
@@ -63,7 +62,7 @@ class LoadTest {
     @ParameterizedTest
     @ValueSource(bytes = {(byte) 0x00, (byte) 0xff, (byte) 0xaf, (byte) 0x67, (byte) 0x14})
     void givenMemoryLocation_whenLoadIntoA_withIndirectC_thenRegisterUpdatedCorrectly(byte memoryLocation) {
-        Instruction instruction = Load.load_A_indirectC();
+        Instruction instruction = Load.ld_A_indirectC();
         byte value = (byte) 0xFA;
         CpuRegisters registers = new CpuRegisters();
         Memory memory = new Memory();
@@ -81,7 +80,7 @@ class LoadTest {
     @ParameterizedTest
     @ValueSource(bytes = {(byte) 0x00, (byte) 0xff, (byte) 0xaf, (byte) 0x67, (byte) 0x14})
     void givenMemoryLocation_whenLoadAIntoIndirectC_thenMemoryUpdatedCorrectly(byte memoryLocation) {
-        Instruction instruction = Load.load_indirectC_A();
+        Instruction instruction = Load.ld_indirectC_A();
         byte value = (byte) 0xFA;
         CpuRegisters registers = new CpuRegisters();
         Memory memory = new Memory();

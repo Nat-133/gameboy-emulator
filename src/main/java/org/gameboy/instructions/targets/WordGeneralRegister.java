@@ -1,6 +1,7 @@
 package org.gameboy.instructions.targets;
 
 public enum WordGeneralRegister {
+    // r16
     BC,
     DE,
     HL,

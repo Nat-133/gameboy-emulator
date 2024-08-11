@@ -5127,7 +5127,7 @@
 			],
 			"operands": [
 				{
-					"name": "a8",
+					"name": "imm8",
 					"bytes": 1,
 					"immediate": false
 				},
@@ -5445,7 +5445,7 @@
 					"immediate": true
 				},
 				{
-					"name": "a8",
+					"name": "imm8",
 					"bytes": 1,
 					"immediate": false
 				}
@@ -5607,14 +5607,9 @@
 					"immediate": true
 				},
 				{
-					"name": "SP",
-					"increment": true,
-					"immediate": true
-				},
-				{
-					"name": "e8",
-					"bytes": 1,
-					"immediate": true
+					"name": "SP+e8",
+					"immediate": true,
+					"bytes": 1
 				}
 			],
 			"immediate": true,

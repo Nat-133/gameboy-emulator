@@ -16,7 +16,8 @@ public enum OperationTarget {
     HL_INC("HL+"),
     HL_DEC("HL-"),
     IMM_8("imm8"),
-    IMM_16("imm16");
+    IMM_16("imm16"),
+    SP_OFFSET("SP+e8");
 
     private final String representation;
 

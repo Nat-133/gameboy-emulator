@@ -1,6 +1,7 @@
 package org.gameboy.instructions.targets;
 
 public enum WordStackRegister {
+    // sck16
     BC,
     DE,
     HL,
