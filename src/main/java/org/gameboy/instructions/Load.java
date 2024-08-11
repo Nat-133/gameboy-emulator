@@ -1,10 +1,7 @@
 package org.gameboy.instructions;
 
 import org.gameboy.OperationTargetAccessor;
-import org.gameboy.instructions.targets.ByteRegister;
-import org.gameboy.instructions.targets.GenericOperationTarget;
-import org.gameboy.instructions.targets.WordGeneralRegister;
-import org.gameboy.instructions.targets.WordMemoryRegister;
+import org.gameboy.instructions.targets.*;
 
 import static org.gameboy.instructions.targets.OperationTarget.*;
 
@@ -59,6 +56,10 @@ public class Load implements Instruction {
 
     public static Instruction ld_A_imm16indirect() {
         return new Load(A.direct(), IMM_16.indirect());
+    }
+
+    public static Instruction load_SL_HL() {
+        return new Load(SP.direct(), HL.direct());
     }
 
     @Override
