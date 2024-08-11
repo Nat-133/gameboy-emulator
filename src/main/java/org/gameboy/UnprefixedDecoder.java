@@ -89,7 +89,16 @@ public class UnprefixedDecoder implements Decoder {
                 case b110 -> LoadHigher.ldh_A_imm8();
                 case b111 -> Load.load_HL_SP_OFFSET();
             };
-            case b001 -> UNIMPLEMENTED;
+            case b001 -> switch(ThreeBitValue.from(y)) {
+                case b000 -> UNIMPLEMENTED;
+                case b001 -> UNIMPLEMENTED;
+                case b010 -> UNIMPLEMENTED;
+                case b011 -> UNIMPLEMENTED;
+                case b100 -> UNIMPLEMENTED;
+                case b101 -> UNIMPLEMENTED;
+                case b110 -> UNIMPLEMENTED;
+                case b111 -> Load.load_SL_HL();
+            };
             case b010 -> switch (ThreeBitValue.from(y)) {
                 case b000 -> UNIMPLEMENTED;
                 case b001 -> UNIMPLEMENTED;
