@@ -38,8 +38,8 @@ class ArithmeticUnitTest {
 
     @ParameterizedTest(name="{0}")
     @MethodSource("getIncValues")
-    void givenByte_whenInc_thenFlagsCorrect(byte expectedResult, List<FlagValue> expectedFlags) {
-        ArithmeticResult result = ArithmeticUnit.inc(expectedResult);
+    void givenByte_whenInc_thenFlagsCorrect(byte value, List<FlagValue> expectedFlags) {
+        ArithmeticResult result = ArithmeticUnit.inc(value);
 
         assertThat(result.flagChanges()).containsExactlyElementsOf(expectedFlags);
     }
