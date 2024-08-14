@@ -1,5 +1,6 @@
 package org.gameboy.utils;
 
+@SuppressWarnings("unused")
 public class BitUtilities {
     public static int uint(short val) {
         return Short.toUnsignedInt(val);
