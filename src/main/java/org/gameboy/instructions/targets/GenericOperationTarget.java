@@ -7,6 +7,10 @@ public record GenericOperationTarget(OperationTarget target, boolean isIndirect)
                 : target.representation();
     }
 
+    public boolean isByteTarget() {
+        return this.isIndirect || OperationTarget.BYTE_TARGETS.contains(target);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof GenericOperationTarget that) {

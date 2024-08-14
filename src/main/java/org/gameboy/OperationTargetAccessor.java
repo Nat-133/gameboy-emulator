@@ -6,8 +6,8 @@ import org.gameboy.instructions.targets.OperationTarget;
 import static org.gameboy.utils.BitUtilities.*;
 
 public class OperationTargetAccessor {
-    Memory memory;
-    CpuRegisters cpuRegisters;
+    public final Memory memory;
+    public final CpuRegisters cpuRegisters;
 
     public OperationTargetAccessor(Memory memory, CpuRegisters cpuRegisters) {
         this.memory = memory;

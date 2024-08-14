@@ -72,4 +72,16 @@ public class BitUtilities {
     public static short set_lower_byte(short oldShort, byte newByte) {
         return (short) ((oldShort & 0xFF00) | uint(newByte));
     }
+
+    public static short apply_mask(short value, int mask, boolean invert) {
+        if (!invert) {
+            return (short) (value | mask);
+        } else {
+            return (short) (value & ~mask);
+        }
+    }
+
+    public static boolean bit(short value, int i) {
+        return (rshift(value, i) & 0b1) == 1;
+    }
 }
