@@ -1,5 +1,8 @@
 package org.gameboy.instructions.targets;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 public enum OperationTarget {
     B("B"),
     C("C"),
@@ -18,6 +21,8 @@ public enum OperationTarget {
     IMM_8("imm8"),
     IMM_16("imm16"),
     SP_OFFSET("SP+e8");
+
+    public static final Set<OperationTarget> BYTE_TARGETS = EnumSet.of(B, C, D, E, H, L, A, IMM_8);
 
     private final String representation;
 

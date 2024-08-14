@@ -1,5 +1,9 @@
 package org.gameboy;
 
+import java.util.Arrays;
+
+import static org.gameboy.utils.BitUtilities.apply_mask;
+
 public class CpuRegisters {
     private short af;
     private short bc;
@@ -161,8 +165,16 @@ public class CpuRegisters {
         af = (short) (af | value);
     }
 
-    private void setZ(boolean value) {
+    public void setFlags(boolean value, Flag... flags) {
+        int mask = Arrays.stream(flags)
+                .map(Flag::getLocationMask)
+                .reduce(0, (a, b) -> a | b);
 
+        af = apply_mask(af, mask, !value);
+    }
+
+    public boolean getFlag(Flag flag) {
+        return apply_mask(af, ~flag.getLocationMask(), true) != 0;
     }
 
     public short instructionRegister() {
