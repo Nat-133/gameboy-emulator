@@ -2,6 +2,7 @@ package org.gameboy;
 
 import java.util.List;
 
+import static org.gameboy.Flag.*;
 import static org.gameboy.utils.BitUtilities.bit_range;
 
 public class ArithmeticUnit {
@@ -11,9 +12,9 @@ public class ArithmeticUnit {
         return new ArithmeticResult(
                 newValue,
                 List.of(
-                        new FlagValue(Flag.Z, newValue == 0),
-                        new FlagValue(Flag.N, false),
-                        new FlagValue(Flag.H, bit_range(3, 0, value) == 0xf)
+                        new FlagValue(Z, newValue == 0),
+                        new FlagValue(N, false),
+                        new FlagValue(H, bit_range(3, 0, value) == 0xf)
                 )
         );
     }
