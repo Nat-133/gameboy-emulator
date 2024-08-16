@@ -3,8 +3,6 @@ package org.gameboy;
 import com.google.gson.GsonBuilder;
 import org.gameboy.OpcodeJson.InstructionData;
 import org.gameboy.instructions.Instruction;
-import org.gameboy.instructions.Unimplemented;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;

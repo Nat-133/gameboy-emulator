@@ -1,5 +1,7 @@
 package org.gameboy.instructions.targets;
 
+import org.gameboy.utils.MultiBitValue.TwoBitValue;
+
 public enum WordGeneralRegister {
     // r16
     BC,
@@ -14,5 +16,9 @@ public enum WordGeneralRegister {
             case HL -> OperationTarget.HL.direct();
             case SP -> OperationTarget.SP.direct();
         };
+    }
+
+    public WordGeneralRegister value(TwoBitValue value) {
+        return values()[value.ordinal()];
     }
 }
