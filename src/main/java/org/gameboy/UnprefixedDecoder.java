@@ -78,9 +78,6 @@ public class UnprefixedDecoder implements Decoder {
     }
 
     private Instruction decodeBlock3(int y, int z) {
-        OneBitValue q = OneBitValue.from(y);
-        TwoBitValue p = TwoBitValue.from(y >> 1);
-
         return switch (ThreeBitValue.from(z)) {
             case b000 -> switch(ThreeBitValue.from(y)) {
                 case b000 -> UNIMPLEMENTED;
