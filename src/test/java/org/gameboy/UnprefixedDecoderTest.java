@@ -9,7 +9,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import java.util.zip.GZIPInputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.instructions.Unimplemented.UNIMPLEMENTED;
@@ -29,7 +31,25 @@ class UnprefixedDecoderTest {
 
     @BeforeAll
     static void loadJson() throws IOException {
-        String jsonString = Files.readString(Path.of(UnprefixedDecoderTest.class.getClassLoader().getResource("Opcodes.json").getFile()));
+        String jsonString = "{}";
+        try (InputStream resource = UnprefixedDecoderTest.class.getClassLoader().getResourceAsStream("Opcodes.json.gz")) {
+            assert resource != null;
+
+            GZIPInputStream gzipInputStream = new GZIPInputStream(resource);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = gzipInputStream.read(buffer)) > 0) {
+                byteArrayOutputStream.write(buffer, 0, bytesRead);
+            }
+
+            jsonString = byteArrayOutputStream.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         opcodeJson = new GsonBuilder().create().fromJson(jsonString, OpcodeJson.class);
     }
 
