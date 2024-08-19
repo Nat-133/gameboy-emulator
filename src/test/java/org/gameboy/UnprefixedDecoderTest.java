@@ -31,7 +31,7 @@ class UnprefixedDecoderTest {
 
     @BeforeAll
     static void loadJson() throws IOException {
-        String jsonString = "{}";
+        String jsonString;
         try (InputStream resource = UnprefixedDecoderTest.class.getClassLoader().getResourceAsStream("Opcodes.json.gz")) {
             assert resource != null;
 
