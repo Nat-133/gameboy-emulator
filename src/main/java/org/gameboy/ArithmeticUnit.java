@@ -19,6 +19,19 @@ public class ArithmeticUnit {
         );
     }
 
+    public static ArithmeticResult dec(byte value) {
+        byte newValue = (byte) (value - 1);
+
+        return new ArithmeticResult(
+                newValue,
+                List.of(
+                        new FlagValue(Z, newValue == 0),
+                        new FlagValue(N, true),
+                        new FlagValue(H, bit_range(3, 0, value) == 0x00)
+                )
+        );
+    }
+
     public record ArithmeticResult(byte result, List<FlagValue> flagChanges) {}
 
     public record FlagValue(Flag flag, boolean value) {
