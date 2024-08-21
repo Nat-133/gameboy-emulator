@@ -56,10 +56,10 @@ public class UnprefixedDecoder implements Decoder {
             }
             case b011 -> switch (q) {
                 case b0 -> Inc.inc_r16(WordGeneralRegister.values()[p.ordinal()]);
-                case b1 -> UNIMPLEMENTED; // dec_r16
+                case b1 -> Dec.dec_r16(WordGeneralRegister.values()[p.ordinal()]);
             };
             case b100 -> Inc.inc_r8(ByteRegister.values()[y]);
-            case b101 -> UNIMPLEMENTED;
+            case b101 -> Dec.dec_r8(ByteRegister.values()[y]);
             case b110 -> Load.ld_r8_imm8(ByteRegister.values()[y]);
             case b111 -> UNIMPLEMENTED;
         };
