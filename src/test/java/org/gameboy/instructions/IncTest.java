@@ -41,7 +41,7 @@ class IncTest {
     void givenByteRegisterWithZeroValue_whenInc_thenRegisterUpdatedCorrectly(WordGeneralRegister register) {
         Instruction instruction = Inc.inc_r16(register);
         short ffff = (short) 0xffff;
-        CpuRegisters registers = new CpuRegisters(ffff, ffff, ffff, ffff, ffff, ffff, ffff);
+        CpuRegisters registers = new CpuRegisters(ffff, ffff, ffff, ffff, ffff, ffff, (byte) ffff);
         OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
 
         instruction.execute(accessor);
@@ -63,7 +63,7 @@ class IncTest {
     void givenByte_whenInc_thenFlagsCorrect(byte value, List<FlagValue> expectedFlags) {
         short zero = (short) 0;
         Instruction instruction = Inc.inc_r8(ByteRegister.A);
-        CpuRegisters registers = new CpuRegisters(set_upper_byte(zero, value), zero, zero, zero, zero, zero, zero);
+        CpuRegisters registers = new CpuRegisters(set_upper_byte(zero, value), zero, zero, zero, zero, zero, (byte) zero);
         OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
 
         instruction.execute(accessor);
@@ -81,7 +81,7 @@ class IncTest {
     void givenShort_whenInc_thenNoFlags(WordGeneralRegister register) {
         Instruction instruction = Inc.inc_r16(register);
         short ffff = (short) 0xffff;
-        CpuRegisters registers = new CpuRegisters((short) 0, ffff, ffff, ffff, ffff, ffff, ffff);
+        CpuRegisters registers = new CpuRegisters((short) 0, ffff, ffff, ffff, ffff, ffff, (byte) ffff);
         OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
 
         instruction.execute(accessor);

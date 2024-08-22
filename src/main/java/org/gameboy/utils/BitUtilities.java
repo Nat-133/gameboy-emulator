@@ -74,6 +74,10 @@ public class BitUtilities {
         return (short) ((oldShort & 0xFF00) | uint(newByte));
     }
 
+    public static short concat(byte higher, byte lower) {
+        return set_upper_byte(lower, higher);
+    }
+
     public static short apply_mask(short value, int mask, boolean invert) {
         if (!invert) {
             return (short) (value | mask);

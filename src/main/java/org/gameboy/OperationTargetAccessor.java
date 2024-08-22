@@ -2,6 +2,7 @@ package org.gameboy;
 
 import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.OperationTarget;
+import org.gameboy.utils.BitUtilities;
 
 import static org.gameboy.utils.BitUtilities.*;
 
@@ -52,8 +53,8 @@ public class OperationTargetAccessor {
                 cpuRegisters.setHL((short)(val - 1));
                 yield val;
             }
-            case IMM_8 -> upper_byte(cpuRegisters.instructionRegister());
-            case IMM_16 -> memory.read((short)(cpuRegisters.PC()+1));  // todo: unchecked
+            case IMM_8 -> memory.read(cpuRegisters.PC());
+            case IMM_16 -> concat(memory.read((short)(cpuRegisters.PC()+1)), memory.read(cpuRegisters.PC()));
             case SP_OFFSET -> (short) (cpuRegisters.SP() + upper_byte(cpuRegisters.instructionRegister()));
         };
     }
