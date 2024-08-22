@@ -20,16 +20,18 @@ class LoadTest {
     @ParameterizedTest
     @EnumSource(ByteRegister.class)
     void givenImmediateByte_whenLoadIntoRegister_thenRegisterUpdatedCorrectly(ByteRegister register) {
-        short immediateByte = (short) 0xFA01;
+        byte immediateByte = (byte) 0xFA;
         byte zero = (byte) 0;
-        CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, zero, immediateByte);
+        CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, zero, zero);
         Instruction instruction = Load.ld_r8_imm8(register);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
+        Memory memory = new Memory();
+        memory.write((short) 0x0000, immediateByte);
+        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
 
         instruction.execute(accessor);
 
         byte registerValueAfter = (byte) accessor.getValue(register.convert());
-        assertThat(registerValueAfter).isEqualTo(upper_byte(immediateByte));
+        assertThat(registerValueAfter).isEqualTo(immediateByte);
     }
 
     static Stream<Arguments> byteRegisterPairs() {
@@ -91,7 +93,7 @@ class LoadTest {
 
         instruction.execute(accessor);
 
-        byte memoryValueAfter = (byte)memory.read(set_lower_byte((short) 0xff00, memoryLocation));
+        byte memoryValueAfter = memory.read(set_lower_byte((short) 0xff00, memoryLocation));
 
         assertThat(memoryValueAfter).isEqualTo(value);
     }

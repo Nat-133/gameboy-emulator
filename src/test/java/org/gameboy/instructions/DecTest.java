@@ -41,7 +41,7 @@ class DecTest {
     void givenByteRegisterWithZeroValue_whenDec_thenRegisterUpdatedCorrectly(WordGeneralRegister register) {
         Instruction instruction = Dec.dec_r16(register);
         short zero = (short) 0x0000;
-        CpuRegisters registers = new CpuRegisters(zero, zero, zero, zero, zero, zero, zero);
+        CpuRegisters registers = new CpuRegisters(zero, zero, zero, zero, zero, zero, (byte)0);
         OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
 
         instruction.execute(accessor);
@@ -64,7 +64,7 @@ class DecTest {
     void givenByte_whenDec_thenFlagsCorrect(byte value, List<FlagValue> expectedFlags) {
         short zero = (short) 0;
         Instruction instruction = Dec.dec_r8(ByteRegister.A);
-        CpuRegisters registers = new CpuRegisters(set_upper_byte(zero, value), zero, zero, zero, zero, zero, zero);
+        CpuRegisters registers = new CpuRegisters(set_upper_byte(zero, value), zero, zero, zero, zero, zero, (byte) zero);
         OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
 
         instruction.execute(accessor);
@@ -82,7 +82,7 @@ class DecTest {
     void givenShort_whenDec_thenNoFlags(WordGeneralRegister register) {
         Instruction instruction = Dec.dec_r16(register);
         short zero = (short) 0x0000;
-        CpuRegisters registers = new CpuRegisters((short) 0, zero, zero, zero, zero, zero, zero);
+        CpuRegisters registers = new CpuRegisters(zero, zero, zero, zero, zero, zero, (byte) zero);
         OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
 
         instruction.execute(accessor);

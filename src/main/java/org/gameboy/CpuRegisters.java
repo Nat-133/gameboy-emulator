@@ -22,7 +22,7 @@ public class CpuRegisters {
             short hl,
             short sp,
             short pc,
-            short instructionRegister) {
+            byte instructionRegister) {
         this.af = af;
         this.bc = bc;
         this.de = de;
@@ -41,7 +41,7 @@ public class CpuRegisters {
                 (short) 0x0000,
                 (short) 0x0000,
                 (short) 0x0000,
-                (short) 0x0000
+                (byte) 0x0000
         );
     }
 
@@ -181,7 +181,7 @@ public class CpuRegisters {
         return instructionRegister;
     }
 
-    public void setInstructionRegister(short instructionRegister) {
+    public void setInstructionRegister(byte instructionRegister) {
         this.instructionRegister = instructionRegister;
     }
 }

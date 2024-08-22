@@ -14,11 +14,8 @@ class MemoryTest {
         }
 
         for (int i = 0x0000; i < 0xFFFF; i++) {
-            short val = memory.read((short) i);
-            assertEquals((byte) i, (byte) val);
-
-            byte expectedValue = (byte) (i==0xFFFE ? 0 : i+1);
-            assertEquals(expectedValue, BitUtilities.upper_byte(val));
+            byte val = memory.read((short) i);
+            assertEquals((byte) i, val);
         }
     }
 }
