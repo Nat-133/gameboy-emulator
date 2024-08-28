@@ -1,7 +1,12 @@
 package org.gameboy;
 
+import org.gameboy.utils.BitUtilities;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.utils.BitUtilities.*;
@@ -77,5 +82,25 @@ class BitUtilitiesTest {
 
         assertThat(lower_byte(result)).isEqualTo(lowerByte);
         assertThat(upper_byte(result)).isEqualTo((byte) 0);
+    }
+
+    static Stream<Arguments> getCarryTestValues() {
+        return Stream.of(
+                Arguments.of((byte) 0b0000_0000, (byte) 0b0000_0000, (byte) 0b0000_0000),
+                Arguments.of((byte) 0b1111_1111, (byte) 0b1111_1111, (byte) 0b1111_1111),
+                Arguments.of((byte) 0b1111_1111, (byte) 0b0000_0001, (byte) 0b1111_1111),
+                Arguments.of((byte) 0b1110_1111, (byte) 0b0000_0001, (byte) 0b0000_1111),
+                Arguments.of((byte) 0b1110_1111, (byte) 0b0100_0001, (byte) 0b1100_1111)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getCarryTestValues")
+    void givenTwoBytes_whenCalculateCarryBits_thenResultCorrect(byte a, byte b, byte expectedCarry) {
+        byte res = (byte) (a+b);
+
+        byte carry = BitUtilities.calculate_carry_from_add(a, b, res);
+
+        assertThat(carry).isEqualTo(expectedCarry);
     }
 }
