@@ -89,4 +89,11 @@ public class BitUtilities {
     public static boolean bit(short value, int i) {
         return (rshift(value, i) & 0b1) == 1;
     }
+
+    public static byte calculate_carry_from_add(byte a, byte b, byte res) {
+        int intA = uint(a);
+        int intB = uint(b);
+        int intRes = uint(res);
+        return (byte) ((intA&intB) | ((intA^intB) & ~intRes));
+    }
 }
