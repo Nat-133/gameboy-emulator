@@ -18,5 +18,8 @@ dependencies {
 }
 
 tasks.test {
+    reports {
+        junitXml.outputLocation = layout.buildDirectory.dir("test-junit-xml")
+    }
     useJUnitPlatform()
 }
