@@ -19,7 +19,6 @@ dependencies {
 
 tasks.test {
     reports {
-        junitXml.outputLocation = layout.buildDirectory.dir("test-junit-xml")
         junitXml.required.set(true)
         html.required.set(false)
     }
