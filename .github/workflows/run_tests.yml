@@ -35,3 +35,13 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: ./gradlew test
+
+    - name: Publish Test Report
+      if: always()                                    # Forces this step to always run
+      continue-on-error: true
+      uses: mikepenz/action-junit-report@v4
+      with:
+        report_paths: 'build/test-results/test/TEST-*.xml'
+        fail_on_failure: false
+        require_tests: false
+        include_passed: true
