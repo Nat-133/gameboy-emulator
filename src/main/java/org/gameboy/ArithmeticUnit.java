@@ -3,6 +3,7 @@ package org.gameboy;
 import org.gameboy.utils.BitUtilities;
 
 import java.util.Hashtable;
+import java.util.Map;
 
 import static org.gameboy.Flag.*;
 import static org.gameboy.utils.BitUtilities.bit;
@@ -58,16 +59,6 @@ public class ArithmeticUnit {
     }
 
     public record ArithmeticResult(byte result, Hashtable<Flag, Boolean> flagChanges) {}
-
-    public record FlagValue(Flag flag, boolean value) {
-        public static FlagValue setFlag(Flag flag) {
-            return new FlagValue(flag, true);
-        }
-
-        public static FlagValue unsetFlag(Flag flag) {
-            return new FlagValue(flag, false);
-        }
-    }
 
     public static class FlagChangeSetBuilder {
         private final Hashtable<Flag, Boolean> changes;

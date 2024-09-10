@@ -1,6 +1,6 @@
 package org.gameboy.instructions;
 
-import org.gameboy.ArithmeticUnit.FlagValue;
+import org.gameboy.FlagValue;
 import org.gameboy.CpuRegisters;
 import org.gameboy.Flag;
 import org.gameboy.Memory;
@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.gameboy.ArithmeticUnit.FlagValue.setFlag;
-import static org.gameboy.ArithmeticUnit.FlagValue.unsetFlag;
+import static org.gameboy.FlagValue.setFlag;
+import static org.gameboy.FlagValue.unsetFlag;
 import static org.gameboy.Flag.*;
 import static org.gameboy.utils.BitUtilities.set_upper_byte;
 
@@ -69,7 +69,7 @@ class IncTest {
         instruction.execute(accessor);
 
         List<FlagValue> actualFlags = expectedFlags.stream()
-                .map(FlagValue::flag)
+                .map(FlagValue::getKey)
                 .map(flag -> new FlagValue(flag, registers.getFlag(flag)))
                 .toList();
 
