@@ -39,7 +39,7 @@ public class Dec implements Instruction{
             newValue = result.result();
 
             result.flagChanges().forEach(
-                    flagValue -> operationTargetAccessor.cpuRegisters.setFlags(flagValue.value(), flagValue.flag())
+                    (flag, change) -> operationTargetAccessor.cpuRegisters.setFlags(change, flag)
             );
         } else {
             newValue = (short) (value - 1);
