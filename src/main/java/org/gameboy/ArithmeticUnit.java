@@ -3,7 +3,6 @@ package org.gameboy;
 import org.gameboy.utils.BitUtilities;
 
 import java.util.Hashtable;
-import java.util.Map;
 
 import static org.gameboy.Flag.*;
 import static org.gameboy.utils.BitUtilities.bit;
@@ -14,7 +13,7 @@ public class ArithmeticUnit {
 
         return new ArithmeticResult(
                 result.result,
-                new FlagChangeSetBuilder(result.flagChanges)
+                new FlagChangesetBuilder(result.flagChanges)
                         .without(C)
                         .build()
         );
@@ -26,7 +25,7 @@ public class ArithmeticUnit {
 
         return new ArithmeticResult(
                 result.result,
-                new FlagChangeSetBuilder(result.flagChanges)
+                new FlagChangesetBuilder(result.flagChanges)
                         .without(C)
                         .build()
         );
@@ -39,7 +38,7 @@ public class ArithmeticUnit {
 
         return new ArithmeticResult(
                 res,
-                new FlagChangeSetBuilder()
+                new FlagChangesetBuilder()
                         .with(Z, res == 0)
                         .with(N, isSubtract)
                         .with(H, bit(carry_bits, 3))
@@ -48,35 +47,43 @@ public class ArithmeticUnit {
         );
     }
 
+    public static ArithmeticResult add_carry(byte a, byte b, boolean carry) {
+        return calculate_sum(a, b, carry, false);
+    }
+
+    public static ArithmeticResult sub_carry(byte a, byte b, boolean carry) {
+        byte b_twos_compliment = (byte) (~b);
+
+        return calculate_sum(a, b_twos_compliment, !carry, true);
+    }
+
     public static ArithmeticResult add(byte a, byte b) {
-        return calculate_sum(a, b, false, false);
+        return add_carry(a, b, false);
     }
 
     public static ArithmeticResult sub(byte a, byte b) {
-        byte b_twos_compliment = (byte) (~b);
-
-        return calculate_sum(a, b_twos_compliment, true, true);
+        return sub_carry(a, b, false);
     }
 
     public record ArithmeticResult(byte result, Hashtable<Flag, Boolean> flagChanges) {}
 
-    public static class FlagChangeSetBuilder {
+    public static class FlagChangesetBuilder {
         private final Hashtable<Flag, Boolean> changes;
 
-        public FlagChangeSetBuilder() {
+        public FlagChangesetBuilder() {
             this(new Hashtable<>(4, 1f));
         }
 
-        public FlagChangeSetBuilder(Hashtable<Flag, Boolean> changes){
+        public FlagChangesetBuilder(Hashtable<Flag, Boolean> changes){
             this.changes = new Hashtable<>(changes);
         }
 
-        public FlagChangeSetBuilder with(Flag flag, boolean value) {
+        public FlagChangesetBuilder with(Flag flag, boolean value) {
             changes.put(flag, value);
             return this;
         }
 
-        public FlagChangeSetBuilder without(Flag flag) {
+        public FlagChangesetBuilder without(Flag flag) {
             changes.remove(flag);
             return this;
         }
