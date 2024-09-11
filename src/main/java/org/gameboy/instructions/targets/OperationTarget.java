@@ -16,6 +16,7 @@ public enum OperationTarget {
     DE("DE"),
     HL("HL"),
     SP("SP"),
+    PC("PC"),
     HL_INC("HL+"),
     HL_DEC("HL-"),
     IMM_8("imm8"),
