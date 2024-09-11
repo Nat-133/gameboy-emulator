@@ -2,6 +2,7 @@ package org.gameboy;
 
 import org.gameboy.instructions.*;
 import org.gameboy.instructions.targets.ByteRegister;
+import org.gameboy.instructions.targets.Condition;
 import org.gameboy.instructions.targets.WordGeneralRegister;
 import org.gameboy.instructions.targets.WordMemoryRegister;
 import org.gameboy.utils.MultiBitValue.OneBitValue;
@@ -40,8 +41,8 @@ public class UnprefixedDecoder implements Decoder {
                 case 0 -> Nop.NOP();
                 case 1 -> Load.ld_imm16indirect_sp();
                 case 2 -> UNIMPLEMENTED; // STOP
-                case 3 -> UNIMPLEMENTED; // JR imm8; imm8 signed
-                default -> UNIMPLEMENTED; // JR condition[y-4], imm8; imm8 signed
+                case 3 -> JumpRelative.jr(); // JR imm8; imm8 signed
+                default -> JumpRelative.jr_cc(Condition.values()[y-4]); // JR condition[y-4], imm8; imm8 signed
             };
             case b001 -> switch(q){
                 case b0 -> Load.ld_r16_imm16(WordGeneralRegister.values()[p.ordinal()]);

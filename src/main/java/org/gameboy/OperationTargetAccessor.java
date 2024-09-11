@@ -43,6 +43,7 @@ public class OperationTargetAccessor {
             case DE -> cpuRegisters.DE();
             case HL -> cpuRegisters.HL();
             case SP -> cpuRegisters.SP();
+            case PC -> cpuRegisters.PC();
             case HL_INC -> {
                 short val = cpuRegisters.HL();
                 cpuRegisters.setHL((short)(val + 1));
@@ -84,6 +85,7 @@ public class OperationTargetAccessor {
             case DE -> cpuRegisters.setDE(value);
             case HL -> cpuRegisters.setHL(value);
             case SP -> cpuRegisters.setSP(value);
+            case PC -> cpuRegisters.setPC(value);
             case HL_INC -> {
                 short val = cpuRegisters.HL();
                 cpuRegisters.setHL((short)(val + 1));
