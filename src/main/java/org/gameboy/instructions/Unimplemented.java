@@ -12,7 +12,7 @@ public class Unimplemented implements Instruction{
 
     @Override
     public void execute(OperationTargetAccessor operationTargetAccessor) {
-
+        throw new UnsupportedOperationException("Unimplemented instruction");
     }
 
     @Override
