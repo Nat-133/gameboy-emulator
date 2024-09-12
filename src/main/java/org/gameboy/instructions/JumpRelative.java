@@ -1,11 +1,11 @@
 package org.gameboy.instructions;
 
 import org.gameboy.*;
-import org.gameboy.ArithmeticUnit.ArithmeticResult;
+import org.gameboy.components.CpuRegisters;
+import org.gameboy.instructions.common.ControlFlow;
+import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.Condition;
 import org.gameboy.instructions.targets.OperationTarget;
-
-import static org.gameboy.utils.BitUtilities.*;
 
 public class JumpRelative implements Instruction{
     private final Condition cc;
@@ -36,23 +36,7 @@ public class JumpRelative implements Instruction{
 
         if (shouldJump) {
             short pc = operationTargetAccessor.cpuRegisters.PC();
-            byte pch = upper_byte(pc);
-            byte pcl = lower_byte(pc);
-
-            ArithmeticResult res = ArithmeticUnit.add(pcl, offset);
-            boolean carry = res.flagChanges().getOrDefault(Flag.C, false);
-            boolean negativeOffset = bit(offset, 7);
-
-            if (carry && !negativeOffset) {
-                pch = (byte) IncrementDecrementUnit.increment(pch);
-            }
-            else if (!carry && negativeOffset) {
-                pch = (byte) IncrementDecrementUnit.decrement(pch);
-            }
-            pcl = res.result();
-
-            short new_pc = concat(pch, pcl);
-
+            short new_pc = ControlFlow.signedAddition(pc, offset, (a, b) -> {});
             operationTargetAccessor.setValue(OperationTarget.PC.direct(), new_pc);
         }
     }

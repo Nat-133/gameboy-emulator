@@ -1,5 +1,6 @@
-package org.gameboy;
+package org.gameboy.components;
 
+import org.gameboy.Flag;
 import org.gameboy.utils.BitUtilities;
 
 import java.util.Hashtable;
@@ -75,6 +76,8 @@ public class ArithmeticUnit {
         }
 
         public FlagChangesetBuilder(Hashtable<Flag, Boolean> changes){
+
+
             this.changes = new Hashtable<>(changes);
         }
 

@@ -1,6 +1,7 @@
-package org.gameboy;
+package org.gameboy.components;
 
-import org.gameboy.ArithmeticUnit.ArithmeticResult;
+import org.gameboy.Flag;
+import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

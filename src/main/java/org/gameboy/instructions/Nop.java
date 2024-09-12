@@ -1,6 +1,6 @@
 package org.gameboy.instructions;
 
-import org.gameboy.OperationTargetAccessor;
+import org.gameboy.instructions.common.OperationTargetAccessor;
 
 public class Nop implements Instruction {
     private static final Nop NOP = new Nop();

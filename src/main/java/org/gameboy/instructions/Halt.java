@@ -1,6 +1,6 @@
 package org.gameboy.instructions;
 
-import org.gameboy.OperationTargetAccessor;
+import org.gameboy.instructions.common.OperationTargetAccessor;
 
 public class Halt implements Instruction {
     private static final Halt HALT = new Halt();

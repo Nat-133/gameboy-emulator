@@ -1,9 +1,9 @@
 package org.gameboy.instructions;
 
-import org.gameboy.CpuRegisters;
+import org.gameboy.components.CpuRegisters;
 import org.gameboy.Flag;
-import org.gameboy.Memory;
-import org.gameboy.OperationTargetAccessor;
+import org.gameboy.components.Memory;
+import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.Condition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

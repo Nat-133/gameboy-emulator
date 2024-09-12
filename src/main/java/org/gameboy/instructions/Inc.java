@@ -1,8 +1,8 @@
 package org.gameboy.instructions;
 
-import org.gameboy.ArithmeticUnit;
-import org.gameboy.ArithmeticUnit.ArithmeticResult;
-import org.gameboy.OperationTargetAccessor;
+import org.gameboy.components.ArithmeticUnit;
+import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
+import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.WordGeneralRegister;

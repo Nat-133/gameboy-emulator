@@ -1,4 +1,6 @@
-package org.gameboy;
+package org.gameboy.components;
+
+import org.gameboy.Flag;
 
 import java.util.Arrays;
 
@@ -97,10 +99,6 @@ public class CpuRegisters {
         return (byte) (hl);
     }
 
-    public byte F() {
-        return (byte) (af);
-    }
-
     public void setBC(short value) {
         bc = value;
     }
@@ -158,11 +156,6 @@ public class CpuRegisters {
     public void setL(byte value) {
         hl = (short) (hl & 0xFF00);
         hl = (short) (hl | value);
-    }
-
-    private void setF(byte value) {
-        af = (short) (af & 0xFF00);
-        af = (short) (af | value);
     }
 
     public void setFlags(boolean value, Flag... flags) {

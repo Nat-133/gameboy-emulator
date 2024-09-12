@@ -1,6 +1,6 @@
 package org.gameboy.instructions;
 
-import org.gameboy.OperationTargetAccessor;
+import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.*;
 
 import static org.gameboy.instructions.targets.OperationTarget.*;
