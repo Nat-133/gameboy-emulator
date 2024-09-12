@@ -1,4 +1,4 @@
-package org.gameboy;
+package org.gameboy.components;
 
 import static org.gameboy.utils.BitUtilities.uint;
 

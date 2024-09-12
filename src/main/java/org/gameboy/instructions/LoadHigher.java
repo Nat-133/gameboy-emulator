@@ -1,8 +1,7 @@
 package org.gameboy.instructions;
 
-import org.gameboy.OperationTargetAccessor;
+import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.GenericOperationTarget;
-import org.gameboy.instructions.targets.OperationTarget;
 
 import static org.gameboy.instructions.targets.OperationTarget.A;
 import static org.gameboy.instructions.targets.OperationTarget.IMM_8;

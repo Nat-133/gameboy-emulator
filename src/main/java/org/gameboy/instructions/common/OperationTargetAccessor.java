@@ -1,8 +1,9 @@
-package org.gameboy;
+package org.gameboy.instructions.common;
 
+import org.gameboy.components.CpuRegisters;
+import org.gameboy.components.Memory;
 import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.OperationTarget;
-import org.gameboy.utils.BitUtilities;
 
 import static org.gameboy.utils.BitUtilities.*;
 

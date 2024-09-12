@@ -1,6 +1,6 @@
 package org.gameboy.instructions;
 
-import org.gameboy.OperationTargetAccessor;
+import org.gameboy.instructions.common.OperationTargetAccessor;
 
 public class Unimplemented implements Instruction{
     public static final Unimplemented UNIMPLEMENTED = new Unimplemented();

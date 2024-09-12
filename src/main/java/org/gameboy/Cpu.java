@@ -1,5 +1,7 @@
 package org.gameboy;
 
+import org.gameboy.components.CpuRegisters;
+import org.gameboy.components.Memory;
 import org.gameboy.instructions.Instruction;
 import org.gameboy.instructions.Load;
 import org.gameboy.instructions.targets.ByteRegister;

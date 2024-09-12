@@ -1,4 +1,4 @@
-package org.gameboy;
+package org.gameboy.components;
 
 public class IncrementDecrementUnit {
     public static short increment(short value) {

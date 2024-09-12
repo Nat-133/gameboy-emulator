@@ -1,6 +1,5 @@
-package org.gameboy;
+package org.gameboy.components;
 
-import org.gameboy.utils.BitUtilities;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
