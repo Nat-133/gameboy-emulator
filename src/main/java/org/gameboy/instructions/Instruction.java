@@ -1,9 +1,9 @@
 package org.gameboy.instructions;
 
-import org.gameboy.instructions.common.OperationTargetAccessor;
+import org.gameboy.components.CpuStructure;
 
 public interface Instruction {
     String representation();
 
-    void execute(OperationTargetAccessor operationTargetAccessor);
+    void execute(CpuStructure cpuStructure);
 }

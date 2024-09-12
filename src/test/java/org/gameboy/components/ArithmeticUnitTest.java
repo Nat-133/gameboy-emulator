@@ -2,6 +2,7 @@ package org.gameboy.components;
 
 import org.gameboy.Flag;
 import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,11 +18,17 @@ import static org.gameboy.Flag.*;
 import static org.gameboy.utils.BitUtilities.uint;
 
 class ArithmeticUnitTest {
+    private ArithmeticUnit alu;
+
+    @BeforeEach
+    void setUp() {
+        alu = new ArithmeticUnit();
+    }
 
     @ParameterizedTest
     @ValueSource(bytes = {(byte) 0x00, (byte) 0xff, (byte) 0xa1, (byte) 0x0f, (byte) 0x14})
     void givenByte_whenInc_thenResultCorrect(byte value) {
-        ArithmeticResult result = ArithmeticUnit.inc(value);
+        ArithmeticResult result = alu.inc(value);
 
         int expected = uint(value) + 1;
 
@@ -40,7 +47,7 @@ class ArithmeticUnitTest {
     @ParameterizedTest(name="{0}")
     @MethodSource("getIncValues")
     final void givenByte_whenInc_thenFlagsCorrect(byte value, Entry<Flag, Boolean>... expectedFlags) {
-        ArithmeticResult result = ArithmeticUnit.inc(value);
+        ArithmeticResult result = alu.inc(value);
 
         assertThat(result.flagChanges()).containsOnly(expectedFlags);
     }
@@ -48,7 +55,7 @@ class ArithmeticUnitTest {
     @ParameterizedTest
     @ValueSource(bytes = {(byte) 0x00, (byte) 0xff, (byte) 0xa1, (byte) 0x0f, (byte) 0x14})
     void givenByte_whenDec_thenResultCorrect(byte value) {
-        ArithmeticResult result = ArithmeticUnit.dec(value);
+        ArithmeticResult result = alu.dec(value);
 
         int expected = uint(value) - 1;
 
@@ -69,7 +76,7 @@ class ArithmeticUnitTest {
     @ParameterizedTest(name="{0}")
     @MethodSource("getDecValues")
     final void givenByte_whenDec_thenFlagsCorrect(byte value, Entry<Flag, Boolean>... expectedFlags) {
-        ArithmeticResult result = ArithmeticUnit.dec(value);
+        ArithmeticResult result = alu.dec(value);
 
         assertThat(result.flagChanges()).containsOnly(expectedFlags);
     }
@@ -90,7 +97,7 @@ class ArithmeticUnitTest {
     void givenTwoBytes_whenAdd_thenResultCorrect(byte a, byte b) {
         byte expectedResult = (byte) (a+b);
 
-        ArithmeticResult result = ArithmeticUnit.add(a, b);
+        ArithmeticResult result = alu.add(a, b);
 
         assertThat(result.result()).isEqualTo(expectedResult);
     }
@@ -100,7 +107,7 @@ class ArithmeticUnitTest {
     void givenTwoBytes_whenSub_thenResultCorrect(byte a, byte b) {
         byte expectedResult = (byte) (uint(a) - uint(b));
 
-        ArithmeticResult result = ArithmeticUnit.sub(a, b);
+        ArithmeticResult result = alu.sub(a, b);
 
         assertThat(result.result()).isEqualTo(expectedResult);
     }
@@ -120,7 +127,7 @@ class ArithmeticUnitTest {
     @ParameterizedTest(name="{0}+{1}")
     @MethodSource("getAddValues")
     final void givenTwoBytes_whenAdd_thenFlagsCorrect(byte a, byte b, Entry<Flag, Boolean>... expectedFlags) {
-        ArithmeticResult result = ArithmeticUnit.add(a, b);
+        ArithmeticResult result = alu.add(a, b);
 
         assertThat(result.flagChanges()).containsOnly(expectedFlags);
     }
@@ -143,7 +150,7 @@ class ArithmeticUnitTest {
     @ParameterizedTest(name="{0}-{1}")
     @MethodSource("getSubValues")
     final void givenTwoBytes_whenSub_thenFlagsCorrect(byte a, byte b, Entry<Flag, Boolean>... expectedFlags) {
-        ArithmeticResult result = ArithmeticUnit.sub(a, b);
+        ArithmeticResult result = alu.sub(a, b);
 
         assertThat(result.flagChanges()).containsOnly(expectedFlags);
     }

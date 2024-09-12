@@ -1,9 +1,8 @@
 package org.gameboy.instructions;
 
 import org.gameboy.FlagValue;
-import org.gameboy.components.CpuRegisters;
+import org.gameboy.components.*;
 import org.gameboy.Flag;
-import org.gameboy.components.Memory;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.WordGeneralRegister;
@@ -28,9 +27,10 @@ class DecTest {
     void givenByteRegisterWithZeroValue_whenDec_thenRegisterUpdatedCorrectly(ByteRegister register) {
         Instruction instruction = Dec.dec_r8(register);
         CpuRegisters registers = new CpuRegisters();
-        OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, new Memory(), new ArithmeticUnit(), new IncrementDecrementUnit());
+        OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         byte registerValueAfter = (byte) accessor.getValue(register.convert());
         assertThat(registerValueAfter).isEqualTo((byte) 0xff);
@@ -42,9 +42,10 @@ class DecTest {
         Instruction instruction = Dec.dec_r16(register);
         short zero = (short) 0x0000;
         CpuRegisters registers = new CpuRegisters(zero, zero, zero, zero, zero, zero, (byte)0);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, new Memory(), new ArithmeticUnit(), new IncrementDecrementUnit());
+        OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         short registerValueAfter = accessor.getValue(register.convert());
         assertThat(registerValueAfter).isEqualTo((short) 0xffff);
@@ -65,9 +66,9 @@ class DecTest {
         short zero = (short) 0;
         Instruction instruction = Dec.dec_r8(ByteRegister.A);
         CpuRegisters registers = new CpuRegisters(set_upper_byte(zero, value), zero, zero, zero, zero, zero, (byte) zero);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, new Memory(), new ArithmeticUnit(), new IncrementDecrementUnit());
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         List<FlagValue> actualFlags = expectedFlags.stream()
                 .map(FlagValue::getKey)
@@ -83,9 +84,9 @@ class DecTest {
         Instruction instruction = Dec.dec_r16(register);
         short zero = (short) 0x0000;
         CpuRegisters registers = new CpuRegisters(zero, zero, zero, zero, zero, zero, (byte) zero);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, new Memory(), new ArithmeticUnit(), new IncrementDecrementUnit());
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         List<Boolean> actualFlags = Arrays.stream(Flag.values()).map(registers::getFlag).toList();
 

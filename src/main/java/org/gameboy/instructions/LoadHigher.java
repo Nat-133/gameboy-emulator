@@ -1,5 +1,6 @@
 package org.gameboy.instructions;
 
+import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.GenericOperationTarget;
 
@@ -29,7 +30,8 @@ public class LoadHigher implements Instruction{
     }
 
     @Override
-    public void execute(OperationTargetAccessor operationTargetAccessor) {
+    public void execute(CpuStructure cpuStructure) {
+        OperationTargetAccessor operationTargetAccessor = OperationTargetAccessor.from(cpuStructure);
         operationTargetAccessor.setValue(destination, operationTargetAccessor.getValue(source));
     }
 

@@ -1,6 +1,7 @@
 package org.gameboy.instructions.common;
 
 import org.gameboy.components.CpuRegisters;
+import org.gameboy.components.CpuStructure;
 import org.gameboy.components.Memory;
 import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.OperationTarget;
@@ -14,6 +15,10 @@ public class OperationTargetAccessor {
     public OperationTargetAccessor(Memory memory, CpuRegisters cpuRegisters) {
         this.memory = memory;
         this.cpuRegisters = cpuRegisters;
+    }
+
+    public static OperationTargetAccessor from(CpuStructure cpuStructure) {
+        return new OperationTargetAccessor(cpuStructure.memory(), cpuStructure.registers());
     }
 
     public void setValue(GenericOperationTarget target, short value) {

@@ -1,6 +1,6 @@
 package org.gameboy.instructions;
 
-import org.gameboy.instructions.common.OperationTargetAccessor;
+import org.gameboy.components.CpuStructure;
 
 public class Unimplemented implements Instruction{
     public static final Unimplemented UNIMPLEMENTED = new Unimplemented();
@@ -11,7 +11,7 @@ public class Unimplemented implements Instruction{
     }
 
     @Override
-    public void execute(OperationTargetAccessor operationTargetAccessor) {
+    public void execute(CpuStructure cpuStructure) {
         throw new UnsupportedOperationException("Unimplemented instruction");
     }
 

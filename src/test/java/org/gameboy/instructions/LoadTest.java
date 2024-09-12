@@ -1,7 +1,6 @@
 package org.gameboy.instructions;
 
-import org.gameboy.components.CpuRegisters;
-import org.gameboy.components.Memory;
+import org.gameboy.components.*;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,9 +25,10 @@ class LoadTest {
         Instruction instruction = Load.ld_r8_imm8(register);
         Memory memory = new Memory();
         memory.write((short) 0x0000, immediateByte);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
+        OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         byte registerValueAfter = (byte) accessor.getValue(register.convert());
         assertThat(registerValueAfter).isEqualTo(immediateByte);
@@ -52,10 +52,11 @@ class LoadTest {
         byte zero = (byte) 0;
         CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, zero, zero);
         Instruction instruction = Load.ld_r8_r8(destination, source);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(new Memory(), registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, new Memory(), new ArithmeticUnit(), new IncrementDecrementUnit());
+        OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
         accessor.setValue(source.convert(), immediateByte);
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         byte registerValueAfter = (byte) accessor.getValue(destination.convert());
         assertThat(registerValueAfter).isEqualTo(lower_byte(immediateByte));
@@ -68,12 +69,12 @@ class LoadTest {
         byte value = (byte) 0xFA;
         CpuRegisters registers = new CpuRegisters();
         Memory memory = new Memory();
-        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
 
         memory.write(set_lower_byte((short)0xff00, memoryLocation), value);
         registers.setC(memoryLocation);
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         byte registerValueAfter = registers.A();
         assertThat(registerValueAfter).isEqualTo(value);
@@ -86,12 +87,12 @@ class LoadTest {
         byte value = (byte) 0xFA;
         CpuRegisters registers = new CpuRegisters();
         Memory memory = new Memory();
-        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
 
         registers.setC(memoryLocation);
         registers.setA(value);
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         byte memoryValueAfter = memory.read(set_lower_byte((short) 0xff00, memoryLocation));
 

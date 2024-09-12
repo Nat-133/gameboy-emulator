@@ -2,6 +2,7 @@ package org.gameboy.instructions;
 
 import org.gameboy.components.ArithmeticUnit;
 import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
+import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.GenericOperationTarget;
@@ -21,7 +22,7 @@ public class Add implements Instruction {
     }
 
     @Override
-    public void execute(OperationTargetAccessor operationTargetAccessor) {
+    public void execute(CpuStructure cpuStructure) {
         if (!this.left.isByteTarget() && !this.right.isByteTarget()) {
             // 16-bit addition
         }
@@ -29,15 +30,16 @@ public class Add implements Instruction {
             // 16-bit + 8-bit signed
         }
         else {
-            executeEightBitAddition(operationTargetAccessor);
+            executeEightBitAddition(cpuStructure);
         }
     }
 
-    private void executeEightBitAddition(OperationTargetAccessor operationTargetAccessor) {
+    private void executeEightBitAddition(CpuStructure cpuStructure) {
+        OperationTargetAccessor operationTargetAccessor = OperationTargetAccessor.from(cpuStructure);
         byte leftValue = (byte) operationTargetAccessor.getValue(this.left);
         byte rightValue = (byte) operationTargetAccessor.getValue(this.right);
 
-        ArithmeticResult result = ArithmeticUnit.add(leftValue, rightValue);
+        ArithmeticResult result = cpuStructure.alu().add(leftValue, rightValue);
         operationTargetAccessor.setValue(this.left, result.result());
 
         result.flagChanges().forEach(

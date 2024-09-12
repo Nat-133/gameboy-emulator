@@ -2,6 +2,7 @@ package org.gameboy.instructions;
 
 import org.gameboy.components.ArithmeticUnit;
 import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
+import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.GenericOperationTarget;
@@ -28,13 +29,14 @@ public class Inc implements Instruction{
     }
 
     @Override
-    public void execute(OperationTargetAccessor operationTargetAccessor) {
+    public void execute(CpuStructure cpuStructure) {
+        OperationTargetAccessor operationTargetAccessor = OperationTargetAccessor.from(cpuStructure);
         short value = operationTargetAccessor.getValue(target);
 
         short newValue;
 
         if (target.isByteTarget()) {
-            ArithmeticResult result = ArithmeticUnit.inc((byte) value);
+            ArithmeticResult result = cpuStructure.alu().inc((byte) value);
 
             newValue = result.result();
 
