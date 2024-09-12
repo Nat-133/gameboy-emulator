@@ -9,7 +9,7 @@ import static org.gameboy.Flag.*;
 import static org.gameboy.utils.BitUtilities.bit;
 
 public class ArithmeticUnit {
-    public static ArithmeticResult inc(byte value) {
+    public ArithmeticResult inc(byte value) {
         ArithmeticResult result = add(value, (byte) 1);
 
         return new ArithmeticResult(
@@ -20,7 +20,7 @@ public class ArithmeticUnit {
         );
     }
 
-    public static ArithmeticResult dec(byte value) {
+    public ArithmeticResult dec(byte value) {
         ArithmeticResult result = sub(value, (byte) 1);
 
 
@@ -32,7 +32,7 @@ public class ArithmeticUnit {
         );
     }
 
-    private static ArithmeticResult calculate_sum(byte a, byte b, boolean carry, boolean isSubtract) {
+    private ArithmeticResult calculate_sum(byte a, byte b, boolean carry, boolean isSubtract) {
         byte res = (byte) (a + b + (carry ? 1 : 0));
         byte carry_bits = BitUtilities.calculate_carry_from_add(a, b, res);
         carry_bits = isSubtract ? (byte) ~carry_bits : carry_bits;
@@ -48,21 +48,21 @@ public class ArithmeticUnit {
         );
     }
 
-    public static ArithmeticResult add_carry(byte a, byte b, boolean carry) {
+    public ArithmeticResult add_carry(byte a, byte b, boolean carry) {
         return calculate_sum(a, b, carry, false);
     }
 
-    public static ArithmeticResult sub_carry(byte a, byte b, boolean carry) {
+    public ArithmeticResult sub_carry(byte a, byte b, boolean carry) {
         byte b_twos_compliment = (byte) (~b);
 
         return calculate_sum(a, b_twos_compliment, !carry, true);
     }
 
-    public static ArithmeticResult add(byte a, byte b) {
+    public ArithmeticResult add(byte a, byte b) {
         return add_carry(a, b, false);
     }
 
-    public static ArithmeticResult sub(byte a, byte b) {
+    public ArithmeticResult sub(byte a, byte b) {
         return sub_carry(a, b, false);
     }
 

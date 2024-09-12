@@ -1,8 +1,7 @@
 package org.gameboy.instructions;
 
-import org.gameboy.components.CpuRegisters;
+import org.gameboy.components.*;
 import org.gameboy.Flag;
-import org.gameboy.components.Memory;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.Condition;
 import org.junit.jupiter.api.Test;
@@ -21,9 +20,9 @@ public class JumpRelativeTest {
         Instruction instruction = JumpRelative.jr();
         Memory memory = new Memory();
         memory.write(initialPC, jump);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + jump);
         short actualPC = registers.PC();
@@ -40,9 +39,9 @@ public class JumpRelativeTest {
         Instruction instruction = JumpRelative.jr_cc(Condition.Z);
         Memory memory = new Memory();
         memory.write(initialPC, (byte) 1);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         short actualPC = registers.PC();
         assertThat(actualPC).isEqualTo(initialPC);
@@ -58,9 +57,9 @@ public class JumpRelativeTest {
         Instruction instruction = JumpRelative.jr_cc(Condition.Z);
         Memory memory = new Memory();
         memory.write(initialPC, (byte) 1);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + 1);
         short actualPC = registers.PC();
@@ -78,9 +77,9 @@ public class JumpRelativeTest {
         Instruction instruction = JumpRelative.jr_cc(Condition.C);
         Memory memory = new Memory();
         memory.write(initialPC, (byte) 1);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         short actualPC = registers.PC();
         assertThat(actualPC).isEqualTo(initialPC);
@@ -96,9 +95,9 @@ public class JumpRelativeTest {
         Instruction instruction = JumpRelative.jr_cc(Condition.C);
         Memory memory = new Memory();
         memory.write(initialPC, (byte) 1);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + 1);
         short actualPC = registers.PC();
@@ -115,9 +114,9 @@ public class JumpRelativeTest {
         Instruction instruction = JumpRelative.jr_cc(Condition.NZ);
         Memory memory = new Memory();
         memory.write(initialPC, (byte) 1);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         short actualPC = registers.PC();
         assertThat(actualPC).isEqualTo(initialPC);
@@ -133,9 +132,9 @@ public class JumpRelativeTest {
         Instruction instruction = JumpRelative.jr_cc(Condition.NZ);
         Memory memory = new Memory();
         memory.write(initialPC, (byte) 1);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + 1);
         short actualPC = registers.PC();
@@ -153,9 +152,9 @@ public class JumpRelativeTest {
         Instruction instruction = JumpRelative.jr_cc(Condition.NC);
         Memory memory = new Memory();
         memory.write(initialPC, (byte) 1);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         short actualPC = registers.PC();
         assertThat(actualPC).isEqualTo(initialPC);
@@ -171,9 +170,9 @@ public class JumpRelativeTest {
         Instruction instruction = JumpRelative.jr_cc(Condition.NC);
         Memory memory = new Memory();
         memory.write(initialPC, (byte) 1);
-        OperationTargetAccessor accessor = new OperationTargetAccessor(memory, registers);
+        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
 
-        instruction.execute(accessor);
+        instruction.execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + 1);
         short actualPC = registers.PC();

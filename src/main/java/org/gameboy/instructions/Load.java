@@ -1,5 +1,6 @@
 package org.gameboy.instructions;
 
+import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.*;
 
@@ -68,7 +69,8 @@ public class Load implements Instruction {
     }
 
     @Override
-    public void execute(OperationTargetAccessor operationTargetAccessor) {
+    public void execute(CpuStructure cpuStructure) {
+        OperationTargetAccessor operationTargetAccessor = OperationTargetAccessor.from(cpuStructure);
         short loaded_value = operationTargetAccessor.getValue(this.source);
         operationTargetAccessor.setValue(this.destination, loaded_value);
     }

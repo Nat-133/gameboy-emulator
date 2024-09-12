@@ -2,6 +2,7 @@ package org.gameboy.instructions;
 
 import org.gameboy.*;
 import org.gameboy.components.CpuRegisters;
+import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.ControlFlow;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.Condition;
@@ -30,13 +31,14 @@ public class JumpRelative implements Instruction{
     }
 
     @Override
-    public void execute(OperationTargetAccessor operationTargetAccessor) {
+    public void execute(CpuStructure cpuStructure) {
+        OperationTargetAccessor operationTargetAccessor = OperationTargetAccessor.from(cpuStructure);
         byte offset = (byte) operationTargetAccessor.getValue(OperationTarget.IMM_8.direct());
         boolean shouldJump = evaluateCondition(cc, operationTargetAccessor.cpuRegisters);
 
         if (shouldJump) {
             short pc = operationTargetAccessor.cpuRegisters.PC();
-            short new_pc = ControlFlow.signedAddition(pc, offset, (a, b) -> {});
+            short new_pc = ControlFlow.signedAddition(pc, offset, false, cpuStructure);
             operationTargetAccessor.setValue(OperationTarget.PC.direct(), new_pc);
         }
     }

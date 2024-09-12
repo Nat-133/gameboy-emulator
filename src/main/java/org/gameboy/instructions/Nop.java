@@ -1,6 +1,6 @@
 package org.gameboy.instructions;
 
-import org.gameboy.instructions.common.OperationTargetAccessor;
+import org.gameboy.components.CpuStructure;
 
 public class Nop implements Instruction {
     private static final Nop NOP = new Nop();
@@ -16,7 +16,7 @@ public class Nop implements Instruction {
     }
 
     @Override
-    public void execute(OperationTargetAccessor operationTargetAccessor) {
+    public void execute(CpuStructure cpuStructure) {
 
     }
 }

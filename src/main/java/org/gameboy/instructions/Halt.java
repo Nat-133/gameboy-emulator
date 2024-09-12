@@ -1,6 +1,6 @@
 package org.gameboy.instructions;
 
-import org.gameboy.instructions.common.OperationTargetAccessor;
+import org.gameboy.components.CpuStructure;
 
 public class Halt implements Instruction {
     private static final Halt HALT = new Halt();
@@ -12,7 +12,7 @@ public class Halt implements Instruction {
     private Halt() {}
 
     @Override
-    public void execute(OperationTargetAccessor operationTargetAccessor) {
+    public void execute(CpuStructure cpuStructure) {
 
     }
 
