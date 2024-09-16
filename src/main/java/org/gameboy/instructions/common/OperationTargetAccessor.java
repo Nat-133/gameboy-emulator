@@ -1,24 +1,26 @@
 package org.gameboy.instructions.common;
 
-import org.gameboy.components.CpuRegisters;
-import org.gameboy.components.CpuStructure;
-import org.gameboy.components.Memory;
+import org.gameboy.components.*;
 import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.OperationTarget;
 
 import static org.gameboy.utils.BitUtilities.*;
 
 public class OperationTargetAccessor {
-    public final Memory memory;
-    public final CpuRegisters cpuRegisters;
+    private final Memory memory;
+    private final CpuRegisters registers;
+    private final IncrementDecrementUnit idu;
+    private final CpuStructure cpuStructure;
 
-    public OperationTargetAccessor(Memory memory, CpuRegisters cpuRegisters) {
-        this.memory = memory;
-        this.cpuRegisters = cpuRegisters;
+    public OperationTargetAccessor(CpuStructure cpuStructure) {
+        this.cpuStructure = cpuStructure;
+        this.memory = cpuStructure.memory();
+        this.registers = cpuStructure.registers();
+        this.idu = cpuStructure.idu();
     }
 
     public static OperationTargetAccessor from(CpuStructure cpuStructure) {
-        return new OperationTargetAccessor(cpuStructure.memory(), cpuStructure.registers());
+        return new OperationTargetAccessor(cpuStructure);
     }
 
     public void setValue(GenericOperationTarget target, short value) {
@@ -37,32 +39,36 @@ public class OperationTargetAccessor {
 
     private short getDirectValue(OperationTarget target) {
         return switch(target) {
-            case B -> (short) uint(cpuRegisters.B());
-            case C -> (short) uint(cpuRegisters.C());
-            case D -> (short) uint(cpuRegisters.D());
-            case E -> (short) uint(cpuRegisters.E());
-            case H -> (short) uint(cpuRegisters.H());
-            case L -> (short) uint(cpuRegisters.L());
-            case A -> (short) uint(cpuRegisters.A());
-            case AF -> cpuRegisters.AF();
-            case BC -> cpuRegisters.BC();
-            case DE -> cpuRegisters.DE();
-            case HL -> cpuRegisters.HL();
-            case SP -> cpuRegisters.SP();
-            case PC -> cpuRegisters.PC();
+            case B -> (short) uint(registers.B());
+            case C -> (short) uint(registers.C());
+            case D -> (short) uint(registers.D());
+            case E -> (short) uint(registers.E());
+            case H -> (short) uint(registers.H());
+            case L -> (short) uint(registers.L());
+            case A -> (short) uint(registers.A());
+            case AF -> registers.AF();
+            case BC -> registers.BC();
+            case DE -> registers.DE();
+            case HL -> registers.HL();
+            case SP -> registers.SP();
+            case PC -> registers.PC();
             case HL_INC -> {
-                short val = cpuRegisters.HL();
-                cpuRegisters.setHL((short)(val + 1));
+                short val = registers.HL();
+                registers.setHL(idu.increment(val));
                 yield val;
             }
             case HL_DEC -> {
-                short val = cpuRegisters.HL();
-                cpuRegisters.setHL((short)(val - 1));
+                short val = registers.HL();
+                registers.setHL(idu.decrement(val));
                 yield val;
             }
-            case IMM_8 -> memory.read(cpuRegisters.PC());
-            case IMM_16 -> concat(memory.read((short)(cpuRegisters.PC()+1)), memory.read(cpuRegisters.PC()));
-            case SP_OFFSET -> (short) (cpuRegisters.SP() + upper_byte(cpuRegisters.instructionRegister()));
+            case IMM_8 -> ControlFlow.readImm8(cpuStructure);
+            case IMM_16 -> ControlFlow.readImm16(cpuStructure);
+            case SP_OFFSET -> ControlFlow.signedAddition(
+                    registers.SP(),
+                    (byte) this.getDirectValue(OperationTarget.IMM_8),
+                    true,
+                    cpuStructure);
         };
     }
 
@@ -79,30 +85,20 @@ public class OperationTargetAccessor {
     private void setDirectValue(OperationTarget target, short value) {
         byte byteValue = (byte) value;
         switch(target) {
-            case A -> cpuRegisters.setA(byteValue);
-            case B -> cpuRegisters.setB(byteValue);
-            case C -> cpuRegisters.setC(byteValue);
-            case D -> cpuRegisters.setD(byteValue);
-            case E -> cpuRegisters.setE(byteValue);
-            case H -> cpuRegisters.setH(byteValue);
-            case L -> cpuRegisters.setL(byteValue);
-            case AF -> cpuRegisters.setAF(value);
-            case BC -> cpuRegisters.setBC(value);
-            case DE -> cpuRegisters.setDE(value);
-            case HL -> cpuRegisters.setHL(value);
-            case SP -> cpuRegisters.setSP(value);
-            case PC -> cpuRegisters.setPC(value);
-            case HL_INC -> {
-                short val = cpuRegisters.HL();
-                cpuRegisters.setHL((short)(val + 1));
-                memory.write(val, byteValue);
-            }
-            case HL_DEC -> {
-                short val = cpuRegisters.HL();
-                cpuRegisters.setHL((short)(val - 1));
-                memory.write(val, byteValue);
-            }
-            case IMM_8, IMM_16, SP_OFFSET -> {
+            case A -> registers.setA(byteValue);
+            case B -> registers.setB(byteValue);
+            case C -> registers.setC(byteValue);
+            case D -> registers.setD(byteValue);
+            case E -> registers.setE(byteValue);
+            case H -> registers.setH(byteValue);
+            case L -> registers.setL(byteValue);
+            case AF -> registers.setAF(value);
+            case BC -> registers.setBC(value);
+            case DE -> registers.setDE(value);
+            case HL -> registers.setHL(value);
+            case SP -> registers.setSP(value);
+            case PC -> registers.setPC(value);
+            case HL_INC, HL_DEC, IMM_8, IMM_16, SP_OFFSET -> {
                 // not needed
             }
         }

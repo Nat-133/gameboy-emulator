@@ -1,12 +1,8 @@
 package org.gameboy.instructions.common;
 
-import org.gameboy.components.ArithmeticUnit;
 import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
 import org.gameboy.Flag;
 import org.gameboy.components.CpuStructure;
-import org.gameboy.components.IncrementDecrementUnit;
-
-import java.util.function.BiConsumer;
 
 import static org.gameboy.utils.BitUtilities.*;
 
@@ -28,6 +24,24 @@ public class ControlFlow {
         lsb = res.result();
 
         if (setFlags) res.flagChanges().forEach((f,b) -> cpuStructure.registers().setFlags(b, f));
+        return concat(msb, lsb);
+    }
+
+    public static void incrementPC(CpuStructure cpuStructure) {
+        cpuStructure.registers().setPC(cpuStructure.idu().increment(cpuStructure.registers().PC()));
+    }
+
+    public static byte readImm8(CpuStructure cpuStructure) {
+        byte value = cpuStructure.memory().read(cpuStructure.registers().PC());
+        incrementPC(cpuStructure);
+        return value;
+    }
+
+    public static short readImm16(CpuStructure cpuStructure) {
+        byte lsb = readImm8(cpuStructure);
+
+        byte msb = readImm8(cpuStructure);
+
         return concat(msb, lsb);
     }
 }

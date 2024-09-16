@@ -34,10 +34,10 @@ public class JumpRelative implements Instruction{
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor operationTargetAccessor = OperationTargetAccessor.from(cpuStructure);
         byte offset = (byte) operationTargetAccessor.getValue(OperationTarget.IMM_8.direct());
-        boolean shouldJump = evaluateCondition(cc, operationTargetAccessor.cpuRegisters);
+        boolean shouldJump = evaluateCondition(cc, cpuStructure.registers());
 
         if (shouldJump) {
-            short pc = operationTargetAccessor.cpuRegisters.PC();
+            short pc = cpuStructure.registers().PC();
             short new_pc = ControlFlow.signedAddition(pc, offset, false, cpuStructure);
             operationTargetAccessor.setValue(OperationTarget.PC.direct(), new_pc);
         }
