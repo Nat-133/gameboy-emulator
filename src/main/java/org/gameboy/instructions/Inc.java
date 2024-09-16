@@ -1,6 +1,5 @@
 package org.gameboy.instructions;
 
-import org.gameboy.components.ArithmeticUnit;
 import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
@@ -41,7 +40,7 @@ public class Inc implements Instruction{
             newValue = result.result();
 
             result.flagChanges().forEach(
-                    (flag, change) -> operationTargetAccessor.cpuRegisters.setFlags(change, flag)
+                    (flag, change) -> cpuStructure.registers().setFlags(change, flag)
             );
         } else {
             newValue = (short) (value + 1);
