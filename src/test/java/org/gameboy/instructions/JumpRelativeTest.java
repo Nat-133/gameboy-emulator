@@ -1,8 +1,8 @@
 package org.gameboy.instructions;
 
+import org.gameboy.CpuStructureBuilder;
 import org.gameboy.components.*;
 import org.gameboy.Flag;
-import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.Condition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,180 +14,153 @@ public class JumpRelativeTest {
     @ParameterizedTest
     @ValueSource(bytes={(byte)0, (byte) 1, (byte) 7, (byte) -1, (byte) -54, (byte) 0xff})
     void givenImmediateByte_whenJumpRelativeWithoutCondition_thenPcCorrect(byte jump) {
-        byte zero = (byte) 0;
         short initialPC = (short) 0x00ff;
-        CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, initialPC, zero);
-        Instruction instruction = JumpRelative.jr();
-        Memory memory = new Memory();
-        memory.write(initialPC, jump);
-        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withPC(initialPC)
+                .withImm8(jump)
+                .build();
 
-        instruction.execute(cpuStructure);
+        JumpRelative.jr().execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + 1 + jump);
-        short actualPC = registers.PC();
+        short actualPC = cpuStructure.registers().PC();
         assertThat(actualPC).isEqualTo(expectedPC);
     }
 
     @Test
     void givenNotZero_whenJumpRelativeOnZero_thenNoJump() {
-        byte zero = (byte) 0;
         short initialPC = (short) 0x00ff;
-        CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, initialPC, zero);
-        registers.setFlags(false, Flag.Z);
-        registers.setFlags(true, Flag.C, Flag.H, Flag.N);
-        Instruction instruction = JumpRelative.jr_cc(Condition.Z);
-        Memory memory = new Memory();
-        memory.write(initialPC, (byte) 1);
-        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withPC(initialPC)
+                .withExclusivelyUnsetFlags(Flag.Z)
+                .withImm8(8)
+                .build();
 
-        instruction.execute(cpuStructure);
+        JumpRelative.jr_cc(Condition.Z).execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + 1);
-        short actualPC = registers.PC();
+        short actualPC = cpuStructure.registers().PC();
         assertThat(actualPC).isEqualTo(expectedPC);
     }
 
     @Test
     void givenZero_whenJumpRelativeOnZero_thenJump() {
-        byte zero = (byte) 0;
         short initialPC = (short) 0x00ff;
         byte jump = 8;
 
-        CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, initialPC, zero);
-        registers.setFlags(true, Flag.Z);
-        registers.setFlags(false, Flag.C, Flag.H, Flag.N);
-        Instruction instruction = JumpRelative.jr_cc(Condition.Z);
-        Memory memory = new Memory();
-        memory.write(initialPC, jump);
-        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withExclusivelySetFlags(Flag.Z)
+                .withPC(initialPC)
+                .withImm8(jump)
+                .build();
 
-        instruction.execute(cpuStructure);
+        JumpRelative.jr_cc(Condition.Z).execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + 1 + jump);
-        short actualPC = registers.PC();
+        short actualPC = cpuStructure.registers().PC();
         assertThat(actualPC).isEqualTo(expectedPC);
     }
 
 
     @Test
     void givenNotCarry_whenJumpRelativeOnCarry_thenNoJump() {
-        byte zero = (byte) 0;
         short initialPC = (short) 0x00ff;
-        CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, initialPC, zero);
-        registers.setFlags(false, Flag.C);
-        registers.setFlags(true, Flag.Z, Flag.H, Flag.N);
-        Instruction instruction = JumpRelative.jr_cc(Condition.C);
-        Memory memory = new Memory();
-        memory.write(initialPC, (byte) 1);
-        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withPC(initialPC)
+                .withImm8(8)
+                .withExclusivelyUnsetFlags(Flag.C)
+                .build();
 
-        instruction.execute(cpuStructure);
+        JumpRelative.jr_cc(Condition.C).execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + 1);
-        short actualPC = registers.PC();
+        short actualPC = cpuStructure.registers().PC();
         assertThat(actualPC).isEqualTo(expectedPC);
     }
 
     @Test
     void givenCarry_whenJumpRelativeOnCarry_thenJump() {
-        byte zero = (byte) 0;
         short initialPC = (short) 0x00ff;
         byte jump = 8;
 
-        CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, initialPC, zero);
-        registers.setFlags(true, Flag.C);
-        registers.setFlags(false, Flag.Z, Flag.H, Flag.N);
         Instruction instruction = JumpRelative.jr_cc(Condition.C);
-        Memory memory = new Memory();
-        memory.write(initialPC, jump);
-        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withPC(initialPC)
+                .withImm8(jump)
+                .withExclusivelySetFlags(Flag.C)
+                .build();
 
         instruction.execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + 1 + jump);
-        short actualPC = registers.PC();
+        short actualPC = cpuStructure.registers().PC();
         assertThat(actualPC).isEqualTo(expectedPC);
     }
 
     @Test
     void givenZero_whenJumpRelativeOnNotZero_thenNoJump() {
-        byte zero = (byte) 0;
         short initialPC = (short) 0x00ff;
-        CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, initialPC, zero);
-        registers.setFlags(true, Flag.Z);
-        registers.setFlags(false, Flag.C, Flag.H, Flag.N);
-        Instruction instruction = JumpRelative.jr_cc(Condition.NZ);
-        Memory memory = new Memory();
-        memory.write(initialPC, (byte) 1);
-        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withPC(initialPC)
+                .withImm8(8)
+                .withExclusivelySetFlags(Flag.Z)
+                .build();
 
-        instruction.execute(cpuStructure);
+        JumpRelative.jr_cc(Condition.NZ).execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + 1);
-        short actualPC = registers.PC();
+        short actualPC = cpuStructure.registers().PC();
         assertThat(actualPC).isEqualTo(expectedPC);
     }
 
     @Test
     void givenNotZero_whenJumpRelativeOnNotZero_thenJump() {
-        byte zero = (byte) 0;
         short initialPC = (short) 0x00ff;
         byte jump = 8;
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withPC(initialPC)
+                .withImm8(jump)
+                .withExclusivelyUnsetFlags(Flag.Z)
+                .build();
 
-        CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, initialPC, zero);
-        registers.setFlags(false, Flag.Z);
-        registers.setFlags(true, Flag.C, Flag.H, Flag.N);
-        Instruction instruction = JumpRelative.jr_cc(Condition.NZ);
-        Memory memory = new Memory();
-        memory.write(initialPC, jump);
-        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
-
-        instruction.execute(cpuStructure);
+        JumpRelative.jr_cc(Condition.NZ).execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + 1 + jump);
-        short actualPC = registers.PC();
+        short actualPC = cpuStructure.registers().PC();
         assertThat(actualPC).isEqualTo(expectedPC);
     }
 
 
     @Test
     void givenCarry_whenJumpRelativeOnNotCarry_thenNoJump() {
-        byte zero = (byte) 0;
         short initialPC = (short) 0x00ff;
-        CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, initialPC, zero);
-        registers.setFlags(true, Flag.C);
-        registers.setFlags(false, Flag.Z, Flag.H, Flag.N);
-        Instruction instruction = JumpRelative.jr_cc(Condition.NC);
-        Memory memory = new Memory();
-        memory.write(initialPC, (byte) 1);
-        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withPC(initialPC)
+                .withImm8(8)
+                .withExclusivelySetFlags(Flag.C)
+                .build();
 
-        instruction.execute(cpuStructure);
+        JumpRelative.jr_cc(Condition.NC).execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + 1);
-        short actualPC = registers.PC();
+        short actualPC = cpuStructure.registers().PC();
         assertThat(actualPC).isEqualTo(expectedPC);
     }
 
     @Test
     void givenNotCarry_whenJumpRelativeOnNotCarry_thenJump() {
-        byte zero = (byte) 0;
         short initialPC = (short) 0x00ff;
         byte jump = 8;
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withPC(initialPC)
+                .withImm8(jump)
+                .withExclusivelyUnsetFlags(Flag.C)
+                .build();
 
-        CpuRegisters registers = new CpuRegisters(zero, zero , zero, zero ,zero, initialPC, zero);
-        registers.setFlags(false, Flag.C);
-        registers.setFlags(true, Flag.Z, Flag.H, Flag.N);
-        Instruction instruction = JumpRelative.jr_cc(Condition.NC);
-        Memory memory = new Memory();
-        memory.write(initialPC, jump);
-        CpuStructure cpuStructure = new CpuStructure(registers, memory, new ArithmeticUnit(), new IncrementDecrementUnit());
-
-        instruction.execute(cpuStructure);
+        JumpRelative.jr_cc(Condition.NC).execute(cpuStructure);
 
         short expectedPC = (short) (initialPC + jump + 1);
-        short actualPC = registers.PC();
+        short actualPC = cpuStructure.registers().PC();
         assertThat(actualPC).isEqualTo(expectedPC);
     }
 }
