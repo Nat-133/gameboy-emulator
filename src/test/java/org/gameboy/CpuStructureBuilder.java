@@ -6,7 +6,7 @@ import org.gameboy.utils.BitUtilities;
 import static org.gameboy.utils.BitUtilities.lower_byte;
 import static org.gameboy.utils.BitUtilities.upper_byte;
 
-@SuppressWarnings("Unused")
+@SuppressWarnings("unused")
 public class CpuStructureBuilder {
     private short af;
     private short bc;
