@@ -105,6 +105,16 @@ public class CpuStructureBuilder {
         return this;
     }
 
+    public CpuStructureBuilder withAllRegistersSet(int value) {
+        return this.withAF(value)
+                .withBC(value)
+                .withDE(value)
+                .withHL(value)
+                .withSP(value)
+                .withPC(value)
+                .withInstructionRegister(value);
+    }
+
     public CpuStructureBuilder withImm8(int imm8) {
         this.memory.write(this.pc, (byte) imm8);
         return this;
