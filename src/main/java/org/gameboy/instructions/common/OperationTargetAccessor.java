@@ -64,7 +64,7 @@ public class OperationTargetAccessor {
             }
             case IMM_8 -> ControlFlow.readImm8(cpuStructure);
             case IMM_16 -> ControlFlow.readImm16(cpuStructure);
-            case SP_OFFSET -> ControlFlow.signedAddition(
+            case SP_OFFSET -> ControlFlow.signedAdditionWithIdu(
                     registers.SP(),
                     (byte) this.getDirectValue(OperationTarget.IMM_8),
                     true,

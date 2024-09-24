@@ -23,7 +23,6 @@ public class ArithmeticUnit {
     public ArithmeticResult dec(byte value) {
         ArithmeticResult result = sub(value, (byte) 1);
 
-
         return new ArithmeticResult(
                 result.result,
                 new FlagChangesetBuilder(result.flagChanges)

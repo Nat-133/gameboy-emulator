@@ -38,7 +38,7 @@ public class JumpRelative implements Instruction{
 
         if (shouldJump) {
             short pc = cpuStructure.registers().PC();
-            short new_pc = ControlFlow.signedAddition(pc, offset, false, cpuStructure);
+            short new_pc = ControlFlow.signedAdditionWithIdu(pc, offset, false, cpuStructure);
             operationTargetAccessor.setValue(OperationTarget.PC.direct(), new_pc);
         }
     }
