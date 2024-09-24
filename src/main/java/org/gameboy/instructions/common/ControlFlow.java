@@ -7,11 +7,39 @@ import org.gameboy.components.CpuStructure;
 import static org.gameboy.utils.BitUtilities.*;
 
 public class ControlFlow {
-    public static short signedAddition(short a, byte signedByte, boolean setFlags, CpuStructure cpuStructure) {
+    public static short signedAdditionOnlyAlu(short a, byte signedByte, CpuStructure cpuStructure) {
         byte msb = upper_byte(a);
         byte lsb = lower_byte(a);
 
         ArithmeticResult res = cpuStructure.alu().add(lsb, signedByte);
+        res.flagChanges().forEach((f,b) -> cpuStructure.registers().setFlags(b, f));
+        lsb = res.result();
+
+        boolean carry = res.flagChanges().getOrDefault(Flag.C, false);
+        boolean negativeOffset = bit(signedByte, 7);
+
+        // tick
+
+        if (carry && !negativeOffset) {
+            msb = cpuStructure.alu().inc(msb).result();
+        }
+        else if (!carry && negativeOffset) {
+            msb = cpuStructure.alu().dec(msb).result();
+        }
+
+        // tick
+
+        return concat(msb, lsb);
+    }
+
+    public static short signedAdditionWithIdu(short a, byte signedByte, boolean setFlags, CpuStructure cpuStructure) {
+        byte msb = upper_byte(a);
+        byte lsb = lower_byte(a);
+
+        ArithmeticResult res = cpuStructure.alu().add(lsb, signedByte);
+        if (setFlags) res.flagChanges().forEach((f,b) -> cpuStructure.registers().setFlags(b, f));
+        lsb = res.result();
+
         boolean carry = res.flagChanges().getOrDefault(Flag.C, false);
         boolean negativeOffset = bit(signedByte, 7);
 
@@ -21,9 +49,9 @@ public class ControlFlow {
         else if (!carry && negativeOffset) {
             msb = (byte) cpuStructure.idu().decrement(msb);
         }
-        lsb = res.result();
 
-        if (setFlags) res.flagChanges().forEach((f,b) -> cpuStructure.registers().setFlags(b, f));
+        // tick
+
         return concat(msb, lsb);
     }
 

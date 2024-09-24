@@ -90,6 +90,14 @@ public class BitUtilities {
         return (rshift(value, i) & 0b1) == 1;
     }
 
+    public static short set_bit(short value, int i) {
+        return or(value, lshift((short) 1, i));
+    }
+
+    public static byte set_bit(byte value, int i) {
+        return or(value, lshift((byte) 1, i));
+    }
+
     public static byte calculate_carry_from_add(byte a, byte b, byte res) {
         int intA = uint(a);
         int intB = uint(b);

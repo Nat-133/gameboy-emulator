@@ -2,6 +2,7 @@ package org.gameboy.instructions;
 
 import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
 import org.gameboy.components.CpuStructure;
+import org.gameboy.instructions.common.ControlFlow;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.GenericOperationTarget;
@@ -46,9 +47,12 @@ public class Add implements Instruction {
         );
     }
 
-    private void executeSignedAddition(OperationTargetAccessor operationTargetAccessor) {
+    private void executeSignedAddition(CpuStructure cpuStructure) {
+        OperationTargetAccessor operationTargetAccessor = OperationTargetAccessor.from(cpuStructure);
         short leftValue = operationTargetAccessor.getValue(this.left);
         byte rightValue = (byte) operationTargetAccessor.getValue(this.right);
+
+        short res = ControlFlow.signedAdditionOnlyAlu(leftValue, rightValue, cpuStructure);
     }
 
     private void executeSixteenBitAddition(OperationTargetAccessor operationTargetAccessor) {
