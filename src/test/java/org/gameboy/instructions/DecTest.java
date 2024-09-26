@@ -1,8 +1,9 @@
 package org.gameboy.instructions;
 
-import org.gameboy.FlagValue;
-import org.gameboy.components.*;
+import org.gameboy.CpuStructureBuilder;
 import org.gameboy.Flag;
+import org.gameboy.FlagValue;
+import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.WordGeneralRegister;
@@ -16,21 +17,18 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.gameboy.Flag.*;
 import static org.gameboy.FlagValue.setFlag;
 import static org.gameboy.FlagValue.unsetFlag;
-import static org.gameboy.Flag.*;
-import static org.gameboy.utils.BitUtilities.set_upper_byte;
 
 class DecTest {
     @ParameterizedTest
     @EnumSource(ByteRegister.class)
     void givenByteRegisterWithZeroValue_whenDec_thenRegisterUpdatedCorrectly(ByteRegister register) {
-        Instruction instruction = Dec.dec_r8(register);
-        CpuRegisters registers = new CpuRegisters();
-        CpuStructure cpuStructure = new CpuStructure(registers, new Memory(), new ArithmeticUnit(), new IncrementDecrementUnit());
+        CpuStructure cpuStructure = new CpuStructureBuilder().build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
-        instruction.execute(cpuStructure);
+        Dec.dec_r8(register).execute(cpuStructure);
 
         byte registerValueAfter = (byte) accessor.getValue(register.convert());
         assertThat(registerValueAfter).isEqualTo((byte) 0xff);
@@ -39,13 +37,10 @@ class DecTest {
     @ParameterizedTest
     @EnumSource(WordGeneralRegister.class)
     void givenByteRegisterWithZeroValue_whenDec_thenRegisterUpdatedCorrectly(WordGeneralRegister register) {
-        Instruction instruction = Dec.dec_r16(register);
-        short zero = (short) 0x0000;
-        CpuRegisters registers = new CpuRegisters(zero, zero, zero, zero, zero, zero, (byte)0);
-        CpuStructure cpuStructure = new CpuStructure(registers, new Memory(), new ArithmeticUnit(), new IncrementDecrementUnit());
+        CpuStructure cpuStructure = new CpuStructureBuilder().build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
-        instruction.execute(cpuStructure);
+        Dec.dec_r16(register).execute(cpuStructure);
 
         short registerValueAfter = accessor.getValue(register.convert());
         assertThat(registerValueAfter).isEqualTo((short) 0xffff);
@@ -63,16 +58,15 @@ class DecTest {
     @ParameterizedTest(name="{0}")
     @MethodSource("getDecValues")
     void givenByte_whenDec_thenFlagsCorrect(byte value, List<FlagValue> expectedFlags) {
-        short zero = (short) 0;
-        Instruction instruction = Dec.dec_r8(ByteRegister.A);
-        CpuRegisters registers = new CpuRegisters(set_upper_byte(zero, value), zero, zero, zero, zero, zero, (byte) zero);
-        CpuStructure cpuStructure = new CpuStructure(registers, new Memory(), new ArithmeticUnit(), new IncrementDecrementUnit());
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withA(value)
+                .build();
 
-        instruction.execute(cpuStructure);
+        Dec.dec_r8(ByteRegister.A).execute(cpuStructure);
 
         List<FlagValue> actualFlags = expectedFlags.stream()
                 .map(FlagValue::getKey)
-                .map(flag -> new FlagValue(flag, registers.getFlag(flag)))
+                .map(flag -> new FlagValue(flag, cpuStructure.registers().getFlag(flag)))
                 .toList();
 
         assertThat(actualFlags).containsExactlyElementsOf(expectedFlags);
@@ -81,14 +75,11 @@ class DecTest {
     @ParameterizedTest
     @EnumSource
     void givenShort_whenDec_thenNoFlags(WordGeneralRegister register) {
-        Instruction instruction = Dec.dec_r16(register);
-        short zero = (short) 0x0000;
-        CpuRegisters registers = new CpuRegisters(zero, zero, zero, zero, zero, zero, (byte) zero);
-        CpuStructure cpuStructure = new CpuStructure(registers, new Memory(), new ArithmeticUnit(), new IncrementDecrementUnit());
+        CpuStructure cpuStructure = new CpuStructureBuilder().build();
 
-        instruction.execute(cpuStructure);
+        Dec.dec_r16(register).execute(cpuStructure);
 
-        List<Boolean> actualFlags = Arrays.stream(Flag.values()).map(registers::getFlag).toList();
+        List<Boolean> actualFlags = Arrays.stream(Flag.values()).map(cpuStructure.registers()::getFlag).toList();
 
         assertThat(actualFlags).doesNotContain(true);
     }
