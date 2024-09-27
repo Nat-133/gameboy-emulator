@@ -66,6 +66,14 @@ public class BitUtilities {
         return (byte) value;
     }
 
+    public static int lower_nibble(byte value) {
+        return 0b00001111 & value;
+    }
+
+    public static int upper_nibble(byte value) {
+        return value >>> 4;
+    }
+
     public static short set_upper_byte(short oldShort, byte newByte) {
         return (short) ((uint(oldShort) & 0x00FF) | uint(newByte) << 8);
     }
