@@ -123,7 +123,12 @@ public class CpuStructureBuilder {
     public CpuStructureBuilder withImm16(int imm16) {
         short val = (short) imm16;
         this.memory.write(this.pc, lower_byte(val));
-        this.memory.write(this.pc, upper_byte(val));
+        this.memory.write((short) (this.pc+1), upper_byte(val));
+        return this;
+    }
+
+    public CpuStructureBuilder withIndirectHL(int value) {
+        this.memory.write(this.hl, (byte) value);
         return this;
     }
 
