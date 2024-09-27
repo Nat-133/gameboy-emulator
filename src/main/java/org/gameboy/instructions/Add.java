@@ -1,5 +1,6 @@
 package org.gameboy.instructions;
 
+import org.gameboy.Flag;
 import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.ControlFlow;
@@ -7,6 +8,9 @@ import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.OperationTarget;
+import org.gameboy.utils.BitUtilities;
+
+import static org.gameboy.utils.BitUtilities.*;
 
 public class Add implements Instruction {
     private final GenericOperationTarget left;
@@ -25,9 +29,11 @@ public class Add implements Instruction {
     public void execute(CpuStructure cpuStructure) {
         if (!this.left.isByteTarget() && !this.right.isByteTarget()) {
             // 16-bit addition
+            executeSixteenBitAddition(cpuStructure);
         }
         else if (!this.left.isByteTarget()) { // && this.right.isByteTarget()
             // 16-bit + 8-bit signed
+            executeSignedAddition(cpuStructure);
         }
         else {
             executeEightBitAddition(cpuStructure);
@@ -55,9 +61,31 @@ public class Add implements Instruction {
         short res = ControlFlow.signedAdditionOnlyAlu(leftValue, rightValue, cpuStructure);
     }
 
-    private void executeSixteenBitAddition(OperationTargetAccessor operationTargetAccessor) {
-        short leftValue = operationTargetAccessor.getValue(this.left);
-        short rightValue = operationTargetAccessor.getValue(this.right);
+    private void executeSixteenBitAddition(CpuStructure cpuStructure) {
+        OperationTargetAccessor operationTargetAccessor = OperationTargetAccessor.from(cpuStructure);
+        short a = operationTargetAccessor.getValue(this.left);
+        short b = operationTargetAccessor.getValue(this.right);
+
+        byte a_lsb = lower_byte(a);
+        byte b_lsb = lower_byte(b);
+        ArithmeticResult lowerRes = cpuStructure.alu().add(a_lsb, b_lsb);
+        short result = set_lower_byte(a, lowerRes.result());
+        lowerRes.flagChanges().forEach(
+                (flag, change) -> cpuStructure.registers().setFlags(change, flag)
+        );
+        operationTargetAccessor.setValue(this.left, result);
+
+        // tick
+
+        byte a_msb = upper_byte(a);
+        byte b_msb = upper_byte(b);
+        boolean carry = cpuStructure.registers().getFlag(Flag.C);
+        ArithmeticResult upperRes = cpuStructure.alu().add_carry(a_msb, b_msb, carry);
+        result = set_upper_byte(a, lowerRes.result());
+        upperRes.flagChanges().forEach(
+                (flag, change) -> cpuStructure.registers().setFlags(change, flag)
+        );
+        operationTargetAccessor.setValue(this.left, result);
 
     }
 
