@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Hashtable;
 import java.util.stream.Stream;
@@ -114,7 +115,7 @@ class AddTest {
 
     @ParameterizedTest
     @MethodSource("getR16ValuePairs")
-    void givenTwoBytesAnd16BitRegister_whenAdd_thenResultIsCorrect(int a, WordGeneralRegister rr, int b) {
+    void givenTwoShortsAnd16BitRegister_whenAdd_thenResultIsCorrect(int a, WordGeneralRegister rr, int b) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withHL(a)
                 .build();
@@ -129,7 +130,7 @@ class AddTest {
 
     @ParameterizedTest
     @MethodSource("getR16ValuePairs")
-    void givenTwoBytesAnd16BitRegister_whenAdd_thenFlagsAreCorrect(int a, WordGeneralRegister rr, int b) {
+    void givenTwoShortsAnd16BitRegister_whenAdd_thenFlagsAreCorrect(int a, WordGeneralRegister rr, int b) {
         int upper_a = a >> 8;
         int upper_b = b >> 8;
         int lower_a = uint((byte) a);
@@ -147,6 +148,57 @@ class AddTest {
                 .with(Flag.H, lower_nibble((byte) upper_b) + lower_nibble((byte) upper_a) + carry > 0xf)
                 .with(Flag.C, upper_a + upper_b + carry > 0xff)
                 .with(Flag.Z, (byte) (upper_a + upper_b + carry) == 0)
+                .with(Flag.N, false)
+                .build();
+        expectedFlags.forEach(
+                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
+        );
+    }
+
+    static Stream<Arguments> getSP_IMM8_Values() {
+        return Stream.of(
+                Arguments.of(0xffff, 0x80),
+                Arguments.of(0x0080, 0x80),
+                Arguments.of(0xaf01, 0x81),
+                Arguments.of(0x5a97, 0x72)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSP_IMM8_Values")
+    void givenSP_whenAddE8_thenResultIsCorrect(int sp, int imm8) {
+        int initialPC = 74;
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withPC(initialPC)
+                .withSP(sp)
+                .withImm8(imm8)
+                .build();
+
+        Add.add_sp_e8().execute(cpuStructure);
+
+        short expectedResult = (short) ((short) sp + (byte) imm8);
+        assertThat(cpuStructure.registers().SP()).isEqualTo(expectedResult);
+        assertThat(cpuStructure.registers().PC()).isEqualTo((short) (initialPC + 1));
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSP_IMM8_Values")
+    void givenSP_whenAddE8_thenFlagsAreCorrect(int sp, int imm8) {
+        int initialPC = 74;
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withPC(initialPC)
+                .withSP(sp)
+                .withImm8(imm8)
+                .withSetFlags(Flag.H, Flag.C, Flag.Z, Flag.N)
+                .build();
+
+        Add.add_sp_e8().execute(cpuStructure);
+
+        int lowerByteRes = uint((byte) sp) + imm8;
+        Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
+                .with(Flag.H, lower_nibble((byte) sp) + lower_nibble((byte) imm8) > 0xf)
+                .with(Flag.C, lowerByteRes > 0xff)
+                .with(Flag.Z, false)
                 .with(Flag.N, false)
                 .build();
         expectedFlags.forEach(
