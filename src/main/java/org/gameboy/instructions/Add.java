@@ -8,7 +8,7 @@ import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.OperationTarget;
-import org.gameboy.utils.BitUtilities;
+import org.gameboy.instructions.targets.WordGeneralRegister;
 
 import static org.gameboy.utils.BitUtilities.*;
 
@@ -21,8 +21,16 @@ public class Add implements Instruction {
         this.right = right;
     }
 
-    public static Add AddA_register(ByteRegister right) {
+    public static Add add_a_r8(ByteRegister right) {
         return new Add(OperationTarget.A.direct(), right.convert());
+    }
+
+    public static Add add_hl_r16(WordGeneralRegister right) {
+        return new Add(OperationTarget.HL.direct(), right.convert());
+    }
+
+    public static Add add_sp_e8() {
+        return new Add(OperationTarget.SP.direct(), OperationTarget.IMM_8.direct());
     }
 
     @Override
@@ -58,7 +66,7 @@ public class Add implements Instruction {
         short leftValue = operationTargetAccessor.getValue(this.left);
         byte rightValue = (byte) operationTargetAccessor.getValue(this.right);
 
-        short res = ControlFlow.signedAdditionOnlyAlu(leftValue, rightValue, cpuStructure);
+        ControlFlow.signedAdditionOnlyAlu(leftValue, rightValue, cpuStructure);
     }
 
     private void executeSixteenBitAddition(CpuStructure cpuStructure) {
@@ -81,12 +89,11 @@ public class Add implements Instruction {
         byte b_msb = upper_byte(b);
         boolean carry = cpuStructure.registers().getFlag(Flag.C);
         ArithmeticResult upperRes = cpuStructure.alu().add_carry(a_msb, b_msb, carry);
-        result = set_upper_byte(a, lowerRes.result());
+        result = set_upper_byte(result, upperRes.result());
         upperRes.flagChanges().forEach(
                 (flag, change) -> cpuStructure.registers().setFlags(change, flag)
         );
         operationTargetAccessor.setValue(this.left, result);
-
     }
 
     @Override
