@@ -6,6 +6,7 @@ import org.gameboy.components.ArithmeticUnit;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
+import org.gameboy.instructions.targets.WordGeneralRegister;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,7 +16,8 @@ import java.util.Hashtable;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.gameboy.utils.BitUtilities.lower_nibble;
+import static org.gameboy.instructions.targets.WordGeneralRegister.*;
+import static org.gameboy.utils.BitUtilities.*;
 
 class AddTest {
     static Stream<Arguments> getR8ValuePairs() {
@@ -39,7 +41,7 @@ class AddTest {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
         accessor.setValue(r8.convert(), (short) b);
 
-        Add.AddA_register(r8).execute(cpuStructure);
+        Add.add_a_r8(r8).execute(cpuStructure);
 
         assertThat(cpuStructure.registers().A()).isEqualTo((byte) (a+b));
     }
@@ -53,7 +55,7 @@ class AddTest {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
         accessor.setValue(r8.convert(), (short) b);
 
-        Add.AddA_register(r8).execute(cpuStructure);
+        Add.add_a_r8(r8).execute(cpuStructure);
 
         Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
                 .with(Flag.H, lower_nibble((byte) a) + lower_nibble((byte) b) >= 0x10)
@@ -76,7 +78,7 @@ class AddTest {
                 .withA(a)
                 .build();
 
-        Add.AddA_register(ByteRegister.INDIRECT_HL).execute(cpuStructure);
+        Add.add_a_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
 
         assertThat(cpuStructure.registers().A()).isEqualTo((byte) (a+b));
     }
@@ -91,10 +93,61 @@ class AddTest {
                 .withA(a)
                 .build();
 
-        Add.AddA_register(ByteRegister.INDIRECT_HL).execute(cpuStructure);
+        Add.add_a_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
 
         Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
                 .with(Flag.H, true)
+                .build();
+        expectedFlags.forEach(
+                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
+        );
+    }
+
+    static Stream<Arguments> getR16ValuePairs() {
+        return Stream.of(
+                Arguments.of(0xffff, BC, 0x0001),
+                Arguments.of(0xff0f, DE, 0x0101),
+                Arguments.of(0x00ac, SP, 0x0062),
+                Arguments.of(0x0200, HL, 0x0200)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getR16ValuePairs")
+    void givenTwoBytesAnd16BitRegister_whenAdd_thenResultIsCorrect(int a, WordGeneralRegister rr, int b) {
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withHL(a)
+                .build();
+        OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
+        accessor.setValue(rr.convert(), (short) b);
+
+        Add.add_hl_r16(rr).execute(cpuStructure);
+
+        short expectedResult = (short) (a + b);
+        assertThat(cpuStructure.registers().HL()).isEqualTo(expectedResult);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getR16ValuePairs")
+    void givenTwoBytesAnd16BitRegister_whenAdd_thenFlagsAreCorrect(int a, WordGeneralRegister rr, int b) {
+        int upper_a = a >> 8;
+        int upper_b = b >> 8;
+        int lower_a = uint((byte) a);
+        int lower_b = uint((byte) b);
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withHL(a)
+                .build();
+        OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
+        accessor.setValue(rr.convert(), (short) b);
+
+        Add.add_hl_r16(rr).execute(cpuStructure);
+
+        int carry = lower_a + lower_b > 0xff ? 1 : 0;
+        Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
+                .with(Flag.H, lower_nibble((byte) upper_b) + lower_nibble((byte) upper_a) + carry > 0xf)
+                .with(Flag.C, upper_a + upper_b + carry > 0xff)
+                .with(Flag.Z, (byte) (upper_a + upper_b + carry) == 0)
+                .with(Flag.N, false)
                 .build();
         expectedFlags.forEach(
                 (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
