@@ -66,7 +66,8 @@ public class Add implements Instruction {
         short leftValue = operationTargetAccessor.getValue(this.left);
         byte rightValue = (byte) operationTargetAccessor.getValue(this.right);
 
-        ControlFlow.signedAdditionOnlyAlu(leftValue, rightValue, cpuStructure);
+        short res = ControlFlow.signedAdditionOnlyAlu(leftValue, rightValue, cpuStructure);
+        operationTargetAccessor.setValue(this.left, res);
     }
 
     private void executeSixteenBitAddition(CpuStructure cpuStructure) {

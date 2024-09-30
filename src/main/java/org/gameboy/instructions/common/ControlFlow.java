@@ -1,8 +1,11 @@
 package org.gameboy.instructions.common;
 
+import org.gameboy.components.ArithmeticUnit;
 import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
 import org.gameboy.Flag;
 import org.gameboy.components.CpuStructure;
+
+import java.util.Hashtable;
 
 import static org.gameboy.utils.BitUtilities.*;
 
@@ -12,7 +15,11 @@ public class ControlFlow {
         byte lsb = lower_byte(a);
 
         ArithmeticResult res = cpuStructure.alu().add(lsb, signedByte);
-        res.flagChanges().forEach((f,b) -> cpuStructure.registers().setFlags(b, f));
+        Hashtable<Flag, Boolean> flagChanges = new ArithmeticUnit.FlagChangesetBuilder(res.flagChanges())
+                .with(Flag.Z, false)
+                .with(Flag.N, false)
+                .build();
+        flagChanges.forEach((f,b) -> cpuStructure.registers().setFlags(b, f));
         lsb = res.result();
 
         boolean carry = res.flagChanges().getOrDefault(Flag.C, false);
