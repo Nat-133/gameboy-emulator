@@ -1,8 +1,8 @@
 package org.gameboy.instructions.common;
 
+import org.gameboy.Flag;
 import org.gameboy.components.ArithmeticUnit;
 import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
-import org.gameboy.Flag;
 import org.gameboy.components.CpuStructure;
 
 import java.util.Hashtable;

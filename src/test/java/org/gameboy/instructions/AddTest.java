@@ -11,14 +11,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Hashtable;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.gameboy.instructions.targets.WordGeneralRegister.*;
-import static org.gameboy.utils.BitUtilities.*;
+import static org.gameboy.utils.BitUtilities.lower_nibble;
+import static org.gameboy.utils.BitUtilities.uint;
 
 class AddTest {
     static Stream<Arguments> getR8ValuePairs() {
