@@ -46,7 +46,7 @@ public class UnprefixedDecoder implements Decoder {
             };
             case b001 -> switch(q){
                 case b0 -> Load.ld_r16_imm16(WordGeneralRegister.values()[p.ordinal()]);
-                case b1 -> UNIMPLEMENTED; // Add.add_HL_wordGeneralRegister
+                case b1 -> Add.add_hl_r16(WordGeneralRegister.values()[p.ordinal()]); // Add.add_HL_wordGeneralRegister
             };
             case b010 -> {
                 WordMemoryRegister register = WordMemoryRegister.values()[p.ordinal()];
@@ -75,7 +75,17 @@ public class UnprefixedDecoder implements Decoder {
     }
 
     private Instruction decodeBlock2(int y, int z) {
-        return UNIMPLEMENTED;
+        ByteRegister r8 = ByteRegister.values()[z];
+        return switch(ThreeBitValue.from(y)) {
+            case b000 -> Add.add_a_r8(r8);
+            case b001 -> UNIMPLEMENTED;  // adc
+            case b010 -> UNIMPLEMENTED;  // sub
+            case b011 -> UNIMPLEMENTED;  // sbc
+            case b100 -> UNIMPLEMENTED;  // and
+            case b101 -> UNIMPLEMENTED;  // xor
+            case b110 -> UNIMPLEMENTED;  // or
+            case b111 -> UNIMPLEMENTED;  // cp
+        };
     }
 
     private Instruction decodeBlock3(int y, int z) {
@@ -113,7 +123,16 @@ public class UnprefixedDecoder implements Decoder {
             case b011 -> UNIMPLEMENTED;
             case b100 -> UNIMPLEMENTED;
             case b101 -> UNIMPLEMENTED;
-            case b110 -> UNIMPLEMENTED;
+            case b110 -> switch(ThreeBitValue.from(y)) {
+                case b000 -> Add.add_a_imm8();
+                case b001 -> UNIMPLEMENTED;  // adc
+                case b010 -> UNIMPLEMENTED;  // sub
+                case b011 -> UNIMPLEMENTED;  // sbc
+                case b100 -> UNIMPLEMENTED;  // and
+                case b101 -> UNIMPLEMENTED;  // xor
+                case b110 -> UNIMPLEMENTED;  // or
+                case b111 -> UNIMPLEMENTED;  // cp
+            };
             case b111 -> UNIMPLEMENTED;
         };
     }
