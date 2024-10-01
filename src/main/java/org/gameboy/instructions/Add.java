@@ -25,6 +25,10 @@ public class Add implements Instruction {
         return new Add(OperationTarget.A.direct(), right.convert());
     }
 
+    public static Add add_a_imm8() {
+        return new Add(OperationTarget.A.direct(), OperationTarget.IMM_8.direct());
+    }
+
     public static Add add_hl_r16(WordGeneralRegister right) {
         return new Add(OperationTarget.HL.direct(), right.convert());
     }
