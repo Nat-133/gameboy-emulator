@@ -96,7 +96,7 @@ public class UnprefixedDecoder implements Decoder {
                 case b010 -> UNIMPLEMENTED;
                 case b011 -> UNIMPLEMENTED;
                 case b100 -> LoadHigher.ldh_imm8_A();
-                case b101 -> UNIMPLEMENTED;
+                case b101 -> Add.add_sp_e8();
                 case b110 -> LoadHigher.ldh_A_imm8();
                 case b111 -> Load.load_HL_SP_OFFSET();
             };
