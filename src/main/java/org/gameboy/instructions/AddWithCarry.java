@@ -9,7 +9,7 @@ import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.OperationTarget;
 
 public class AddWithCarry implements Instruction{
-    private GenericOperationTarget right;
+    private final GenericOperationTarget right;
 
     private AddWithCarry(GenericOperationTarget right) {
         this.right = right;
