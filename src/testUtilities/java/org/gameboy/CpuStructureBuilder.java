@@ -1,5 +1,6 @@
 package org.gameboy;
 
+import org.gameboy.Flag;
 import org.gameboy.components.*;
 import org.gameboy.utils.BitUtilities;
 
@@ -122,8 +123,8 @@ public class CpuStructureBuilder {
 
     public CpuStructureBuilder withImm16(int imm16) {
         short val = (short) imm16;
-        this.memory.write(this.pc, lower_byte(val));
-        this.memory.write((short) (this.pc+1), upper_byte(val));
+        this.memory.write(this.pc, BitUtilities.lower_byte(val));
+        this.memory.write((short) (this.pc+1), BitUtilities.upper_byte(val));
         return this;
     }
 

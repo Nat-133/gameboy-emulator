@@ -1,10 +1,8 @@
 package org.gameboy.instructions.common;
 
-import org.assertj.core.api.Assertions;
 import org.gameboy.CpuStructureBuilder;
 import org.gameboy.Flag;
 import org.gameboy.components.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,7 +13,6 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.utils.BitUtilities.lower_byte;
-import static org.gameboy.utils.BitUtilities.upper_byte;
 
 class ControlFlowTest {
     @Test
