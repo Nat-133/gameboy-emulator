@@ -2,6 +2,7 @@ package org.gameboy.instructions;
 
 import org.gameboy.CpuStructureBuilder;
 import org.gameboy.Flag;
+import org.gameboy.GameboyAssertions;
 import org.gameboy.components.ArithmeticUnit;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
@@ -99,9 +100,7 @@ class SubWithCarryTestTest {
                 .with(Flag.H, true)
                 .with(Flag.C, true)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
-        );
+        GameboyAssertions.assertFlagsMatch(expectedFlags, cpuStructure);
     }
 
 
@@ -179,8 +178,6 @@ class SubWithCarryTestTest {
                 .with(Flag.H, true)
                 .with(Flag.C, false)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
-        );
+        GameboyAssertions.assertFlagsMatch(expectedFlags, cpuStructure);
     }
 }

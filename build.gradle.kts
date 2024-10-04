@@ -20,8 +20,13 @@ sourceSets {
     }
 }
 
+val testUtilitiesImplementation by configurations.getting {
+    extendsFrom(configurations.implementation.get())
+}
+
 dependencies {
     testImplementation(sourceSets["testUtilities"].output)
+    testUtilitiesImplementation("org.assertj:assertj-core:3.11.1")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.assertj:assertj-core:3.11.1")
