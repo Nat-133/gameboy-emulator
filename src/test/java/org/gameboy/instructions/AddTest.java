@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 import static org.gameboy.instructions.targets.WordGeneralRegister.*;
 import static org.gameboy.utils.BitUtilities.lower_nibble;
 import static org.gameboy.utils.BitUtilities.uint;
@@ -64,9 +65,7 @@ class AddTest {
                 .with(Flag.C, a+b >= 0x100)
                 .with(Flag.Z, (byte)(a+b) == 0)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
-        );
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 
     @Test
@@ -99,9 +98,7 @@ class AddTest {
         Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
                 .with(Flag.H, true)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
-        );
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 
     static Stream<Arguments> getR16ValuePairs() {
@@ -150,9 +147,7 @@ class AddTest {
                 .with(Flag.Z, (byte) (upper_a + upper_b + carry) == 0)
                 .with(Flag.N, false)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
-        );
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 
     static Stream<Arguments> getSP_IMM8_Values() {
@@ -201,8 +196,6 @@ class AddTest {
                 .with(Flag.Z, false)
                 .with(Flag.N, false)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
-        );
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 }
