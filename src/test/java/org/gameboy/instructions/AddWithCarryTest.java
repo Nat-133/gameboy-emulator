@@ -2,6 +2,7 @@ package org.gameboy.instructions;
 
 import org.gameboy.CpuStructureBuilder;
 import org.gameboy.Flag;
+import org.gameboy.GameboyAssertions;
 import org.gameboy.components.ArithmeticUnit;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
@@ -15,6 +16,7 @@ import java.util.Hashtable;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 import static org.gameboy.utils.BitUtilities.lower_nibble;
 
 class AddWithCarryTest {
@@ -61,9 +63,7 @@ class AddWithCarryTest {
                 .with(Flag.C, a+b >= 0x100)
                 .with(Flag.Z, (byte)(a+b) == 0)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
-        );
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 
     @Test
@@ -96,9 +96,7 @@ class AddWithCarryTest {
         Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
                 .with(Flag.H, true)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
-        );
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 
     @ParameterizedTest
@@ -134,9 +132,7 @@ class AddWithCarryTest {
                 .with(Flag.C, a+b+1 >= 0x100)
                 .with(Flag.Z, (byte)(a+b+1) == 0)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
-        );
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 
     @Test
@@ -171,8 +167,6 @@ class AddWithCarryTest {
         Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
                 .with(Flag.H, true)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
-        );
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 }

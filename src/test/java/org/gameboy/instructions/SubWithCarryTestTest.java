@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 import static org.gameboy.utils.BitUtilities.lower_nibble;
 
 class SubWithCarryTestTest {
@@ -62,11 +63,7 @@ class SubWithCarryTestTest {
                 .with(Flag.C, a-b < 0)
                 .with(Flag.Z, (byte) (a - b) == 0)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag))
-                        .withFailMessage("Expecting flag %s to be %s, but was %s".formatted(flag, value, !value))
-                        .isEqualTo(value)
-        );
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 
     @Test
@@ -100,7 +97,7 @@ class SubWithCarryTestTest {
                 .with(Flag.H, true)
                 .with(Flag.C, true)
                 .build();
-        GameboyAssertions.assertFlagsMatch(expectedFlags, cpuStructure);
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 
 
@@ -138,11 +135,7 @@ class SubWithCarryTestTest {
                 .with(Flag.C, a-b-1 < 0)
                 .with(Flag.Z, (byte) (a - b - 1) == 0)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag))
-                        .withFailMessage("Expecting flag %s to be %s, but was %s".formatted(flag, value, !value))
-                        .isEqualTo(value)
-        );
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 
     @Test
@@ -178,6 +171,6 @@ class SubWithCarryTestTest {
                 .with(Flag.H, true)
                 .with(Flag.C, false)
                 .build();
-        GameboyAssertions.assertFlagsMatch(expectedFlags, cpuStructure);
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 }

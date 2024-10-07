@@ -15,6 +15,7 @@ import java.util.Hashtable;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 import static org.gameboy.utils.BitUtilities.lower_nibble;
 
 class SubTest {
@@ -61,11 +62,7 @@ class SubTest {
                 .with(Flag.C, a-b < 0)
                 .with(Flag.Z, (byte) (a - b) == 0)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag))
-                        .withFailMessage("Expecting flag %s to be %s, but was %s".formatted(flag, value, !value))
-                        .isEqualTo(value)
-        );
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 
     @Test
@@ -99,8 +96,6 @@ class SubTest {
                 .with(Flag.H, true)
                 .with(Flag.C, true)
                 .build();
-        expectedFlags.forEach(
-                (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
-        );
+        assertFlagsMatch(expectedFlags, cpuStructure);
     }
 }
