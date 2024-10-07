@@ -1,10 +1,14 @@
 package org.gameboy.instructions.common;
 
-import org.gameboy.components.*;
+import org.gameboy.components.CpuRegisters;
+import org.gameboy.components.CpuStructure;
+import org.gameboy.components.IncrementDecrementUnit;
+import org.gameboy.components.Memory;
 import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.OperationTarget;
 
-import static org.gameboy.utils.BitUtilities.*;
+import static org.gameboy.utils.BitUtilities.set_upper_byte;
+import static org.gameboy.utils.BitUtilities.uint;
 
 public class OperationTargetAccessor {
     private final Memory memory;

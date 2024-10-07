@@ -2,7 +2,10 @@ package org.gameboy.instructions;
 
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
-import org.gameboy.instructions.targets.*;
+import org.gameboy.instructions.targets.ByteRegister;
+import org.gameboy.instructions.targets.GenericOperationTarget;
+import org.gameboy.instructions.targets.WordGeneralRegister;
+import org.gameboy.instructions.targets.WordMemoryRegister;
 
 import static org.gameboy.instructions.targets.OperationTarget.*;
 
