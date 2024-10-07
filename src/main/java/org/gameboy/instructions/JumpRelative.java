@@ -1,6 +1,6 @@
 package org.gameboy.instructions;
 
-import org.gameboy.*;
+import org.gameboy.Flag;
 import org.gameboy.components.CpuRegisters;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.ControlFlow;

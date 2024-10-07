@@ -2,7 +2,6 @@ package org.gameboy.instructions;
 
 import org.gameboy.CpuStructureBuilder;
 import org.gameboy.Flag;
-import org.gameboy.GameboyAssertions;
 import org.gameboy.components.ArithmeticUnit;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;

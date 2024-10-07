@@ -10,7 +10,7 @@ import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
 import static org.gameboy.instructions.Unimplemented.UNIMPLEMENTED;
-import static org.gameboy.utils.BitUtilities.*;
+import static org.gameboy.utils.BitUtilities.bit_range;
 
 public class UnprefixedDecoder implements Decoder {
     /*

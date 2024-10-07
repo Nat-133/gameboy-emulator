@@ -1,8 +1,8 @@
 package org.gameboy.instructions;
 
 import org.gameboy.CpuStructureBuilder;
-import org.gameboy.components.*;
 import org.gameboy.Flag;
+import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.targets.Condition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
