@@ -65,6 +65,20 @@ public class ArithmeticUnit {
         return sub_carry(a, b, false);
     }
 
+    public ArithmeticResult and(byte a, byte b) {
+        byte res = BitUtilities.and(a, b);
+
+        return new ArithmeticResult(
+                res,
+                new FlagChangesetBuilder()
+                        .with(Z, res == 0)
+                        .with(N, false)
+                        .with(H, true)
+                        .with(C, false)
+                        .build()
+        );
+    }
+
     public record ArithmeticResult(byte result, Hashtable<Flag, Boolean> flagChanges) {}
 
     public static class FlagChangesetBuilder {

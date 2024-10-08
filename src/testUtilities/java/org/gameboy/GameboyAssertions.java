@@ -14,4 +14,8 @@ public class GameboyAssertions {
                         .isEqualTo(value)
         );
     }
+
+    public static void assertFlagsMatch(Hashtable<Flag, Boolean> expectedFlags, Hashtable<Flag, Boolean> actualFlags) {
+        assertThat(actualFlags).isEqualTo(expectedFlags);
+    }
 }
