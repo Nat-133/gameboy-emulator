@@ -81,7 +81,7 @@ public class UnprefixedDecoder implements Decoder {
             case b001 -> AddWithCarry.adc_a_r8(r8);
             case b010 -> Sub.sub_a_r8(r8);
             case b011 -> SubWithCarry.sbc_a_r8(r8);
-            case b100 -> UNIMPLEMENTED;  // and
+            case b100 -> And.and_a_r8(r8);
             case b101 -> UNIMPLEMENTED;  // xor
             case b110 -> UNIMPLEMENTED;  // or
             case b111 -> UNIMPLEMENTED;  // cp
@@ -128,7 +128,7 @@ public class UnprefixedDecoder implements Decoder {
                 case b001 -> AddWithCarry.adc_a_imm8();
                 case b010 -> Sub.sub_a_imm8();
                 case b011 -> SubWithCarry.sbc_a_imm8();
-                case b100 -> UNIMPLEMENTED;  // and
+                case b100 -> And.and_imm8();
                 case b101 -> UNIMPLEMENTED;  // xor
                 case b110 -> UNIMPLEMENTED;  // or
                 case b111 -> UNIMPLEMENTED;  // cp
