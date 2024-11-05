@@ -1,7 +1,6 @@
 package org.gameboy;
 
-import org.gameboy.components.CpuRegisters;
-import org.gameboy.components.Memory;
+import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.Instruction;
 import org.gameboy.instructions.Load;
 import org.gameboy.instructions.targets.ByteRegister;
@@ -9,39 +8,37 @@ import org.gameboy.instructions.targets.ByteRegister;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Cpu {
-    private final CpuRegisters registers;
-    private final Memory memory;
-    private final UnprefixedDecoder unprefixedDecoder;
-    private final PrefixedDecoder prefixedDecoder;
+    private final Decoder unprefixedDecoder;
+    private final Decoder prefixedDecoder;
     private final AtomicReference<Decoder> activeDecoder;
+    private final CpuStructure cpuStructure;
 
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-        Instruction instruction = Load.ld_r8_r8(ByteRegister.A, ByteRegister.B);
-        System.out.println(instruction.representation());
-    }
-
-    private Cpu(CpuRegisters registers, Memory memory, UnprefixedDecoder unprefixedDecoder, PrefixedDecoder prefixedDecoder) {
-        this.registers = registers;
-        this.memory = memory;
+    public Cpu(CpuStructure cpuStructure, Decoder unprefixedDecoder, Decoder prefixedDecoder) {
+        this.cpuStructure = cpuStructure;
         this.unprefixedDecoder = unprefixedDecoder;
         this.prefixedDecoder = prefixedDecoder;
         this.activeDecoder = new AtomicReference<>(unprefixedDecoder);
     }
 
-    private byte fetch()
-    {
-        registers.setInstructionRegister(memory.read(registers.PC()));
-        return (byte) (registers.instructionRegister() >> 8);
+    public void cycle() {
+        Instruction instruction = decode(cpuStructure.registers().instructionRegister());
+
+        execute(instruction);
     }
 
-    private Instruction decode(byte opcode)
-    {
+    private void fetch() {
+        this.cpuStructure.registers().setInstructionRegister(cpuStructure.memory().read(cpuStructure.registers().PC()));
+    }
+
+    private Instruction decode(byte opcode) {
         return activeDecoder.get().decode(opcode);
     }
 
-    private void execute(Instruction instruction)
-    {
+    private void execute(Instruction instruction) {
+        instruction.execute(cpuStructure);
 
+        fetch();
+
+        cpuStructure.clock().tickCpu();
     }
 }

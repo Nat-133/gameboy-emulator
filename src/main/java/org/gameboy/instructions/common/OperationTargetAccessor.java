@@ -16,7 +16,7 @@ public class OperationTargetAccessor {
     private final IncrementDecrementUnit idu;
     private final CpuStructure cpuStructure;
 
-    public OperationTargetAccessor(CpuStructure cpuStructure) {
+    private OperationTargetAccessor(CpuStructure cpuStructure) {
         this.cpuStructure = cpuStructure;
         this.memory = cpuStructure.memory();
         this.registers = cpuStructure.registers();
@@ -78,12 +78,14 @@ public class OperationTargetAccessor {
 
     private short getIndirectValue(OperationTarget target) {
         short directValue = getDirectValue(target);
-
         if (target == OperationTarget.C || target == OperationTarget.IMM_8) {
             directValue = set_upper_byte(directValue, (byte) 0xFF);
         }
+        byte read = memory.read(directValue);
 
-        return memory.read(directValue);
+        cpuStructure.clock().tickCpu();
+
+        return read;
     }
 
     private void setDirectValue(OperationTarget target, short value) {
@@ -116,5 +118,7 @@ public class OperationTargetAccessor {
         }
 
         memory.write(directValue, (byte) value);
+
+        cpuStructure.clock().tickCpu();
     }
 }

@@ -14,7 +14,7 @@ public class Sub implements Instruction{
         this.right = right;
     }
 
-    public static Sub sub_a_r8(ByteRegister r8) {
+    public static Sub sub_r8(ByteRegister r8) {
         return new Sub(r8.convert());
     }
 
@@ -36,5 +36,10 @@ public class Sub implements Instruction{
         ArithmeticResult res = cpuStructure.alu().sub(a, b);
         cpuStructure.registers().setA(res.result());
         res.flagChanges().forEach((flag, value) -> cpuStructure.registers().setFlags(value, flag));
+    }
+
+    @Override
+    public String toString() {
+        return this.representation();
     }
 }

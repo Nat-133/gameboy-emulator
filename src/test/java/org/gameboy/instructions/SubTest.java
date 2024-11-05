@@ -40,7 +40,7 @@ class SubTest {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
         accessor.setValue(r8.convert(), (short) b);
 
-        Sub.sub_a_r8(r8).execute(cpuStructure);
+        Sub.sub_r8(r8).execute(cpuStructure);
 
         assertThat(cpuStructure.registers().A()).isEqualTo((byte) (a - b));
     }
@@ -54,7 +54,7 @@ class SubTest {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
         accessor.setValue(r8.convert(), (short) b);
 
-        Sub.sub_a_r8(r8).execute(cpuStructure);
+        Sub.sub_r8(r8).execute(cpuStructure);
 
         Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
                 .with(Flag.H, lower_nibble((byte) a) - lower_nibble((byte) b) < 0)
@@ -75,7 +75,7 @@ class SubTest {
                 .withA(a)
                 .build();
 
-        Sub.sub_a_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
+        Sub.sub_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
 
         assertThat(cpuStructure.registers().A()).isEqualTo((byte) (a - b));
     }
@@ -90,7 +90,7 @@ class SubTest {
                 .withA(a)
                 .build();
 
-        Sub.sub_a_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
+        Sub.sub_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
 
         Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
                 .with(Flag.H, true)

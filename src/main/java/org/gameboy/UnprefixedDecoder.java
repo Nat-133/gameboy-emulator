@@ -79,9 +79,9 @@ public class UnprefixedDecoder implements Decoder {
         return switch(ThreeBitValue.from(y)) {
             case b000 -> Add.add_a_r8(r8);
             case b001 -> AddWithCarry.adc_a_r8(r8);
-            case b010 -> Sub.sub_a_r8(r8);
+            case b010 -> Sub.sub_r8(r8);
             case b011 -> SubWithCarry.sbc_a_r8(r8);
-            case b100 -> And.and_a_r8(r8);
+            case b100 -> And.and_r8(r8);
             case b101 -> UNIMPLEMENTED;  // xor
             case b110 -> UNIMPLEMENTED;  // or
             case b111 -> UNIMPLEMENTED;  // cp
@@ -98,7 +98,7 @@ public class UnprefixedDecoder implements Decoder {
                 case b100 -> LoadHigher.ldh_imm8_A();
                 case b101 -> Add.add_sp_e8();
                 case b110 -> LoadHigher.ldh_A_imm8();
-                case b111 -> Load.load_HL_SP_OFFSET();
+                case b111 -> Load.ld_HL_SP_OFFSET();
             };
             case b001 -> switch(ThreeBitValue.from(y)) {
                 case b000 -> UNIMPLEMENTED;
@@ -108,7 +108,7 @@ public class UnprefixedDecoder implements Decoder {
                 case b100 -> UNIMPLEMENTED;
                 case b101 -> UNIMPLEMENTED;
                 case b110 -> UNIMPLEMENTED;
-                case b111 -> Load.load_SL_HL();
+                case b111 -> Load.load_SP_HL();
             };
             case b010 -> switch (ThreeBitValue.from(y)) {
                 case b000 -> UNIMPLEMENTED;

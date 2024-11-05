@@ -15,7 +15,7 @@ public class CpuRegisters {
     private short sp;
     private short pc;
 
-    private short instructionRegister;
+    private byte instructionRegister;
 
     public CpuRegisters(
             short af,
@@ -33,18 +33,6 @@ public class CpuRegisters {
         this.pc = pc;
 
         this.instructionRegister = instructionRegister;
-    }
-
-    public CpuRegisters() {
-        this(
-                (short) 0x0000,
-                (short) 0x0000,
-                (short) 0x0000,
-                (short) 0x0000,
-                (short) 0x0000,
-                (short) 0x0000,
-                (byte) 0x0000
-        );
     }
 
     public short BC() {
@@ -170,7 +158,7 @@ public class CpuRegisters {
         return apply_mask(af, ~flag.getLocationMask(), true) != 0;
     }
 
-    public short instructionRegister() {
+    public byte instructionRegister() {
         return instructionRegister;
     }
 

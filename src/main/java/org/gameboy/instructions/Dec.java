@@ -48,4 +48,9 @@ public class Dec implements Instruction{
 
         operationTargetAccessor.setValue(target, newValue);
     }
+
+    @Override
+    public String toString() {
+        return this.representation();
+    }
 }
