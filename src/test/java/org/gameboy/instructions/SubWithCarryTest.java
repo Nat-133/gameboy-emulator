@@ -18,7 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 import static org.gameboy.utils.BitUtilities.lower_nibble;
 
-class SubWithCarryTestTest {
+class SubWithCarryTest {
     static Stream<Arguments> getR8ValuePairs() {
         return Stream.of(
                 Arguments.of(0x12, ByteRegister.A, 0x12),

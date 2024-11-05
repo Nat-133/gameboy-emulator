@@ -1,11 +1,7 @@
 package org.gameboy;
 
-import org.gameboy.Flag;
 import org.gameboy.components.*;
 import org.gameboy.utils.BitUtilities;
-
-import static org.gameboy.utils.BitUtilities.lower_byte;
-import static org.gameboy.utils.BitUtilities.upper_byte;
 
 @SuppressWarnings("unused")
 public class CpuStructureBuilder {
@@ -175,7 +171,8 @@ public class CpuStructureBuilder {
                 new CpuRegisters(af, bc, de, hl, sp, pc, instructionRegister),
                 memory,
                 new ArithmeticUnit(),
-                new IncrementDecrementUnit()
+                new IncrementDecrementUnit(),
+                new CpuClock()
         );
     }
 }

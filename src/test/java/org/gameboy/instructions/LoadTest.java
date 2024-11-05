@@ -28,7 +28,7 @@ class LoadTest {
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
-        Load.ld_r8_imm8(register).execute(cpuStructure);
+        BasicLoad.ld_r8_imm8(register).execute(cpuStructure);
 
         byte registerValueAfter = (byte) accessor.getValue(register.convert());
         assertThat(registerValueAfter).isEqualTo(immediateByteValue);
@@ -48,22 +48,21 @@ class LoadTest {
     @ParameterizedTest
     @MethodSource("byteRegisterPairs")
     void givenRegisterData_whenLoadIntoRegister_thenRegisterUpdatedCorrectly(ByteRegister destination, ByteRegister source) {
-        short immediateByte = (short) 0xfa;
-        CpuRegisters registers = new CpuRegisters();
-        CpuStructure cpuStructure = new CpuStructure(registers, new Memory(), new ArithmeticUnit(), new IncrementDecrementUnit());
+        short registerData = (short) 0xfa;
+        CpuStructure cpuStructure = new CpuStructureBuilder().build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        accessor.setValue(source.convert(), immediateByte);
+        accessor.setValue(source.convert(), registerData);
 
-        Load.ld_r8_r8(destination, source).execute(cpuStructure);
+        BasicLoad.ld_r8_r8(destination, source).execute(cpuStructure);
 
         byte registerValueAfter = (byte) accessor.getValue(destination.convert());
-        assertThat(registerValueAfter).isEqualTo(lower_byte(immediateByte));
+        assertThat(registerValueAfter).isEqualTo(lower_byte(registerData));
     }
 
     @ParameterizedTest
     @ValueSource(bytes = {(byte) 0x00, (byte) 0xff, (byte) 0xaf, (byte) 0x67, (byte) 0x14})
     void givenMemoryLocation_whenLoadIntoA_withIndirectC_thenRegisterUpdatedCorrectly(byte memoryLocation) {
-        Instruction instruction = Load.ld_A_indirectC();
+        Instruction instruction = BasicLoad.ld_A_indirectC();
         byte value = (byte) 0xfa;
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withC(memoryLocation)
@@ -85,7 +84,7 @@ class LoadTest {
                 .withA(value)
                 .build();
 
-        Load.ld_indirectC_A().execute(cpuStructure);
+        BasicLoad.ld_indirectC_A().execute(cpuStructure);
 
         byte memoryValueAfter = cpuStructure.memory().read(set_lower_byte((short) 0xff00, memoryLocation));
 

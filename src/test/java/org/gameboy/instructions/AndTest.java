@@ -1,11 +1,11 @@
 package org.gameboy.instructions;
 
-import org.gameboy.CpuStructureBuilder;
-import org.gameboy.Flag;
+import org.gameboy.*;
 import org.gameboy.components.ArithmeticUnit;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -38,7 +38,7 @@ class AndTest {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
         accessor.setValue(r8.convert(), (short) b);
 
-        And.and_a_r8(r8).execute(cpuStructure);
+        And.and_r8(r8).execute(cpuStructure);
 
         assertThat(cpuStructure.registers().A()).isEqualTo((byte) (a & b));
     }
@@ -52,7 +52,7 @@ class AndTest {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
         accessor.setValue(r8.convert(), (short) b);
 
-        And.and_a_r8(r8).execute(cpuStructure);
+        And.and_r8(r8).execute(cpuStructure);
 
         Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
                 .with(Flag.H, true)
@@ -63,4 +63,41 @@ class AndTest {
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
 
+
+    @ParameterizedTest
+    @MethodSource("getR8ValuePairs")
+    void givenByteRegister_whenAnd_thenClockIsCorrect(int ignored1, ByteRegister r8, int ignored2) {
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .build();
+        Decoder testDecoder = TestDecoderFactory.testDecoder(And.and_r8(r8));
+        Cpu cpu = new Cpu(cpuStructure, testDecoder, testDecoder);
+
+        cpu.cycle();
+
+        assertThat(cpuStructure.clock().getTime()).isEqualTo(1);
+    }
+
+    @Test
+    void givenCpu_whenAndHl_thenClockIsCorrect() {
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .build();
+        Decoder testDecoder = TestDecoderFactory.testDecoder(And.and_r8(ByteRegister.INDIRECT_HL));
+        Cpu cpu = new Cpu(cpuStructure, testDecoder, testDecoder);
+
+        cpu.cycle();
+
+        assertThat(cpuStructure.clock().getTime()).isEqualTo(2);
+    }
+
+    @Test
+    void givenCpu_whenAndImm8_thenClockIsCorrect() {
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .build();
+        Decoder testDecoder = TestDecoderFactory.testDecoder(And.and_imm8());
+        Cpu cpu = new Cpu(cpuStructure, testDecoder, testDecoder);
+
+        cpu.cycle();
+
+        assertThat(cpuStructure.clock().getTime()).isEqualTo(2);
+    }
 }

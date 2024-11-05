@@ -38,4 +38,9 @@ public class SubWithCarry implements Instruction{
         cpuStructure.registers().setA(res.result());
         res.flagChanges().forEach((flag, value) -> cpuStructure.registers().setFlags(value, flag));
     }
+
+    @Override
+    public String toString() {
+        return this.representation();
+    }
 }

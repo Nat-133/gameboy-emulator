@@ -4,6 +4,7 @@ import org.gameboy.Flag;
 import org.gameboy.components.ArithmeticUnit;
 import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
 import org.gameboy.components.CpuStructure;
+import org.gameboy.utils.BitUtilities;
 
 import java.util.Hashtable;
 
@@ -57,7 +58,7 @@ public class ControlFlow {
             msb = (byte) cpuStructure.idu().decrement(msb);
         }
 
-        // tick
+        cpuStructure.clock().tickCpu();
 
         return concat(msb, lsb);
     }
@@ -69,6 +70,7 @@ public class ControlFlow {
     public static byte readImm8(CpuStructure cpuStructure) {
         byte value = cpuStructure.memory().read(cpuStructure.registers().PC());
         incrementPC(cpuStructure);
+        cpuStructure.clock().tickCpu();
         return value;
     }
 
@@ -78,5 +80,18 @@ public class ControlFlow {
         byte msb = readImm8(cpuStructure);
 
         return concat(msb, lsb);
+    }
+
+    public static void writeWordToMem(short address, short val, CpuStructure cpuStructure) {
+        byte msb = upper_byte(val);
+        byte lsb = lower_byte(val);
+
+        cpuStructure.memory().write(address, lsb);
+        short nextAddress = cpuStructure.idu().increment(address);
+        cpuStructure.clock().tickCpu();
+
+        cpuStructure.memory().write(nextAddress, msb);
+
+        cpuStructure.clock().tickCpu();
     }
 }

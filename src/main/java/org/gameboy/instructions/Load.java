@@ -1,85 +1,65 @@
 package org.gameboy.instructions;
 
-import org.gameboy.components.CpuStructure;
-import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.WordGeneralRegister;
 import org.gameboy.instructions.targets.WordMemoryRegister;
 
-import static org.gameboy.instructions.targets.OperationTarget.*;
-
-public class Load implements Instruction {
-    private final GenericOperationTarget destination;
-    private final GenericOperationTarget source;
-
-    private Load(GenericOperationTarget destination, GenericOperationTarget source) {
-        this.destination = destination;
-        this.source = source;
+public interface Load extends Instruction {
+    static Load ld_r8_r8(ByteRegister destination, ByteRegister source) {
+        return BasicLoad.ld_r8_r8(destination, source);
     }
 
-    public static Load ld_r8_r8(ByteRegister destination, ByteRegister source) {
-        return new Load(destination.convert(), source.convert());
+    static Load ld_r8_imm8(ByteRegister destination) {
+        return BasicLoad.ld_r8_imm8(destination);
     }
 
-    public static Load ld_r8_imm8(ByteRegister destination) {
-        return new Load(destination.convert(), IMM_8.direct());
+    static Load ld_imm16indirect_sp() {
+        return LoadMem_SP.ld_imm16indirect_sp();
     }
 
-    public static Load ld_imm16indirect_sp() {
-        return new Load(IMM_16.indirect(), SP.direct());
+    static Load ld_r16_imm16(WordGeneralRegister register) {
+        return BasicLoad.ld_r16_imm16(register);
     }
 
-    public static Load ld_r16_imm16(WordGeneralRegister register) {
-        return new Load(register.convert(), IMM_16.direct());
+    static Load ld_A_mem16indirect(WordMemoryRegister indirectSource) {
+        return BasicLoad.ld_A_mem16indirect(indirectSource);
     }
 
-    public static Load ld_A_mem16indirect(WordMemoryRegister indirectSource) {
-        return new Load(A.direct(), indirectSource.convert());
+    static Load ld_mem16indirect_A(WordMemoryRegister indirectDestination) {
+        return BasicLoad.ld_mem16indirect_A(indirectDestination);
     }
 
-    public static Load ld_mem16indirect_A(WordMemoryRegister indirectDestination) {
-        return new Load(indirectDestination.convert(), A.direct());
+    static Load ld_indirectC_A() {
+        return BasicLoad.ld_indirectC_A();
     }
 
-    public static Load ld_indirectC_A() {
-        return new Load(C.indirect(), A.direct());
+    static Load ld_A_indirectC() {
+        return BasicLoad.ld_A_indirectC();
     }
 
-    public static Load ld_A_indirectC() {
-        return new Load(A.direct(), C.indirect());
+    static Load ld_HL_SP_OFFSET() {
+        return BasicLoad.ld_HL_SP_OFFSET();
     }
 
-    public static Instruction load_HL_SP_OFFSET() {
-        return new Load(HL.direct(), SP_OFFSET.direct());
+    static Load ld_imm16indirect_A() {
+        return BasicLoad.ld_imm16indirect_A();
     }
 
-    public static Instruction ld_imm16indirect_A() {
-        return new Load(IMM_16.indirect(), A.direct());
+    static Load ld_A_imm16indirect() {
+        return BasicLoad.ld_A_imm16indirect();
     }
 
-    public static Instruction ld_A_imm16indirect() {
-        return new Load(A.direct(), IMM_16.indirect());
-    }
-
-    public static Instruction load_SL_HL() {
-        return new Load(SP.direct(), HL.direct());
+    static Load load_SP_HL() {
+        return LoadSP_HL.load_SP_HL();
     }
 
     @Override
-    public String representation() {
-        return "LD " + this.destination.representation() + "," + this.source.representation();
+    default String representation() {
+        return "LD " + this.destination().representation() + "," + this.source().representation();
     }
 
-    @Override
-    public void execute(CpuStructure cpuStructure) {
-        OperationTargetAccessor operationTargetAccessor = OperationTargetAccessor.from(cpuStructure);
-        short loaded_value = operationTargetAccessor.getValue(this.source);
-        operationTargetAccessor.setValue(this.destination, loaded_value);
-    }
+    GenericOperationTarget source();
 
-    @Override
-    public String toString() {
-        return representation();
-    }
+    GenericOperationTarget destination();
 }

@@ -24,6 +24,11 @@ public class JumpRelative implements Instruction{
     }
 
     @Override
+    public String toString() {
+        return this.representation();
+    }
+
+    @Override
     public String representation() {
         return "JR "
                 + (cc == null ? "" : cc.name() + ",")
