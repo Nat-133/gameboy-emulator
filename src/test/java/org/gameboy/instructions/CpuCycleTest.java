@@ -39,18 +39,24 @@ public class CpuCycleTest {
         return Stream.of(
                 generateR8TestCases(And::and_r8, 1),
                 generateTestCase(And::and_imm8, 2),
+
                 generateTestCase(Dec::dec_r8, ByteRegister.INDIRECT_HL, 3),
                 generateTestCases(Dec::dec_r8, DIRECT_BYTE_REGISTERS, 1),
                 generateTestCases(Dec::dec_r16, WORD_GENERAL_REGISTERS, 1),
+
                 generateTestCase(Inc::inc_r8, ByteRegister.INDIRECT_HL, 3),
                 generateTestCases(Inc::inc_r8, DIRECT_BYTE_REGISTERS, 1),
                 generateTestCases(Inc::inc_r16, WORD_GENERAL_REGISTERS, 1),
+
                 generateR8TestCases(Sub::sub_r8, 1),
                 generateTestCase(Sub::sub_a_imm8, 2),
+
                 generateR8TestCases(SubWithCarry::sbc_a_r8, 1),
+
                 generateTestCase(JumpRelative::jr, 3),
                 generateConditionalTestCases(JumpRelative::jr_cc, 3, 2),
-                generateTestCase(LoadSP_HL::load_SP_HL, 2),
+
+                generateTestCase(Load::load_SP_HL, 2),
                 generateTestCases(Load::ld_r16_imm16, WORD_GENERAL_REGISTERS, 3),
                 generateTestCase(Load::ld_A_indirectC, 2),
                 generateTestCase(Load::ld_indirectC_A, 2),
@@ -62,20 +68,28 @@ public class CpuCycleTest {
                 generateTestCase(Load::ld_imm16indirect_sp, 5),
                 generateTestCase(Load::ld_HL_SP_OFFSET, 3),
                 generateLdR8R8TestCases(),
+
                 generateTestCase(LoadHigher::ldh_A_imm8, 3),
                 generateTestCase(LoadHigher::ldh_imm8_A, 3),
+
                 generateTestCase(Halt::HALT, 1),
+
                 generateTestCase(Nop::NOP, 1),
+
                 generateR8TestCases(Compare::cp_r8, 1),
                 generateTestCase(Compare::cp_imm8, 2),
+
                 generateR8TestCases(Or::or_r8, 1),
                 generateTestCase(Or::or_imm8, 2),
+
                 generateR8TestCases(Xor::xor_r8, 1),
                 generateTestCase(Xor::xor_imm8, 2),
+
                 generateR8TestCases(Add::add_a_r8, 1),
                 generateTestCase(Add::add_a_imm8, 2),
                 generateTestCases(Add::add_hl_r16, WORD_GENERAL_REGISTERS, 2),
                 generateTestCase(Add::add_sp_e8, 4)
+
         ).flatMap(x -> x);
     }
 
