@@ -7,39 +7,40 @@ import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.OperationTarget;
 
-public class And implements Instruction{
+public class Xor implements Instruction{
     private final GenericOperationTarget target;
 
-    private And(GenericOperationTarget target) {
+    private Xor(GenericOperationTarget target) {
         this.target = target;
     }
 
-    public static And and_r8(ByteRegister r8) {
-        return new And(r8.convert());
+    public static Xor xor_r8(ByteRegister register) {
+        return new Xor(register.convert());
     }
 
-    public static And and_imm8() {
-        return new And(OperationTarget.IMM_8.direct());
-    }
-
-    @Override
-    public String representation() {
-        return "AND A," + target.representation();
+    public static Xor xor_imm8() {
+        return new Xor(OperationTarget.IMM_8.direct());
     }
 
     @Override
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
         byte a = cpuStructure.registers().A();
-        byte b = (byte) accessor.getValue(this.target);
+        byte b = (byte) accessor.getValue(target);
 
-        ArithmeticResult res = cpuStructure.alu().and(a, b);
+        ArithmeticResult res = cpuStructure.alu().xor(a, b);
+
         cpuStructure.registers().setA(res.result());
-        res.flagChanges().forEach((flag, value) -> cpuStructure.registers().setFlags(value, flag));
+        cpuStructure.registers().setFlags(res.flagChanges());
+    }
+
+    @Override
+    public String representation() {
+        return "XOR A," + target.representation();
     }
 
     @Override
     public String toString() {
-        return this.representation();
+        return representation();
     }
 }

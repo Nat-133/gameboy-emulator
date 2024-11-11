@@ -2,7 +2,7 @@ package org.gameboy.instructions;
 
 import org.gameboy.CpuStructureBuilder;
 import org.gameboy.Flag;
-import org.gameboy.components.ArithmeticUnit;
+import org.gameboy.FlagChangesetBuilder;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
@@ -56,7 +56,7 @@ class AddWithCarryTest {
 
         AddWithCarry.adc_a_r8(r8).execute(cpuStructure);
 
-        Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, lower_nibble((byte) a) + lower_nibble((byte) b) >= 0x10)
                 .with(Flag.N, false)
                 .with(Flag.C, a+b >= 0x100)
@@ -92,7 +92,7 @@ class AddWithCarryTest {
 
         AddWithCarry.adc_a_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
 
-        Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, true)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
@@ -125,7 +125,7 @@ class AddWithCarryTest {
 
         AddWithCarry.adc_a_r8(r8).execute(cpuStructure);
 
-        Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, lower_nibble((byte) a) + lower_nibble((byte) b) + 1 >= 0x10)
                 .with(Flag.N, false)
                 .with(Flag.C, a+b+1 >= 0x100)
@@ -163,7 +163,7 @@ class AddWithCarryTest {
 
         AddWithCarry.adc_a_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
 
-        Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, true)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);

@@ -1,9 +1,8 @@
 package org.gameboy.components;
 
-import org.gameboy.Flag;
+import org.gameboy.ArithmeticResult;
+import org.gameboy.FlagChangesetBuilder;
 import org.gameboy.utils.BitUtilities;
-
-import java.util.Hashtable;
 
 import static org.gameboy.Flag.*;
 import static org.gameboy.utils.BitUtilities.bit;
@@ -13,8 +12,8 @@ public class ArithmeticUnit {
         ArithmeticResult result = add(value, (byte) 1);
 
         return new ArithmeticResult(
-                result.result,
-                new FlagChangesetBuilder(result.flagChanges)
+                result.result(),
+                new FlagChangesetBuilder(result.flagChanges())
                         .without(C)
                         .build()
         );
@@ -24,8 +23,8 @@ public class ArithmeticUnit {
         ArithmeticResult result = sub(value, (byte) 1);
 
         return new ArithmeticResult(
-                result.result,
-                new FlagChangesetBuilder(result.flagChanges)
+                result.result(),
+                new FlagChangesetBuilder(result.flagChanges())
                         .without(C)
                         .build()
         );
@@ -79,33 +78,25 @@ public class ArithmeticUnit {
         );
     }
 
-    public record ArithmeticResult(byte result, Hashtable<Flag, Boolean> flagChanges) {}
+    public ArithmeticResult xor(byte a, byte b) {
+        byte res = (byte) (a ^ b);
+        return new ArithmeticResult(
+                res,
+                new FlagChangesetBuilder()
+                        .withAll(false)
+                        .with(Z, res == 0)
+                        .build()
+        );
+    }
 
-    public static class FlagChangesetBuilder {
-        private final Hashtable<Flag, Boolean> changes;
-
-        public FlagChangesetBuilder() {
-            this(new Hashtable<>(4, 1f));
-        }
-
-        public FlagChangesetBuilder(Hashtable<Flag, Boolean> changes){
-
-
-            this.changes = new Hashtable<>(changes);
-        }
-
-        public FlagChangesetBuilder with(Flag flag, boolean value) {
-            changes.put(flag, value);
-            return this;
-        }
-
-        public FlagChangesetBuilder without(Flag flag) {
-            changes.remove(flag);
-            return this;
-        }
-
-        public Hashtable<Flag, Boolean> build() {
-            return changes;
-        }
+    public ArithmeticResult or(byte a, byte b) {
+        byte res = (byte) (a | b);
+        return new ArithmeticResult(
+                res,
+                new FlagChangesetBuilder()
+                        .withAll(false)
+                        .with(Z, res == 0)
+                        .build()
+        );
     }
 }
