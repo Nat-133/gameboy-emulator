@@ -71,7 +71,11 @@ public class CpuCycleTest {
                 generateR8TestCases(Or::or_r8, 1),
                 generateTestCase(Or::or_imm8, 2),
                 generateR8TestCases(Xor::xor_r8, 1),
-                generateTestCase(Xor::xor_imm8, 2)
+                generateTestCase(Xor::xor_imm8, 2),
+                generateR8TestCases(Add::add_a_r8, 1),
+                generateTestCase(Add::add_a_imm8, 2),
+                generateTestCases(Add::add_hl_r16, WORD_GENERAL_REGISTERS, 2),
+                generateTestCase(Add::add_sp_e8, 4)
         ).flatMap(x -> x);
     }
 
