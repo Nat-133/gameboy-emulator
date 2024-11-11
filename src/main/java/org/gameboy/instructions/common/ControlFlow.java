@@ -25,7 +25,7 @@ public class ControlFlow {
         boolean carry = res.flagChanges().getOrDefault(Flag.C, false);
         boolean negativeOffset = bit(signedByte, 7);
 
-        // tick
+        cpuStructure.clock().tickCpu();
 
         if (carry && !negativeOffset) {
             msb = cpuStructure.alu().inc(msb).result();
@@ -34,7 +34,7 @@ public class ControlFlow {
             msb = cpuStructure.alu().dec(msb).result();
         }
 
-        // tick
+        cpuStructure.clock().tickCpu();
 
         return concat(msb, lsb);
     }
