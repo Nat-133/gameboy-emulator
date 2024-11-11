@@ -2,7 +2,7 @@ package org.gameboy.instructions;
 
 import org.gameboy.CpuStructureBuilder;
 import org.gameboy.Flag;
-import org.gameboy.components.ArithmeticUnit;
+import org.gameboy.FlagChangesetBuilder;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
@@ -59,7 +59,7 @@ class AddTest {
 
         Add.add_a_r8(r8).execute(cpuStructure);
 
-        Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, lower_nibble((byte) a) + lower_nibble((byte) b) >= 0x10)
                 .with(Flag.N, false)
                 .with(Flag.C, a+b >= 0x100)
@@ -95,7 +95,7 @@ class AddTest {
 
         Add.add_a_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
 
-        Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, true)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
@@ -141,7 +141,7 @@ class AddTest {
         Add.add_hl_r16(rr).execute(cpuStructure);
 
         int carry = lower_a + lower_b > 0xff ? 1 : 0;
-        Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, lower_nibble((byte) upper_b) + lower_nibble((byte) upper_a) + carry > 0xf)
                 .with(Flag.C, upper_a + upper_b + carry > 0xff)
                 .with(Flag.Z, (byte) (upper_a + upper_b + carry) == 0)
@@ -190,7 +190,7 @@ class AddTest {
         Add.add_sp_e8().execute(cpuStructure);
 
         int lowerByteRes = uint((byte) sp) + imm8;
-        Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, lower_nibble((byte) sp) + lower_nibble((byte) imm8) > 0xf)
                 .with(Flag.C, lowerByteRes > 0xff)
                 .with(Flag.Z, false)

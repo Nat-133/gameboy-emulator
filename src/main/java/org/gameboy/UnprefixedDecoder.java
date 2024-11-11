@@ -82,9 +82,9 @@ public class UnprefixedDecoder implements Decoder {
             case b010 -> Sub.sub_r8(r8);
             case b011 -> SubWithCarry.sbc_a_r8(r8);
             case b100 -> And.and_r8(r8);
-            case b101 -> UNIMPLEMENTED;  // xor
-            case b110 -> UNIMPLEMENTED;  // or
-            case b111 -> UNIMPLEMENTED;  // cp
+            case b101 -> Xor.xor_r8(r8);
+            case b110 -> Or.or_r8(r8);
+            case b111 -> Compare.cp_r8(r8);
         };
     }
 
@@ -129,9 +129,9 @@ public class UnprefixedDecoder implements Decoder {
                 case b010 -> Sub.sub_a_imm8();
                 case b011 -> SubWithCarry.sbc_a_imm8();
                 case b100 -> And.and_imm8();
-                case b101 -> UNIMPLEMENTED;  // xor
-                case b110 -> UNIMPLEMENTED;  // or
-                case b111 -> UNIMPLEMENTED;  // cp
+                case b101 -> Xor.xor_imm8();
+                case b110 -> Or.or_imm8();
+                case b111 -> Compare.cp_imm8();
             };
             case b111 -> UNIMPLEMENTED;
         };

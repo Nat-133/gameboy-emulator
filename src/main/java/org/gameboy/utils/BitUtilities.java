@@ -38,6 +38,14 @@ public class BitUtilities {
         return (short) (a | b);
     }
 
+    public static byte not(byte val) {
+        return (byte) ~val;
+    }
+
+    public static short not(short val) {
+        return (short) ~val;
+    }
+
     public static short rshift(short value, int distance) {
         return (short) (uint(value) >> distance);
     }
@@ -86,8 +94,8 @@ public class BitUtilities {
         return set_upper_byte(lower, higher);
     }
 
-    public static short apply_mask(short value, int mask, boolean invert) {
-        if (!invert) {
+    public static short set_values_from_mask(short value, int mask, boolean setTo) {
+        if (setTo) {
             return (short) (value | mask);
         } else {
             return (short) (value & ~mask);

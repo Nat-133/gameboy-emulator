@@ -1,7 +1,7 @@
 package org.gameboy.instructions;
 
 import org.gameboy.Flag;
-import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
+import org.gameboy.ArithmeticResult;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.ControlFlow;
 import org.gameboy.instructions.common.OperationTargetAccessor;

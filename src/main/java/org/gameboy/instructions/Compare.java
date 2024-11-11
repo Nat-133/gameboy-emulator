@@ -7,24 +7,19 @@ import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.OperationTarget;
 
-public class And implements Instruction{
+public class Compare implements Instruction{
     private final GenericOperationTarget target;
 
-    private And(GenericOperationTarget target) {
+    private Compare(GenericOperationTarget target) {
         this.target = target;
     }
 
-    public static And and_r8(ByteRegister r8) {
-        return new And(r8.convert());
+    public static Compare cp_r8(ByteRegister register) {
+        return new Compare(register.convert());
     }
 
-    public static And and_imm8() {
-        return new And(OperationTarget.IMM_8.direct());
-    }
-
-    @Override
-    public String representation() {
-        return "AND A," + target.representation();
+    public static Compare cp_imm8() {
+        return new Compare(OperationTarget.IMM_8.direct());
     }
 
     @Override
@@ -33,13 +28,17 @@ public class And implements Instruction{
         byte a = cpuStructure.registers().A();
         byte b = (byte) accessor.getValue(this.target);
 
-        ArithmeticResult res = cpuStructure.alu().and(a, b);
-        cpuStructure.registers().setA(res.result());
-        res.flagChanges().forEach((flag, value) -> cpuStructure.registers().setFlags(value, flag));
+        ArithmeticResult res = cpuStructure.alu().sub(a, b);
+        cpuStructure.registers().setFlags(res.flagChanges());
+    }
+
+    @Override
+    public String representation() {
+        return "CP A," + target.representation();
     }
 
     @Override
     public String toString() {
-        return this.representation();
+        return representation();
     }
 }

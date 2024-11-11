@@ -3,8 +3,9 @@ package org.gameboy.components;
 import org.gameboy.Flag;
 
 import java.util.Arrays;
+import java.util.Hashtable;
 
-import static org.gameboy.utils.BitUtilities.apply_mask;
+import static org.gameboy.utils.BitUtilities.set_values_from_mask;
 
 public class CpuRegisters {
     private short af;
@@ -146,16 +147,24 @@ public class CpuRegisters {
         hl = (short) (hl | value);
     }
 
+    public void setFlag(Flag flag, boolean value) {
+        af = set_values_from_mask(af, flag.getLocationMask(), value);
+    }
+
     public void setFlags(boolean value, Flag... flags) {
         int mask = Arrays.stream(flags)
                 .map(Flag::getLocationMask)
                 .reduce(0, (a, b) -> a | b);
 
-        af = apply_mask(af, mask, !value);
+        af = set_values_from_mask(af, mask, value);
+    }
+
+    public void setFlags(Hashtable<Flag, Boolean> changeset) {
+        changeset.forEach(this::setFlag);
     }
 
     public boolean getFlag(Flag flag) {
-        return apply_mask(af, ~flag.getLocationMask(), true) != 0;
+        return set_values_from_mask(af, ~flag.getLocationMask(), false) != 0;
     }
 
     public byte instructionRegister() {

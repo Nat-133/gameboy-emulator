@@ -147,7 +147,7 @@ public class CpuStructureBuilder {
 
     public CpuStructureBuilder withSetFlags(Flag... flags) {
         for (Flag flag : flags) {
-            this.af = BitUtilities.apply_mask(af, flag.getLocationMask(), false);
+            this.af = BitUtilities.set_values_from_mask(af, flag.getLocationMask(), true);
         }
 
         return this;
@@ -160,7 +160,7 @@ public class CpuStructureBuilder {
 
     public CpuStructureBuilder withUnsetFlags(Flag... flags) {
         for (Flag flag : flags) {
-            this.af = BitUtilities.apply_mask(af, flag.getLocationMask(), true);
+            this.af = BitUtilities.set_values_from_mask(af, flag.getLocationMask(), false);
         }
 
         return this;

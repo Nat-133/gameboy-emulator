@@ -1,8 +1,8 @@
 package org.gameboy.components;
 
 import org.gameboy.Flag;
-import org.gameboy.GameboyAssertions;
-import org.gameboy.components.ArithmeticUnit.ArithmeticResult;
+import org.gameboy.ArithmeticResult;
+import org.gameboy.FlagChangesetBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.Flag.*;
 import static org.gameboy.FlagValue.setFlag;
 import static org.gameboy.FlagValue.unsetFlag;
+import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 import static org.gameboy.utils.BitUtilities.uint;
 
 class ArithmeticUnitTest {
@@ -172,12 +173,62 @@ class ArithmeticUnitTest {
     void givenTwoBytes_whenAnd_thenFlagsCorrect(int a, int b) {
         ArithmeticResult result = alu.and((byte) a, (byte) b);
 
-        Hashtable<Flag, Boolean> expectedFlags = new ArithmeticUnit.FlagChangesetBuilder()
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.Z, a == 0 || b == 0)
                 .with(Flag.H, true)
                 .with(Flag.C, false)
                 .with(Flag.N, false)
                 .build();
-        GameboyAssertions.assertFlagsMatch(expectedFlags, result.flagChanges());
+        assertFlagsMatch(expectedFlags, result.flagChanges());
+    }
+
+    @ParameterizedTest
+    @MethodSource("getBasicOperationValues")
+    void givenTwoBytes_whenOr_thenResultCorrect(byte a, byte b) {
+        byte expectedResult = (byte) (a | b);
+
+        ArithmeticResult result = alu.or(a, b);
+
+        assertThat(result.result()).isEqualTo(expectedResult);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getBasicOperationValues")
+    void givenTwoBytes_whenOr_thenFlagsCorrect(byte a, byte b) {
+
+        ArithmeticResult result = alu.or(a, b);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .with(Flag.Z, a == 0 && b == 0)
+                .with(Flag.H, false)
+                .with(Flag.C, false)
+                .with(Flag.N, false)
+                .build();
+        assertFlagsMatch(expectedFlags, result.flagChanges());
+    }
+
+    @ParameterizedTest
+    @MethodSource("getBasicOperationValues")
+    void givenTwoBytes_whenXor_thenResultCorrect(byte a, byte b) {
+        byte expectedResult = (byte) (a | b);
+
+        ArithmeticResult result = alu.or(a, b);
+
+        assertThat(result.result()).isEqualTo(expectedResult);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getBasicOperationValues")
+    void givenTwoBytes_whenXor_thenFlagsCorrect(byte a, byte b) {
+
+        ArithmeticResult result = alu.xor(a, b);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .with(Flag.Z, a == 0 && b == 0)
+                .with(Flag.H, false)
+                .with(Flag.C, false)
+                .with(Flag.N, false)
+                .build();
+        assertFlagsMatch(expectedFlags, result.flagChanges());
     }
 }
