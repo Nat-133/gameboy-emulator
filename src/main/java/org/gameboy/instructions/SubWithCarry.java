@@ -36,7 +36,7 @@ public class SubWithCarry implements Instruction{
 
         ArithmeticResult res = cpuStructure.alu().sub_carry(a, b, cpuStructure.registers().getFlag(Flag.C));
         cpuStructure.registers().setA(res.result());
-        res.flagChanges().forEach((flag, value) -> cpuStructure.registers().setFlags(value, flag));
+        cpuStructure.registers().setFlags(res.flagChanges());
     }
 
     @Override

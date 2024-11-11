@@ -39,9 +39,7 @@ public class Inc implements Instruction{
 
             newValue = result.result();
 
-            result.flagChanges().forEach(
-                    (flag, change) -> cpuStructure.registers().setFlags(change, flag)
-            );
+            cpuStructure.registers().setFlags(result.flagChanges());
         } else {
             newValue = (short) (value + 1);
         }
