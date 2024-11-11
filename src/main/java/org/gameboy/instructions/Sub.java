@@ -35,7 +35,7 @@ public class Sub implements Instruction{
 
         ArithmeticResult res = cpuStructure.alu().sub(a, b);
         cpuStructure.registers().setA(res.result());
-        res.flagChanges().forEach((flag, value) -> cpuStructure.registers().setFlags(value, flag));
+        cpuStructure.registers().setFlags(res.flagChanges());
     }
 
     @Override

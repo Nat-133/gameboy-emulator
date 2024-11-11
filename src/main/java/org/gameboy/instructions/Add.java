@@ -95,9 +95,7 @@ public class Add implements Instruction {
         boolean carry = cpuStructure.registers().getFlag(Flag.C);
         ArithmeticResult upperRes = cpuStructure.alu().add_carry(a_msb, b_msb, carry);
         result = set_upper_byte(result, upperRes.result());
-        upperRes.flagChanges().forEach(
-                (flag, change) -> cpuStructure.registers().setFlags(change, flag)
-        );
+        cpuStructure.registers().setFlags(upperRes.flagChanges());
         operationTargetAccessor.setValue(this.left, result);
     }
 
