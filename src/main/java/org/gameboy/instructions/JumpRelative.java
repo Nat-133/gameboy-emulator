@@ -38,8 +38,8 @@ public class JumpRelative implements Instruction{
     @Override
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor operationTargetAccessor = OperationTargetAccessor.from(cpuStructure);
-        byte offset = (byte) operationTargetAccessor.getValue(OperationTarget.IMM_8.direct());
         boolean shouldJump = evaluateCondition(cc, cpuStructure.registers());
+        byte offset = (byte) operationTargetAccessor.getValue(OperationTarget.IMM_8.direct());
 
         if (shouldJump) {
             short pc = cpuStructure.registers().PC();

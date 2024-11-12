@@ -53,6 +53,10 @@ public class CpuCycleTest {
 
                 generateR8TestCases(SubWithCarry::sbc_a_r8, 1),
 
+                generateConditionalTestCases(Jump::jp_cc_nn, 4, 3),
+                generateTestCase(Jump::jp_nn, 4),
+                generateTestCase(Jump::jp_HL, 1),
+
                 generateTestCase(JumpRelative::jr, 3),
                 generateConditionalTestCases(JumpRelative::jr_cc, 3, 2),
 
