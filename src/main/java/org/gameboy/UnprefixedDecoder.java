@@ -100,27 +100,35 @@ public class UnprefixedDecoder implements Decoder {
                 case b110 -> LoadHigher.ldh_A_imm8();
                 case b111 -> Load.ld_HL_SP_OFFSET();
             };
-            case b001 -> switch(ThreeBitValue.from(y)) {
-                case b000 -> UNIMPLEMENTED;
+            case b001 -> {
+                OneBitValue q = OneBitValue.from(y);
+                yield switch(q) {
+                    case b0 -> UNIMPLEMENTED;
+                    case b1 -> switch(TwoBitValue.from(y>>>1)) {
+                        case b00 -> UNIMPLEMENTED;
+                        case b01 -> UNIMPLEMENTED;
+                        case b10 -> Jump.jp_HL();
+                        case b11 -> Load.load_SP_HL();
+                    };
+                };
+            }
+            case b010 -> switch (ThreeBitValue.from(y)) {
+                case b000, b001, b010, b011 -> Jump.jp_cc_nn(Condition.values()[y]);
+                case b100 -> Load.ld_indirectC_A();
+                case b101 -> Load.ld_imm16indirect_A();
+                case b110 -> Load.ld_A_indirectC();
+                case b111 -> Load.ld_A_imm16indirect();
+            };
+            case b011 -> switch (ThreeBitValue.from(y)) {
+                case b000 -> Jump.jp_nn();
                 case b001 -> UNIMPLEMENTED;
                 case b010 -> UNIMPLEMENTED;
                 case b011 -> UNIMPLEMENTED;
                 case b100 -> UNIMPLEMENTED;
                 case b101 -> UNIMPLEMENTED;
                 case b110 -> UNIMPLEMENTED;
-                case b111 -> Load.load_SP_HL();
+                case b111 -> UNIMPLEMENTED;
             };
-            case b010 -> switch (ThreeBitValue.from(y)) {
-                case b000 -> UNIMPLEMENTED;
-                case b001 -> UNIMPLEMENTED;
-                case b010 -> UNIMPLEMENTED;
-                case b011 -> UNIMPLEMENTED;
-                case b100 -> Load.ld_indirectC_A();
-                case b101 -> Load.ld_imm16indirect_A();
-                case b110 -> Load.ld_A_indirectC();
-                case b111 -> Load.ld_A_imm16indirect();
-            };
-            case b011 -> UNIMPLEMENTED;
             case b100 -> UNIMPLEMENTED;
             case b101 -> UNIMPLEMENTED;
             case b110 -> switch(ThreeBitValue.from(y)) {
