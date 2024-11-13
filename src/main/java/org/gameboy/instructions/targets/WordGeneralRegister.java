@@ -18,7 +18,7 @@ public enum WordGeneralRegister {
         };
     }
 
-    public WordGeneralRegister value(TwoBitValue value) {
-        return values()[value.ordinal()];
+    public static WordGeneralRegister lookup(TwoBitValue index) {
+        return WordGeneralRegister.values()[index.value()];
     }
 }

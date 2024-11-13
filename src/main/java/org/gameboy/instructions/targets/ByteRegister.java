@@ -1,5 +1,8 @@
 package org.gameboy.instructions.targets;
 
+import org.gameboy.utils.MultiBitValue;
+import org.gameboy.utils.MultiBitValue.ThreeBitValue;
+
 public enum ByteRegister {
     // r8
     B,
@@ -22,5 +25,9 @@ public enum ByteRegister {
             case INDIRECT_HL -> OperationTarget.HL.indirect();
             case A -> OperationTarget.A.direct();
         };
+    }
+
+    public static ByteRegister lookup(ThreeBitValue index) {
+        return ByteRegister.values()[index.value()];
     }
 }

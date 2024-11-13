@@ -1,5 +1,7 @@
 package org.gameboy.instructions.targets;
 
+import org.gameboy.utils.MultiBitValue;
+
 public enum WordMemoryRegister {
     // mem16
     BC,
@@ -14,5 +16,9 @@ public enum WordMemoryRegister {
             case HL_INC -> OperationTarget.HL_INC.indirect();
             case HL_DEC -> OperationTarget.HL_DEC.indirect();
         };
+    }
+
+    public static WordMemoryRegister lookup(MultiBitValue.TwoBitValue index) {
+        return WordMemoryRegister.values()[index.value()];
     }
 }
