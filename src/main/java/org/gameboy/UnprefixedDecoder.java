@@ -5,13 +5,11 @@ import org.gameboy.instructions.targets.ByteRegister;
 import org.gameboy.instructions.targets.Condition;
 import org.gameboy.instructions.targets.WordGeneralRegister;
 import org.gameboy.instructions.targets.WordMemoryRegister;
-import org.gameboy.utils.MultiBitValue;
 import org.gameboy.utils.MultiBitValue.OneBitValue;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
 import static org.gameboy.instructions.Unimplemented.UNIMPLEMENTED;
-import static org.gameboy.utils.BitUtilities.bit_range;
 import static org.gameboy.utils.MultiBitValue.ThreeBitValue.b110;
 
 public class UnprefixedDecoder implements Decoder {
