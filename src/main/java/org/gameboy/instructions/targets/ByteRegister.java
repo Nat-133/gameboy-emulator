@@ -1,6 +1,5 @@
 package org.gameboy.instructions.targets;
 
-import org.gameboy.utils.MultiBitValue;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 
 public enum ByteRegister {
