@@ -1,5 +1,7 @@
 package org.gameboy.instructions.targets;
 
+import org.gameboy.utils.MultiBitValue;
+
 public enum WordStackRegister {
     // sck16
     BC,
@@ -14,5 +16,9 @@ public enum WordStackRegister {
             case HL -> OperationTarget.HL.direct();
             case AF -> OperationTarget.AF.direct();
         };
+    }
+
+    public static WordStackRegister lookup(MultiBitValue.TwoBitValue index) {
+        return WordStackRegister.values()[index.value()];
     }
 }

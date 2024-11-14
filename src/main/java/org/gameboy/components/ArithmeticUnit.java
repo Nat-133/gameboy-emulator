@@ -5,7 +5,7 @@ import org.gameboy.FlagChangesetBuilder;
 import org.gameboy.utils.BitUtilities;
 
 import static org.gameboy.Flag.*;
-import static org.gameboy.utils.BitUtilities.bit;
+import static org.gameboy.utils.BitUtilities.*;
 
 public class ArithmeticUnit {
     public ArithmeticResult inc(byte value) {
@@ -97,6 +97,46 @@ public class ArithmeticUnit {
                         .withAll(false)
                         .with(Z, res == 0)
                         .build()
+        );
+    }
+
+    public ArithmeticResult rotate_right_circular(byte value) {
+        boolean carry = bit(value, 0);
+        byte res = set_bit(rshift(value, 1), 7, carry);
+        return new ArithmeticResult(
+                res,
+                new FlagChangesetBuilder()
+                        .withAll(false)
+                        .with(C, carry)
+                        .build()
+        );
+    }
+
+    public ArithmeticResult rotate_right(byte value, boolean carry_in) {
+        byte res = set_bit(rshift(value, 1), 7, carry_in);
+        return new ArithmeticResult(
+                res,
+                new FlagChangesetBuilder().withAll(false).build()
+        );
+    }
+
+    public ArithmeticResult rotate_left_circular(byte value) {
+        boolean carry = bit(value, 7);
+        byte res = set_bit(lshift(value, 1), 0, carry);
+        return new ArithmeticResult(
+                res,
+                new FlagChangesetBuilder()
+                        .withAll(false)
+                        .with(C, carry)
+                        .build()
+        );
+    }
+
+    public ArithmeticResult rotate_left(byte value, boolean carry_in) {
+        byte res = set_bit(lshift(value, 1), 0, carry_in);
+        return new ArithmeticResult(
+                res,
+                new FlagChangesetBuilder().withAll(false).build()
         );
     }
 }
