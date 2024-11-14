@@ -53,17 +53,17 @@ public class UnprefixedDecoder implements Decoder {
                 case b001 -> Load.ld_imm16indirect_sp();
                 case b010 -> UNIMPLEMENTED; // STOP
                 case b011 -> JumpRelative.jr();
-                default -> JumpRelative.jr_cc(Condition.lookup(TwoBitValue.from(y, 0))); // JR condition[y-4], imm8; imm8 signed
+                default -> JumpRelative.jr_cc(Condition.lookup(TwoBitValue.from(y, 0)));
             };
             case b001 -> switch(q){
                 case b0 -> Load.ld_r16_imm16(WordGeneralRegister.lookup(p));
-                case b1 -> Add.add_hl_r16(WordGeneralRegister.lookup(p)); // Add.add_HL_wordGeneralRegister
+                case b1 -> Add.add_hl_r16(WordGeneralRegister.lookup(p));
             };
             case b010 -> {
                 WordMemoryRegister register = WordMemoryRegister.lookup(p);
                 yield switch(q) {
-                    case b0 -> Load.ld_mem16indirect_A(register); // Load.load_wordMemoryRegisterIndirect_A(register);
-                    case b1 -> Load.ld_A_mem16indirect(register); // Load.load_A_wordMemoryRegisterIndirect(register);
+                    case b0 -> Load.ld_mem16indirect_A(register);
+                    case b1 -> Load.ld_A_mem16indirect(register);
                 };
             }
             case b011 -> switch (q) {

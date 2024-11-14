@@ -110,8 +110,8 @@ public class BitUtilities {
         return or(value, lshift((short) 1, i));
     }
 
-    public static byte set_bit(byte value, int i) {
-        return or(value, lshift((byte) 1, i));
+    public static byte set_bit(byte value, int i, boolean bitValue) {
+        return or(value, lshift((byte) (bitValue ? 1 : 0), i));
     }
 
     public static byte calculate_carry_from_add(byte a, byte b, byte res) {

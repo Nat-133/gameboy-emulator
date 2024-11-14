@@ -1,7 +1,7 @@
 package org.gameboy.components;
 
-import org.gameboy.Flag;
 import org.gameboy.ArithmeticResult;
+import org.gameboy.Flag;
 import org.gameboy.FlagChangesetBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -230,5 +230,91 @@ class ArithmeticUnitTest {
                 .with(Flag.N, false)
                 .build();
         assertFlagsMatch(expectedFlags, result.flagChanges());
+    }
+
+    static Stream<Arguments> getRotateLeftCircularValues() {
+        return Stream.of(
+                Arguments.of(0b01010101, 0b10101010),
+                Arguments.of(0b00000000, 0b00000000),
+                Arguments.of(0b11111111, 0b11111111),
+                Arguments.of(0b11101000, 0b11010001)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getRotateLeftCircularValues")
+    void givenByte_whenRotateLeftCircular_thenResultIsCorrect(int val, int expectedResult) {
+        ArithmeticResult res = alu.rotate_left_circular((byte) val);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .withAll(false)
+                .with(Flag.C, (val & 0b1000_0000) != 0)
+                .build();
+        assertFlagsMatch(expectedFlags, res.flagChanges());
+        assertThat(res.result()).isEqualTo((byte) expectedResult);
+    }
+
+    static Stream<Arguments> getRotateRightCircularValues() {
+        return Stream.of(
+                Arguments.of(0b01010101, 0b10101010),
+                Arguments.of(0b00000000, 0b00000000),
+                Arguments.of(0b11111111, 0b11111111),
+                Arguments.of(0b11101000, 0b01110100)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getRotateRightCircularValues")
+    void givenByte_whenRotateRightCircular_thenResultIsCorrect(int val, int expectedResult) {
+        ArithmeticResult res = alu.rotate_right_circular((byte) val);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .withAll(false)
+                .with(Flag.C, (val & 0b1) == 1)
+                .build();
+        assertFlagsMatch(expectedFlags, res.flagChanges());
+        assertThat(res.result()).isEqualTo((byte) expectedResult);
+    }
+
+    static Stream<Arguments> getRotateLeftValues() {
+        return Stream.of(
+                Arguments.of(0b01010101, 1, 0b10101011),
+                Arguments.of(0b00000000, 1, 0b00000001),
+                Arguments.of(0b11111111, 0, 0b11111110),
+                Arguments.of(0b11101000, 0, 0b11010000)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getRotateLeftValues")
+    void givenByte_whenRotateLeft_thenResultIsCorrect(int val, int carry, int expectedResult) {
+        ArithmeticResult res = alu.rotate_left((byte) val, carry == 1);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .withAll(false)
+                .build();
+        assertFlagsMatch(expectedFlags, res.flagChanges());
+        assertThat(res.result()).isEqualTo((byte) expectedResult);
+    }
+
+    static Stream<Arguments> getRotateRightValues() {
+        return Stream.of(
+                Arguments.of(0b01010101, 1, 0b10101010),
+                Arguments.of(0b00000000, 1, 0b10000000),
+                Arguments.of(0b11111111, 0, 0b01111111),
+                Arguments.of(0b11101000, 0, 0b01110100)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getRotateRightValues")
+    void givenByte_whenRotateRight_thenResultIsCorrect(int val, int carry, int expectedResult) {
+        ArithmeticResult res = alu.rotate_right((byte) val, carry==1);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .withAll(false)
+                .build();
+        assertFlagsMatch(expectedFlags, res.flagChanges());
+        assertThat(res.result()).isEqualTo((byte) expectedResult);
     }
 }

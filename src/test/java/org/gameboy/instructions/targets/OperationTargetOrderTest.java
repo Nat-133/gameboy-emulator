@@ -1,13 +1,23 @@
 package org.gameboy.instructions.targets;
 
+import org.gameboy.utils.MultiBitValue.ThreeBitValue;
+import org.gameboy.utils.MultiBitValue.TwoBitValue;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class OperationTargetOrderTest {
+    Stream<ThreeBitValue> threeBitValues = IntStream.range(0, 8).mapToObj(ThreeBitValue::from);
+    Stream<TwoBitValue> twoBitValues = IntStream.range(0, 4).mapToObj(TwoBitValue::from);
+
     @Test
     void givenByteRegister_thenOrderCorrect() {
-        assertThat(ByteRegister.values()).containsExactly(
+        List<ByteRegister> byteRegisterOrder = threeBitValues.map(ByteRegister::lookup).toList();
+        assertThat(byteRegisterOrder).containsExactly(
                 ByteRegister.B,
                 ByteRegister.C,
                 ByteRegister.D,
@@ -21,7 +31,8 @@ class OperationTargetOrderTest {
 
     @Test
     void givenCondition_thenOrderCorrect() {
-        assertThat(Condition.values()).containsExactly(
+        List<Condition> conditionOrder = twoBitValues.map(Condition::lookup).toList();
+        assertThat(conditionOrder).containsExactly(
                 Condition.NZ,
                 Condition.Z,
                 Condition.NC,
@@ -31,7 +42,8 @@ class OperationTargetOrderTest {
 
     @Test
     void givenWordGeneralRegister_thenOrderCorrect() {
-        assertThat(WordGeneralRegister.values()).containsExactly(
+        List<WordGeneralRegister> wordGeneralRegisterOrder = twoBitValues.map(WordGeneralRegister::lookup).toList();
+        assertThat(wordGeneralRegisterOrder).containsExactly(
                 WordGeneralRegister.BC,
                 WordGeneralRegister.DE,
                 WordGeneralRegister.HL,
@@ -41,7 +53,8 @@ class OperationTargetOrderTest {
 
     @Test
     void givenWordMemoryRegister_thenOrderCorrect() {
-        assertThat(WordMemoryRegister.values()).containsExactly(
+        List<WordMemoryRegister> wordMemoryRegisterOrder = twoBitValues.map(WordMemoryRegister::lookup).toList();
+        assertThat(wordMemoryRegisterOrder).containsExactly(
                 WordMemoryRegister.BC,
                 WordMemoryRegister.DE,
                 WordMemoryRegister.HL_INC,
@@ -51,7 +64,8 @@ class OperationTargetOrderTest {
 
     @Test
     void givenWordStackRegister_thenOrderCorrect() {
-        assertThat(WordStackRegister.values()).containsExactly(
+        List<WordStackRegister> wordStackRegisterOrder = twoBitValues.map(WordStackRegister::lookup).toList();
+        assertThat(wordStackRegisterOrder).containsExactly(
                 WordStackRegister.BC,
                 WordStackRegister.DE,
                 WordStackRegister.HL,
