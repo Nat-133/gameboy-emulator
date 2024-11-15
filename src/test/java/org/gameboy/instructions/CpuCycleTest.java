@@ -92,8 +92,9 @@ public class CpuCycleTest {
                 generateR8TestCases(Add::add_a_r8, 1),
                 generateTestCase(Add::add_a_imm8, 2),
                 generateTestCases(Add::add_hl_r16, WORD_GENERAL_REGISTERS, 2),
-                generateTestCase(Add::add_sp_e8, 4)
+                generateTestCase(Add::add_sp_e8, 4),
 
+                generateTestCase(RotateLeftCircular::rlca, 1)
         ).flatMap(x -> x);
     }
 
