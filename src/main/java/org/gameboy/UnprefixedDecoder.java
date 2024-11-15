@@ -73,7 +73,16 @@ public class UnprefixedDecoder implements Decoder {
             case b100 -> Inc.inc_r8(ByteRegister.lookup(y));
             case b101 -> Dec.dec_r8(ByteRegister.lookup(y));
             case b110 -> Load.ld_r8_imm8(ByteRegister.lookup(y));
-            case b111 -> UNIMPLEMENTED;
+            case b111 -> switch(y) {
+                case b000 -> RotateLeftCircular.rlca();
+                case b001 -> UNIMPLEMENTED;
+                case b010 -> UNIMPLEMENTED;
+                case b011 -> UNIMPLEMENTED;
+                case b100 -> UNIMPLEMENTED;
+                case b101 -> UNIMPLEMENTED;
+                case b110 -> UNIMPLEMENTED;
+                case b111 -> UNIMPLEMENTED;
+            };
         };
     }
 
