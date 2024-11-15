@@ -1,6 +1,7 @@
 package org.gameboy.components;
 
 import org.gameboy.ArithmeticResult;
+import org.gameboy.Flag;
 import org.gameboy.FlagChangesetBuilder;
 import org.gameboy.utils.BitUtilities;
 
@@ -116,7 +117,9 @@ public class ArithmeticUnit {
         byte res = set_bit(rshift(value, 1), 7, carry_in);
         return new ArithmeticResult(
                 res,
-                new FlagChangesetBuilder().withAll(false).build()
+                new FlagChangesetBuilder().withAll(false)
+                        .with(Flag.C, BitUtilities.bit(value, 0))
+                        .build()
         );
     }
 
@@ -136,7 +139,9 @@ public class ArithmeticUnit {
         byte res = set_bit(lshift(value, 1), 0, carry_in);
         return new ArithmeticResult(
                 res,
-                new FlagChangesetBuilder().withAll(false).build()
+                new FlagChangesetBuilder().withAll(false)
+                        .with(Flag.C, BitUtilities.bit(value, 7))
+                        .build()
         );
     }
 }
