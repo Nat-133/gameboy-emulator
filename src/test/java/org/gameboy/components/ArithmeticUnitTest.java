@@ -292,6 +292,7 @@ class ArithmeticUnitTest {
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
+                .with(Flag.C, (val & 0b1000_0000) != 0)
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
         assertThat(res.result()).isEqualTo((byte) expectedResult);
@@ -313,6 +314,7 @@ class ArithmeticUnitTest {
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
+                .with(Flag.C, (val & 0b1) == 1)
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
         assertThat(res.result()).isEqualTo((byte) expectedResult);
