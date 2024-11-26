@@ -174,10 +174,10 @@ class ArithmeticUnitTest {
         ArithmeticResult result = alu.and((byte) a, (byte) b);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
-                .with(Flag.Z, a == 0 || b == 0)
-                .with(Flag.H, true)
-                .with(Flag.C, false)
-                .with(Flag.N, false)
+                .with(Z, a == 0 || b == 0)
+                .with(H, true)
+                .with(C, false)
+                .with(N, false)
                 .build();
         assertFlagsMatch(expectedFlags, result.flagChanges());
     }
@@ -199,10 +199,10 @@ class ArithmeticUnitTest {
         ArithmeticResult result = alu.or(a, b);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
-                .with(Flag.Z, a == 0 && b == 0)
-                .with(Flag.H, false)
-                .with(Flag.C, false)
-                .with(Flag.N, false)
+                .with(Z, a == 0 && b == 0)
+                .with(H, false)
+                .with(C, false)
+                .with(N, false)
                 .build();
         assertFlagsMatch(expectedFlags, result.flagChanges());
     }
@@ -224,10 +224,10 @@ class ArithmeticUnitTest {
         ArithmeticResult result = alu.xor(a, b);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
-                .with(Flag.Z, a == 0 && b == 0)
-                .with(Flag.H, false)
-                .with(Flag.C, false)
-                .with(Flag.N, false)
+                .with(Z, a == 0 && b == 0)
+                .with(H, false)
+                .with(C, false)
+                .with(N, false)
                 .build();
         assertFlagsMatch(expectedFlags, result.flagChanges());
     }
@@ -248,7 +248,7 @@ class ArithmeticUnitTest {
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
-                .with(Flag.C, (val & 0b1000_0000) != 0)
+                .with(C, (val & 0b1000_0000) != 0)
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
         assertThat(res.result()).isEqualTo((byte) expectedResult);
@@ -270,7 +270,7 @@ class ArithmeticUnitTest {
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
-                .with(Flag.C, (val & 0b1) == 1)
+                .with(C, (val & 0b1) == 1)
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
         assertThat(res.result()).isEqualTo((byte) expectedResult);
@@ -292,7 +292,7 @@ class ArithmeticUnitTest {
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
-                .with(Flag.C, (val & 0b1000_0000) != 0)
+                .with(C, (val & 0b1000_0000) != 0)
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
         assertThat(res.result()).isEqualTo((byte) expectedResult);
@@ -314,7 +314,29 @@ class ArithmeticUnitTest {
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
-                .with(Flag.C, (val & 0b1) == 1)
+                .with(C, (val & 0b1) == 1)
+                .build();
+        assertFlagsMatch(expectedFlags, res.flagChanges());
+        assertThat(res.result()).isEqualTo((byte) expectedResult);
+    }
+
+    static Stream<Arguments> getComplimentaryValues() {
+        return Stream.of(
+                Arguments.of(0b01010101, 0b10101010),
+                Arguments.of(0b00000000, 0b11111111),
+                Arguments.of(0b11111111, 0b00000000),
+                Arguments.of(0b11101000, 0b00010111)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getComplimentaryValues")
+    void givenByte_whenCompliment_thenResultIsCorrectAndFlagsCorrect(int val, int expectedResult) {
+        ArithmeticResult res = alu.compliment((byte) val);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder(false)
+                .with(Flag.N, true)
+                .with(Flag.H, true)
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
         assertThat(res.result()).isEqualTo((byte) expectedResult);

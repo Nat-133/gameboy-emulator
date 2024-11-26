@@ -11,6 +11,11 @@ public class FlagChangesetBuilder {
         this(new Hashtable<>(4, 1f));
     }
 
+    public FlagChangesetBuilder(boolean initalFlagValues) {
+        this();
+        this.withAll(initalFlagValues);
+    }
+
     public FlagChangesetBuilder(Hashtable<Flag, Boolean> changes) {
 
 
