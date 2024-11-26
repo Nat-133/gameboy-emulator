@@ -49,7 +49,7 @@ public class UnprefixedDecoder implements Decoder {
 
         return switch(z) {
             case b000 -> switch(y) {
-                case b000 -> Nop.NOP();
+                case b000 -> UNIMPLEMENTED;
                 case b001 -> Load.ld_imm16indirect_sp();
                 case b010 -> UNIMPLEMENTED; // STOP
                 case b011 -> JumpRelative.jr();
@@ -75,9 +75,9 @@ public class UnprefixedDecoder implements Decoder {
             case b110 -> Load.ld_r8_imm8(ByteRegister.lookup(y));
             case b111 -> switch(y) {
                 case b000 -> RotateLeftCircular.rlca();
-                case b001 -> UNIMPLEMENTED;
-                case b010 -> UNIMPLEMENTED;
-                case b011 -> UNIMPLEMENTED;
+                case b001 -> RotateRightCircular.rrca();
+                case b010 -> RotateLeft.rla();
+                case b011 -> RotateRight.rra();
                 case b100 -> UNIMPLEMENTED;
                 case b101 -> UNIMPLEMENTED;
                 case b110 -> UNIMPLEMENTED;
@@ -88,7 +88,7 @@ public class UnprefixedDecoder implements Decoder {
 
     private Instruction decodeBlock1(ThreeBitValue y, ThreeBitValue z) {
         if (y == b110 && z == b110) {
-            return Halt.HALT();
+            return UNIMPLEMENTED;
         }
 
         return Load.ld_r8_r8(ByteRegister.lookup(y), ByteRegister.lookup(z));
