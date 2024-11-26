@@ -144,4 +144,14 @@ public class ArithmeticUnit {
                         .build()
         );
     }
+
+    public ArithmeticResult compliment(byte value) {
+        return new ArithmeticResult(
+                BitUtilities.not(value),
+                new FlagChangesetBuilder().withAll(false)
+                        .with(Flag.N, true)
+                        .with(Flag.H, true)
+                        .build()
+        );
+    }
 }
