@@ -94,7 +94,13 @@ public class CpuCycleTest {
                 generateTestCases(Add::add_hl_r16, WORD_GENERAL_REGISTERS, 2),
                 generateTestCase(Add::add_sp_e8, 4),
 
-                generateTestCase(RotateLeftCircular::rlca, 1)
+                generateTestCase(RotateLeftCircular::rlca, 1),
+
+                generateTestCase(RotateLeft::rla, 1),
+
+                generateTestCase(RotateRightCircular::rrca, 1),
+
+                generateTestCase(RotateRight::rra, 1)
         ).flatMap(x -> x);
     }
 

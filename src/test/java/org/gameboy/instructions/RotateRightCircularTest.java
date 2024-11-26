@@ -14,30 +14,30 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 
-class RotateLeftCircularTest {
-    static Stream<Arguments> getRotateLeftCircularValues() {
+class RotateRightCircularTest {
+    static Stream<Arguments> getRotateRightCircularValues() {
         return Stream.of(
                 Arguments.of(0b01010101, 0b10101010),
                 Arguments.of(0b00000000, 0b00000000),
                 Arguments.of(0b11111111, 0b11111111),
-                Arguments.of(0b11101000, 0b11010001)
+                Arguments.of(0b11101000, 0b01110100)
         );
     }
 
     @ParameterizedTest
-    @MethodSource("getRotateLeftCircularValues")
-    void givenA_whenRLCA_thenResultAndFlagsCorrect(int a, int expectedResult) {
+    @MethodSource("getRotateRightCircularValues")
+    void givenA_whenRRCA_thenResultAndFlagsCorrect(int a, int expectedResult) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withA(a)
                 .build();
 
-        RotateLeftCircular.rlca().execute(cpuStructure);
+        RotateRightCircular.rrca().execute(cpuStructure);
 
         assertThat(cpuStructure.registers().A()).isEqualTo((byte) expectedResult);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
-                .with(Flag.C, (a & 0b1000_0000) != 0)
+                .with(Flag.C, (a & 0b0000_0001) != 0)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
