@@ -32,4 +32,9 @@ public class RotateRightCircular implements Instruction{
     public String representation() {
         return "RRC" + (isPrefixInstruction ? " " : "") + this.target.convert().representation();
     }
+
+    @Override
+    public String toString() {
+        return representation();
+    }
 }

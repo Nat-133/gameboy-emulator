@@ -1,7 +1,7 @@
 package org.gameboy.instructions;
 
-import org.gameboy.Flag;
 import org.gameboy.ArithmeticResult;
+import org.gameboy.Flag;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.ControlFlow;
 import org.gameboy.instructions.common.OperationTargetAccessor;
@@ -102,5 +102,10 @@ public class Add implements Instruction {
     @Override
     public String representation() {
         return "ADD " + this.left.representation() + "," + this.right.representation();
+    }
+
+    @Override
+    public String toString() {
+        return representation();
     }
 }

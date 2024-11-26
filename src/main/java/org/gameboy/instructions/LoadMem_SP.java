@@ -3,7 +3,6 @@ package org.gameboy.instructions;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.ControlFlow;
 import org.gameboy.instructions.targets.GenericOperationTarget;
-import org.gameboy.instructions.targets.OperationTarget;
 
 import static org.gameboy.instructions.targets.OperationTarget.IMM_16;
 import static org.gameboy.instructions.targets.OperationTarget.SP;
@@ -31,5 +30,10 @@ public class LoadMem_SP implements Load {
     @Override
     public GenericOperationTarget destination() {
         return IMM_16.indirect();
+    }
+
+    @Override
+    public String toString() {
+        return representation();
     }
 }

@@ -34,4 +34,9 @@ public class RotateRight implements Instruction{
     public String representation() {
         return "RR" + (isPrefixInstruction ? " " : "") + this.target.convert().representation();
     }
+
+    @Override
+    public String toString() {
+        return representation();
+    }
 }
