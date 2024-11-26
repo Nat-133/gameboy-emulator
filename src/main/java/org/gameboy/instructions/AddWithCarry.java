@@ -1,7 +1,7 @@
 package org.gameboy.instructions;
 
-import org.gameboy.Flag;
 import org.gameboy.ArithmeticResult;
+import org.gameboy.Flag;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
@@ -37,5 +37,10 @@ public class AddWithCarry implements Instruction{
         ArithmeticResult res = cpuStructure.alu().add_carry(a, b, cpuStructure.registers().getFlag(Flag.C));
         cpuStructure.registers().setA(res.result());
         cpuStructure.registers().setFlags(res.flagChanges());
+    }
+
+    @Override
+    public String toString() {
+        return representation();
     }
 }

@@ -32,4 +32,9 @@ public class LoadSP_HL implements Load {
 
         cpuStructure.clock().tickCpu();
     }
+
+    @Override
+    public String toString() {
+        return representation();
+    }
 }
