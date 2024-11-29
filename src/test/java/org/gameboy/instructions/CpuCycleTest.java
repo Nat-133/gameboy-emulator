@@ -100,7 +100,9 @@ public class CpuCycleTest {
 
                 generateTestCase(RotateRightCircular::rrca, 1),
 
-                generateTestCase(RotateRight::rra, 1)
+                generateTestCase(RotateRight::rra, 1),
+
+                generateTestCase(Compliment::cpl, 1)
         ).flatMap(x -> x);
     }
 
