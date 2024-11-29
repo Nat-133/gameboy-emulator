@@ -334,7 +334,7 @@ class ArithmeticUnitTest {
     void givenByte_whenCompliment_thenResultIsCorrectAndFlagsCorrect(int val, int expectedResult) {
         ArithmeticResult res = alu.compliment((byte) val);
 
-        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder(false)
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.N, true)
                 .with(Flag.H, true)
                 .build();

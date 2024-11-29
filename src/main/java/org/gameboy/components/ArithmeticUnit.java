@@ -148,7 +148,7 @@ public class ArithmeticUnit {
     public ArithmeticResult compliment(byte value) {
         return new ArithmeticResult(
                 BitUtilities.not(value),
-                new FlagChangesetBuilder().withAll(false)
+                new FlagChangesetBuilder()
                         .with(Flag.N, true)
                         .with(Flag.H, true)
                         .build()
