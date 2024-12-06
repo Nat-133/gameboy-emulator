@@ -79,7 +79,7 @@ public class BitUtilities {
     }
 
     public static int upper_nibble(byte value) {
-        return value >>> 4;
+        return uint(value) >>> 4;
     }
 
     public static short set_upper_byte(short oldShort, byte newByte) {
