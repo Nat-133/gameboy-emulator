@@ -78,7 +78,7 @@ public class UnprefixedDecoder implements Decoder {
                 case b001 -> RotateRightCircular.rrca();
                 case b010 -> RotateLeft.rla();
                 case b011 -> RotateRight.rra();
-                case b100 -> UNIMPLEMENTED;
+                case b100 -> DecimalAdjustAcumulator.daa();
                 case b101 -> Compliment.cpl();
                 case b110 -> UNIMPLEMENTED;
                 case b111 -> UNIMPLEMENTED;
