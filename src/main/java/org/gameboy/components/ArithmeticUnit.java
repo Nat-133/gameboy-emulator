@@ -154,4 +154,26 @@ public class ArithmeticUnit {
                         .build()
         );
     }
+
+    public ArithmeticResult set_carry_flag() {
+        return new ArithmeticResult(
+                (byte) 0,
+                new FlagChangesetBuilder()
+                        .with(Flag.N, false)
+                        .with(Flag.H, false)
+                        .with(Flag.C, true)
+                        .build()
+        );
+    }
+
+    public ArithmeticResult compliment_carry_flag(boolean carry_flag) {
+        return new ArithmeticResult(
+                (byte) 0,
+                new FlagChangesetBuilder()
+                        .with(Flag.N, false)
+                        .with(Flag.H, false)
+                        .with(Flag.C, !carry_flag)
+                        .build()
+        );
+    }
 }

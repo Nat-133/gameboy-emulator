@@ -104,7 +104,11 @@ public class CpuCycleTest {
 
                 generateTestCase(Compliment::cpl, 1),
 
-                generateTestCase(DecimalAdjustAcumulator::daa, 1)
+                generateTestCase(DecimalAdjustAcumulator::daa, 1),
+
+                generateTestCase(SetCarryFlag::scf, 1),
+
+                generateTestCase(ComplimentCarryFlag::ccf, 1)
         ).flatMap(x -> x);
     }
 

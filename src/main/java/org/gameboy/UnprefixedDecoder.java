@@ -80,8 +80,8 @@ public class UnprefixedDecoder implements Decoder {
                 case b011 -> RotateRight.rra();
                 case b100 -> DecimalAdjustAcumulator.daa();
                 case b101 -> Compliment.cpl();
-                case b110 -> UNIMPLEMENTED;
-                case b111 -> UNIMPLEMENTED;
+                case b110 -> SetCarryFlag.scf();
+                case b111 -> ComplimentCarryFlag.ccf();
             };
         };
     }

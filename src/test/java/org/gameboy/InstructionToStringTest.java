@@ -25,6 +25,6 @@ class InstructionToStringTest {
     @ParameterizedTest(name="{0}")
     @MethodSource("getAllUnprefixedInstructions")
     public void givenInstruction_thenToStringIsEqualToRepresentation(Instruction instruction) {
-        assertThat(instruction.toString()).isEqualTo(instruction.representation());
+        assertThat(instruction.toString()).withFailMessage("toString() not implemented for %s\n".formatted(instruction.getClass().getSimpleName())).isEqualTo(instruction.representation());
     }
 }
