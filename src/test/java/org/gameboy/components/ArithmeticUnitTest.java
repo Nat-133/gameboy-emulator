@@ -4,6 +4,7 @@ import org.gameboy.ArithmeticResult;
 import org.gameboy.Flag;
 import org.gameboy.FlagChangesetBuilder;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -145,7 +146,8 @@ class ArithmeticUnitTest {
                 Arguments.of((byte) 0xa5, (byte) 0x67, new Entry[]{unsetFlag(Z), setFlag(N), setFlag(H), unsetFlag(C)}),
                 Arguments.of((byte) 0xc1, (byte) 0x11, new Entry[]{unsetFlag(Z), setFlag(N), unsetFlag(H), unsetFlag(C)}),
                 Arguments.of((byte) 0x30, (byte) 0xa0, new Entry[]{unsetFlag(Z), setFlag(N), unsetFlag(H), setFlag(C)}),
-                Arguments.of((byte) 0x32, (byte) 0xab, new Entry[]{unsetFlag(Z), setFlag(N), setFlag(H), setFlag(C)})
+                Arguments.of((byte) 0x32, (byte) 0xab, new Entry[]{unsetFlag(Z), setFlag(N), setFlag(H), setFlag(C)}),
+                Arguments.of((byte) 0x55, (byte) 0x65, new Entry[]{unsetFlag(Z), setFlag(N), unsetFlag(H), setFlag(C)})
         );
     }
 
@@ -340,5 +342,30 @@ class ArithmeticUnitTest {
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
         assertThat(res.result()).isEqualTo((byte) expectedResult);
+    }
+
+    @Test
+    void givenSetCarryFlag_thenCorrectFlagsReturned() {
+        ArithmeticResult res = alu.set_carry_flag();
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .with(Flag.N, false)
+                .with(Flag.H, false)
+                .with(Flag.C, true)
+                .build();
+        assertFlagsMatch(expectedFlags, res.flagChanges());
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void givenComplimentCarryFlag_thenCorrectFlagsReturned(boolean carry_flag) {
+        ArithmeticResult res = alu.compliment_carry_flag(carry_flag);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .with(Flag.N, false)
+                .with(Flag.H, false)
+                .with(Flag.C, !carry_flag)
+                .build();
+        assertFlagsMatch(expectedFlags, res.flagChanges());
     }
 }
