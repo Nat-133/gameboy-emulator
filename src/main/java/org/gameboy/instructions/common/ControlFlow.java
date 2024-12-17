@@ -1,8 +1,8 @@
 package org.gameboy.instructions.common;
 
+import org.gameboy.ArithmeticResult;
 import org.gameboy.Flag;
 import org.gameboy.FlagChangesetBuilder;
-import org.gameboy.ArithmeticResult;
 import org.gameboy.components.CpuStructure;
 
 import java.util.Hashtable;
@@ -92,5 +92,40 @@ public class ControlFlow {
         cpuStructure.memory().write(nextAddress, msb);
 
         cpuStructure.clock().tickCpu();
+    }
+
+    public static void decrementSP(CpuStructure cpuStructure) {
+        cpuStructure.registers().setSP(cpuStructure.idu().decrement(cpuStructure.registers().SP()));
+    }
+
+    public static void incrementSP(CpuStructure cpuStructure) {
+        cpuStructure.registers().setSP(cpuStructure.idu().increment(cpuStructure.registers().SP()));
+    }
+
+    public static void pushToStack(CpuStructure cpuStructure, short value) {
+        decrementSP(cpuStructure);
+
+        cpuStructure.clock().tickCpu();
+
+        cpuStructure.memory().write(cpuStructure.registers().SP(), upper_byte(value));
+        decrementSP(cpuStructure);
+
+        cpuStructure.clock().tickCpu();
+
+        cpuStructure.memory().write(cpuStructure.registers().SP(), lower_byte(value));
+    }
+
+    public static short popFromStack(CpuStructure cpuStructure) {
+        byte lsb = cpuStructure.memory().read(cpuStructure.registers().SP());
+        incrementSP(cpuStructure);
+
+        cpuStructure.clock().tickCpu();
+
+        byte msb = cpuStructure.memory().read(cpuStructure.registers().SP());
+        incrementSP(cpuStructure);
+
+        cpuStructure.clock().tickCpu();
+
+        return concat(msb, lsb);
     }
 }

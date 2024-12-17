@@ -18,4 +18,8 @@ public class GameboyAssertions {
     public static void assertFlagsMatch(Hashtable<Flag, Boolean> expectedFlags, Hashtable<Flag, Boolean> actualFlags) {
         assertThat(actualFlags).isEqualTo(expectedFlags);
     }
+
+     public static <T extends Number> HexAssert<T> assertThatHex(T value) {
+        return new HexAssert<>(value);
+    }
 }

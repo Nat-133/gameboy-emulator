@@ -3,6 +3,9 @@ package org.gameboy;
 import org.gameboy.components.*;
 import org.gameboy.utils.BitUtilities;
 
+import static org.gameboy.utils.BitUtilities.lower_byte;
+import static org.gameboy.utils.BitUtilities.upper_byte;
+
 @SuppressWarnings("unused")
 public class CpuStructureBuilder {
     private short af;
@@ -121,6 +124,16 @@ public class CpuStructureBuilder {
         short val = (short) imm16;
         this.memory.write(this.pc, BitUtilities.lower_byte(val));
         this.memory.write((short) (this.pc+1), BitUtilities.upper_byte(val));
+        return this;
+    }
+
+    public CpuStructureBuilder withStack(int... stackValues) {
+        for (int i = 0; i < stackValues.length; i++) {
+            memory.write((short) (sp + i*2), lower_byte((short) stackValues[i]));
+
+            memory.write((short) (sp + i*2 + 1), upper_byte((short) stackValues[i]));
+        }
+
         return this;
     }
 

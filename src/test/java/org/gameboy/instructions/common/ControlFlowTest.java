@@ -2,7 +2,7 @@ package org.gameboy.instructions.common;
 
 import org.gameboy.CpuStructureBuilder;
 import org.gameboy.Flag;
-import org.gameboy.components.*;
+import org.gameboy.components.CpuStructure;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,7 +12,9 @@ import java.util.Hashtable;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.gameboy.GameboyAssertions.assertThatHex;
 import static org.gameboy.utils.BitUtilities.lower_byte;
+import static org.gameboy.utils.BitUtilities.upper_byte;
 
 class ControlFlowTest {
     @Test
@@ -85,5 +87,39 @@ class ControlFlowTest {
         expectedFlagChanges.forEach(
                 (flag, value) -> assertThat(cpuStructure.registers().getFlag(flag)).isEqualTo(value)
         );
+    }
+
+    @Test
+    void givenShort_whenPushToStack_thenStateIsCorrect() {
+        int sp = 0xff16;
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withSP(sp)
+                .build();
+
+        short value = (short) 0xabcd;
+        ControlFlow.pushToStack(cpuStructure, value);
+
+        assertThatHex(cpuStructure.memory().read((short) (sp - 1))).isEqualTo(upper_byte(value));
+        assertThatHex(cpuStructure.memory().read((short) (sp - 2))).isEqualTo(lower_byte(value));
+
+        assertThatHex(cpuStructure.registers().SP()).isEqualTo((short) (sp - 2));
+        assertThat(cpuStructure.clock().getTime()).isEqualTo(2);
+    }
+
+    @Test
+    void givenShort_whenPopFromStack_thenStateIsCorrect() {
+        int sp = 0xff16;
+        int expected = 0x1234;
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withSP(sp)
+                .withStack(expected)
+                .build();
+
+        short actual = ControlFlow.popFromStack(cpuStructure);
+
+        assertThatHex(actual).isEqualTo((short) expected);
+
+        assertThatHex(cpuStructure.registers().SP()).isEqualTo((short) (sp + 2));
+        assertThat(cpuStructure.clock().getTime()).isEqualTo(2);
     }
 }
