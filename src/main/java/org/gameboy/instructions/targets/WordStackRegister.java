@@ -3,7 +3,7 @@ package org.gameboy.instructions.targets;
 import org.gameboy.utils.MultiBitValue;
 
 public enum WordStackRegister {
-    // sck16
+    // stk16
     BC,
     DE,
     HL,

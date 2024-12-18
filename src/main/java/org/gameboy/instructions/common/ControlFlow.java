@@ -113,6 +113,8 @@ public class ControlFlow {
         cpuStructure.clock().tickCpu();
 
         cpuStructure.memory().write(cpuStructure.registers().SP(), lower_byte(value));
+
+        cpuStructure.clock().tickCpu();
     }
 
     public static short popFromStack(CpuStructure cpuStructure) {

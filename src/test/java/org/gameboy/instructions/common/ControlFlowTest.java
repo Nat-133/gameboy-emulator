@@ -103,7 +103,7 @@ class ControlFlowTest {
         assertThatHex(cpuStructure.memory().read((short) (sp - 2))).isEqualTo(lower_byte(value));
 
         assertThatHex(cpuStructure.registers().SP()).isEqualTo((short) (sp - 2));
-        assertThat(cpuStructure.clock().getTime()).isEqualTo(2);
+        assertThat(cpuStructure.clock().getTime()).isEqualTo(3);
     }
 
     @Test

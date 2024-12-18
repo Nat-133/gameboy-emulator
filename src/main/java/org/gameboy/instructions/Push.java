@@ -1,35 +1,33 @@
 package org.gameboy.instructions;
 
 import org.gameboy.components.CpuStructure;
+import org.gameboy.instructions.common.ControlFlow;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.WordStackRegister;
 
-import static org.gameboy.instructions.common.ControlFlow.popFromStack;
-
-public class Pop implements Instruction {
+public class Push implements Instruction {
     private final GenericOperationTarget target;
 
-    private Pop(GenericOperationTarget target) {
+    private Push(GenericOperationTarget target) {
         this.target = target;
     }
 
-    public static Pop pop_stk16(WordStackRegister stk16) {
-        return new Pop(stk16.convert());
+    public static Push push_stk16(WordStackRegister rr) {
+        return new Push(rr.convert());
     }
 
     @Override
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
-        short value = popFromStack(cpuStructure);
-
-        accessor.setValue(target, value);
+        short value = accessor.getValue(target);
+        ControlFlow.pushToStack(cpuStructure, value);
     }
 
     @Override
     public String representation() {
-        return "POP " + target.representation();
+        return "PUSH " + target.representation();
     }
 
     @Override

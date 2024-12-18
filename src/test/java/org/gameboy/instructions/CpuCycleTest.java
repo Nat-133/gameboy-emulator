@@ -108,7 +108,9 @@ public class CpuCycleTest {
 
                 generateTestCase(ComplimentCarryFlag::ccf, 1),
 
-                generateTestCases(Pop::pop_rr, WORD_STACK_REGISTERS, 3)
+                generateTestCases(Pop::pop_stk16, WORD_STACK_REGISTERS, 3),
+
+                generateTestCases(Push::push_stk16, WORD_STACK_REGISTERS, 4)
         ).flatMap(x -> x);
     }
 
