@@ -1,10 +1,7 @@
 package org.gameboy;
 
 import org.gameboy.instructions.*;
-import org.gameboy.instructions.targets.ByteRegister;
-import org.gameboy.instructions.targets.Condition;
-import org.gameboy.instructions.targets.WordGeneralRegister;
-import org.gameboy.instructions.targets.WordMemoryRegister;
+import org.gameboy.instructions.targets.*;
 import org.gameboy.utils.MultiBitValue.OneBitValue;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
@@ -123,7 +120,7 @@ public class UnprefixedDecoder implements Decoder {
             case b001 -> {
                 OneBitValue q = OneBitValue.from(y, 0);
                 yield switch(q) {
-                    case b0 -> UNIMPLEMENTED;
+                    case b0 -> Pop.pop_rr(WordStackRegister.lookup(TwoBitValue.from(y, 1)));
                     case b1 -> switch(TwoBitValue.from(y, 1)) {
                         case b00 -> UNIMPLEMENTED;
                         case b01 -> UNIMPLEMENTED;

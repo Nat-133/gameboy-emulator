@@ -2,10 +2,7 @@ package org.gameboy.instructions;
 
 import org.gameboy.*;
 import org.gameboy.components.CpuStructure;
-import org.gameboy.instructions.targets.ByteRegister;
-import org.gameboy.instructions.targets.Condition;
-import org.gameboy.instructions.targets.WordGeneralRegister;
-import org.gameboy.instructions.targets.WordMemoryRegister;
+import org.gameboy.instructions.targets.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -33,6 +30,7 @@ public class CpuCycleTest {
 
     private static final List<WordGeneralRegister> WORD_GENERAL_REGISTERS = List.of(WordGeneralRegister.values());
     private static final List<WordMemoryRegister> WORD_MEMORY_REGISTERS = List.of(WordMemoryRegister.values());
+    private static final List<WordStackRegister> WORD_STACK_REGISTERS = List.of(WordStackRegister.values());
     private static final List<Condition> CONDITIONS = List.of(Condition.values());
 
     static Stream<Arguments> getInstructionExpectations() {
@@ -108,7 +106,9 @@ public class CpuCycleTest {
 
                 generateTestCase(SetCarryFlag::scf, 1),
 
-                generateTestCase(ComplimentCarryFlag::ccf, 1)
+                generateTestCase(ComplimentCarryFlag::ccf, 1),
+
+                generateTestCases(Pop::pop_rr, WORD_STACK_REGISTERS, 3)
         ).flatMap(x -> x);
     }
 
