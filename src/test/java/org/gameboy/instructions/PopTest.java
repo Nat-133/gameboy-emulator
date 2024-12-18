@@ -22,7 +22,7 @@ class PopTest {
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
-        Pop.pop_rr(destination).execute(cpuStructure);
+        Pop.pop_stk16(destination).execute(cpuStructure);
 
         short actual = accessor.getValue(destination.convert());
 

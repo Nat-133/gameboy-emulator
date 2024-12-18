@@ -106,6 +106,7 @@ public class UnprefixedDecoder implements Decoder {
     }
 
     private Instruction decodeBlock3(ThreeBitValue y, ThreeBitValue z) {
+        OneBitValue q = OneBitValue.from(y, 0);
         return switch (z) {
             case b000 -> switch(y) {
                 case b000 -> UNIMPLEMENTED;
@@ -117,18 +118,15 @@ public class UnprefixedDecoder implements Decoder {
                 case b110 -> LoadHigher.ldh_A_imm8();
                 case b111 -> Load.ld_HL_SP_OFFSET();
             };
-            case b001 -> {
-                OneBitValue q = OneBitValue.from(y, 0);
-                yield switch(q) {
-                    case b0 -> Pop.pop_rr(WordStackRegister.lookup(TwoBitValue.from(y, 1)));
-                    case b1 -> switch(TwoBitValue.from(y, 1)) {
-                        case b00 -> UNIMPLEMENTED;
-                        case b01 -> UNIMPLEMENTED;
-                        case b10 -> Jump.jp_HL();
-                        case b11 -> Load.load_SP_HL();
-                    };
+            case b001 -> switch(q) {
+                case b0 -> Pop.pop_stk16(WordStackRegister.lookup(TwoBitValue.from(y, 1)));
+                case b1 -> switch(TwoBitValue.from(y, 1)) {
+                    case b00 -> UNIMPLEMENTED;
+                    case b01 -> UNIMPLEMENTED;
+                    case b10 -> Jump.jp_HL();
+                    case b11 -> Load.load_SP_HL();
                 };
-            }
+            };
             case b010 -> switch (y) {
                 case b000, b001, b010, b011 -> Jump.jp_cc_nn(Condition.lookup(TwoBitValue.from(y, 0)));
                 case b100 -> Load.ld_indirectC_A();
@@ -147,7 +145,10 @@ public class UnprefixedDecoder implements Decoder {
                 case b111 -> UNIMPLEMENTED;
             };
             case b100 -> UNIMPLEMENTED;
-            case b101 -> UNIMPLEMENTED;
+            case b101 -> switch(q) {
+                case b0 -> Push.push_stk16(WordStackRegister.lookup(TwoBitValue.from(y, 1)));
+                case b1 -> UNIMPLEMENTED;
+            };
             case b110 -> switch(y) {
                 case b000 -> Add.add_a_imm8();
                 case b001 -> AddWithCarry.adc_a_imm8();
