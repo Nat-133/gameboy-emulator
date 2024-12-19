@@ -3,7 +3,9 @@ package org.gameboy.instructions.common;
 import org.gameboy.ArithmeticResult;
 import org.gameboy.Flag;
 import org.gameboy.FlagChangesetBuilder;
+import org.gameboy.components.CpuRegisters;
 import org.gameboy.components.CpuStructure;
+import org.gameboy.instructions.targets.Condition;
 
 import java.util.Hashtable;
 
@@ -129,5 +131,15 @@ public class ControlFlow {
         cpuStructure.clock().tickCpu();
 
         return concat(msb, lsb);
+    }
+
+    public static boolean evaluateCondition(Condition condition, CpuRegisters registers) {
+        return switch(condition) {
+            case null -> true;
+            case NZ -> !registers.getFlag(Flag.Z);
+            case Z -> registers.getFlag(Flag.Z);
+            case NC -> !registers.getFlag(Flag.C);
+            case C -> registers.getFlag(Flag.C);
+        };
     }
 }
