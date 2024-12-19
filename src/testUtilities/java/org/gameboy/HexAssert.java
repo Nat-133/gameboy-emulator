@@ -14,7 +14,7 @@ public class HexAssert<T extends Number> {
 
     public void isEqualTo(Number expected) {
         assertion
-                .withFailMessage("expecting:\n0x%x\n to be equal to:\n%x\nbut was not.".formatted(actual, expected))
+                .withFailMessage("expecting:\n0x%x\n to be equal to:\n0x%x\nbut was not.".formatted(actual, expected))
                 .isEqualTo(expected);
     }
 }
