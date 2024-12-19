@@ -1,13 +1,13 @@
 package org.gameboy.instructions;
 
-import org.gameboy.Flag;
-import org.gameboy.components.CpuRegisters;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.ControlFlow;
 import org.gameboy.instructions.targets.Condition;
 import org.gameboy.instructions.targets.GenericOperationTarget;
 import org.gameboy.instructions.targets.OperationTarget;
 import org.gameboy.utils.BitUtilities;
+
+import static org.gameboy.instructions.common.ControlFlow.evaluateCondition;
 
 public class Jump implements Instruction{
     private final Condition cc;
@@ -67,15 +67,5 @@ public class Jump implements Instruction{
             cpuStructure.registers().setPC(imm16);
             cpuStructure.clock().tickCpu();
         }
-    }
-
-    private boolean evaluateCondition(Condition condition, CpuRegisters registers) {
-        return switch(condition) {
-            case null -> true;
-            case NZ -> !registers.getFlag(Flag.Z);
-            case Z -> registers.getFlag(Flag.Z);
-            case NC -> !registers.getFlag(Flag.C);
-            case C -> registers.getFlag(Flag.C);
-        };
     }
 }
