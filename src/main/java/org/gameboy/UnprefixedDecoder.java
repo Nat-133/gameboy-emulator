@@ -144,10 +144,21 @@ public class UnprefixedDecoder implements Decoder {
                 case b110 -> UNIMPLEMENTED;
                 case b111 -> UNIMPLEMENTED;
             };
-            case b100 -> UNIMPLEMENTED;
+            case b100 -> switch(y) {
+                case b000, b001, b010, b011 -> Call.call_cc(Condition.lookup(TwoBitValue.from(y, 0)));
+                case b100 -> UNIMPLEMENTED;
+                case b101 -> UNIMPLEMENTED;
+                case b110 -> UNIMPLEMENTED;
+                case b111 -> UNIMPLEMENTED;
+            };
             case b101 -> switch(q) {
                 case b0 -> Push.push_stk16(WordStackRegister.lookup(TwoBitValue.from(y, 1)));
-                case b1 -> UNIMPLEMENTED;
+                case b1 -> switch(TwoBitValue.from(y, 1)) {
+                    case b00 -> Call.call();
+                    case b01 -> UNIMPLEMENTED;
+                    case b10 -> UNIMPLEMENTED;
+                    case b11 -> UNIMPLEMENTED;
+                };
             };
             case b110 -> switch(y) {
                 case b000 -> Add.add_a_imm8();

@@ -114,8 +114,10 @@ public class CpuCycleTest {
                 generateTestCases(Push::push_stk16, WORD_STACK_REGISTERS, 4),
 
                 generateTestCase(Return::ret, 4),
+                generateConditionalTestCases(ConditionalReturn::ret_cc, 5, 2),
 
-                generateConditionalTestCases(ConditionalReturn::ret_cc, 5, 2)
+                generateTestCase(Call::call, 6),
+                generateConditionalTestCases(Call::call_cc, 6, 3)
         ).flatMap(x -> x);
     }
 
