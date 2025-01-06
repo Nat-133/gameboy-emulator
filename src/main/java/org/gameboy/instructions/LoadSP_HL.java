@@ -30,7 +30,7 @@ public class LoadSP_HL implements Load {
 
         registers.setHL(idu.passthrough(registers.SP()));
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
     }
 
     @Override

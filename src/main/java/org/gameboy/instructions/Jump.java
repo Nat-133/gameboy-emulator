@@ -65,7 +65,7 @@ public class Jump implements Instruction{
 
         if (doJump) {
             cpuStructure.registers().setPC(imm16);
-            cpuStructure.clock().tickCpu();
+            cpuStructure.clock().tick();
         }
     }
 }

@@ -88,7 +88,7 @@ public class Add implements Instruction {
         );
         operationTargetAccessor.setValue(this.left, result);
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
 
         byte a_msb = upper_byte(a);
         byte b_msb = upper_byte(b);

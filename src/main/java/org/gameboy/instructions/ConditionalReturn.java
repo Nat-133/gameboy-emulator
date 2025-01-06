@@ -18,12 +18,12 @@ public class ConditionalReturn implements Instruction {
     @Override
     public void execute(CpuStructure cpuStructure) {
         boolean shouldReturn = ControlFlow.evaluateCondition(condition, cpuStructure.registers());
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
 
         if (shouldReturn) {
             short value = ControlFlow.popFromStack(cpuStructure);
             cpuStructure.registers().setPC(value);
-            cpuStructure.clock().tickCpu();
+            cpuStructure.clock().tick();
         }
     }
 

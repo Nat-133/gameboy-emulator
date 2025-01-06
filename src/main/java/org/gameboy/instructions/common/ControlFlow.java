@@ -27,7 +27,7 @@ public class ControlFlow {
         boolean carry = res.flagChanges().getOrDefault(Flag.C, false);
         boolean negativeOffset = bit(signedByte, 7);
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
 
         if (carry && !negativeOffset) {
             msb = cpuStructure.alu().inc(msb).result();
@@ -36,7 +36,7 @@ public class ControlFlow {
             msb = cpuStructure.alu().dec(msb).result();
         }
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
 
         return concat(msb, lsb);
     }
@@ -59,7 +59,7 @@ public class ControlFlow {
             msb = (byte) cpuStructure.idu().decrement(msb);
         }
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
 
         return concat(msb, lsb);
     }
@@ -71,7 +71,7 @@ public class ControlFlow {
     public static byte readImm8(CpuStructure cpuStructure) {
         byte value = cpuStructure.memory().read(cpuStructure.registers().PC());
         incrementPC(cpuStructure);
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
         return value;
     }
 
@@ -89,11 +89,11 @@ public class ControlFlow {
 
         cpuStructure.memory().write(address, lsb);
         short nextAddress = cpuStructure.idu().increment(address);
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
 
         cpuStructure.memory().write(nextAddress, msb);
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
     }
 
     public static void decrementSP(CpuStructure cpuStructure) {
@@ -107,28 +107,28 @@ public class ControlFlow {
     public static void pushToStack(CpuStructure cpuStructure, short value) {
         decrementSP(cpuStructure);
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
 
         cpuStructure.memory().write(cpuStructure.registers().SP(), upper_byte(value));
         decrementSP(cpuStructure);
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
 
         cpuStructure.memory().write(cpuStructure.registers().SP(), lower_byte(value));
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
     }
 
     public static short popFromStack(CpuStructure cpuStructure) {
         byte lsb = cpuStructure.memory().read(cpuStructure.registers().SP());
         incrementSP(cpuStructure);
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
 
         byte msb = cpuStructure.memory().read(cpuStructure.registers().SP());
         incrementSP(cpuStructure);
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
 
         return concat(msb, lsb);
     }
