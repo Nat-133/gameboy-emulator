@@ -83,7 +83,7 @@ public class OperationTargetAccessor {
         }
         byte read = memory.read(directValue);
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
 
         return read;
     }
@@ -119,6 +119,6 @@ public class OperationTargetAccessor {
 
         memory.write(directValue, (byte) value);
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
     }
 }

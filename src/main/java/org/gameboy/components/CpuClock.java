@@ -7,7 +7,7 @@ public class CpuClock {
         this.time = 0;
     }
 
-    public void tickCpu() {
+    public void tick() {
         this.time++;
     }
 

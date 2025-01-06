@@ -2,8 +2,6 @@ package org.gameboy;
 
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.Instruction;
-import org.gameboy.instructions.Load;
-import org.gameboy.instructions.targets.ByteRegister;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -39,6 +37,6 @@ public class Cpu {
 
         fetch();
 
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
     }
 }

@@ -20,7 +20,7 @@ public class Return implements Instruction {
     public void execute(CpuStructure cpuStructure) {
         short value = ControlFlow.popFromStack(cpuStructure);
         cpuStructure.registers().setPC(value);
-        cpuStructure.clock().tickCpu();
+        cpuStructure.clock().tick();
     }
 
     @Override

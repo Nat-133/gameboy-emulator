@@ -2,7 +2,7 @@ package org.gameboy.components;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CpuClockTest {
     @Test
@@ -10,7 +10,7 @@ class CpuClockTest {
         CpuClock clock = new CpuClock();
         long initialTime = clock.getTime();
 
-        clock.tickCpu();
+        clock.tick();
 
         long updatedTime = clock.getTime();
         assertEquals(initialTime + 1, updatedTime);
