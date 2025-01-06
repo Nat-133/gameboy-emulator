@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.gameboy.TestUtils.getConditionFlags;
 
 @SuppressWarnings("SameParameterValue")
 public class CpuCycleTest {
@@ -110,7 +111,11 @@ public class CpuCycleTest {
 
                 generateTestCases(Pop::pop_stk16, WORD_STACK_REGISTERS, 3),
 
-                generateTestCases(Push::push_stk16, WORD_STACK_REGISTERS, 4)
+                generateTestCases(Push::push_stk16, WORD_STACK_REGISTERS, 4),
+
+                generateTestCase(Return::ret, 4),
+
+                generateConditionalTestCases(ConditionalReturn::ret_cc, 5, 2)
         ).flatMap(x -> x);
     }
 
@@ -169,24 +174,6 @@ public class CpuCycleTest {
                 Arguments.of(constructor.apply(condition), expectedCyclesWithoutCondition, getConditionFlags(condition, false))
         );
     }
-
-    private static Flag[] getConditionFlags(Condition condition, boolean pass) {
-        boolean invert = switch (condition) {
-            case NZ, NC -> pass;
-            case Z, C -> !pass;
-        };
-        Flag conditionFlag = switch (condition) {
-            case NZ, Z -> Flag.Z;
-            case NC, C -> Flag.C;
-        };
-
-        return invert
-                ? Arrays.stream(Flag.values())
-                .filter(f -> f != conditionFlag)
-                .toArray(Flag[]::new)
-                : new Flag[]{conditionFlag};
-    }
-
 
     static Stream<Arguments> generateR8TestCases(Function<ByteRegister, Instruction> constructor, int expectedCyclesNoMemoryLoad) {
         return Stream.of(
