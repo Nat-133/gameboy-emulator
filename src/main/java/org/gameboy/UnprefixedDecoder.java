@@ -109,10 +109,10 @@ public class UnprefixedDecoder implements Decoder {
         OneBitValue q = OneBitValue.from(y, 0);
         return switch (z) {
             case b000 -> switch(y) {
-                case b000 -> UNIMPLEMENTED;
-                case b001 -> UNIMPLEMENTED;
-                case b010 -> UNIMPLEMENTED;
-                case b011 -> UNIMPLEMENTED;
+                case b000,
+                     b001,
+                     b010,
+                     b011 -> ConditionalReturn.ret_cc(Condition.lookup(TwoBitValue.from(y, 0)));
                 case b100 -> LoadHigher.ldh_imm8_A();
                 case b101 -> Add.add_sp_e8();
                 case b110 -> LoadHigher.ldh_A_imm8();
@@ -121,7 +121,7 @@ public class UnprefixedDecoder implements Decoder {
             case b001 -> switch(q) {
                 case b0 -> Pop.pop_stk16(WordStackRegister.lookup(TwoBitValue.from(y, 1)));
                 case b1 -> switch(TwoBitValue.from(y, 1)) {
-                    case b00 -> UNIMPLEMENTED;
+                    case b00 -> Return.ret();
                     case b01 -> UNIMPLEMENTED;
                     case b10 -> Jump.jp_HL();
                     case b11 -> Load.load_SP_HL();
