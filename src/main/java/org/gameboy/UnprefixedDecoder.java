@@ -170,7 +170,16 @@ public class UnprefixedDecoder implements Decoder {
                 case b110 -> Or.or_imm8();
                 case b111 -> Compare.cp_imm8();
             };
-            case b111 -> UNIMPLEMENTED;
+            case b111 -> switch(y) {
+                case b000 -> Restart.rst_00H();
+                case b001 -> Restart.rst_08H();
+                case b010 -> Restart.rst_10H();
+                case b011 -> Restart.rst_18H();
+                case b100 -> Restart.rst_20H();
+                case b101 -> Restart.rst_28H();
+                case b110 -> Restart.rst_30H();
+                case b111 -> Restart.rst_38H();
+            };
         };
     }
 }
