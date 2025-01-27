@@ -122,7 +122,10 @@ public class CpuCycleTest {
                 generateTestCase(Restart::rst_08H, 4),
                 generateTestCase(Restart::rst_18H, 4),
                 generateTestCase(Restart::rst_28H, 4),
-                generateTestCase(Restart::rst_38H, 4)
+                generateTestCase(Restart::rst_38H, 4),
+
+                generateTestCase(EnableInterrupts::ei, 1),
+                generateTestCase(DisableInterrupts::di, 1)
         ).flatMap(x -> x);
     }
 

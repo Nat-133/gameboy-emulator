@@ -17,6 +17,7 @@ public class CpuRegisters {
     private short pc;
 
     private byte instructionRegister;
+    private boolean ime;
 
     public CpuRegisters(
             short af,
@@ -25,7 +26,8 @@ public class CpuRegisters {
             short hl,
             short sp,
             short pc,
-            byte instructionRegister) {
+            byte instructionRegister,
+            boolean ime) {
         this.af = af;
         this.bc = bc;
         this.de = de;
@@ -34,6 +36,7 @@ public class CpuRegisters {
         this.pc = pc;
 
         this.instructionRegister = instructionRegister;
+        this.ime = ime;
     }
 
     public short BC() {
@@ -145,6 +148,14 @@ public class CpuRegisters {
     public void setL(byte value) {
         hl = (short) (hl & 0xFF00);
         hl = (short) (hl | value);
+    }
+
+    public void setIME(boolean value) {
+        ime = value;
+    }
+
+    public boolean getIME() {
+        return ime;
     }
 
     public void setFlag(Flag flag, boolean value) {

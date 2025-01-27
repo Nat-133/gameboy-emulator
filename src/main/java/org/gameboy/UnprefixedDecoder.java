@@ -141,8 +141,8 @@ public class UnprefixedDecoder implements Decoder {
                 case b011 -> UNIMPLEMENTED;
                 case b100 -> UNIMPLEMENTED;
                 case b101 -> UNIMPLEMENTED;
-                case b110 -> UNIMPLEMENTED;
-                case b111 -> UNIMPLEMENTED;
+                case b110 -> DisableInterrupts.di();
+                case b111 -> EnableInterrupts.ei();
             };
             case b100 -> switch(y) {
                 case b000, b001, b010, b011 -> Call.call_cc(Condition.lookup(TwoBitValue.from(y, 0)));
