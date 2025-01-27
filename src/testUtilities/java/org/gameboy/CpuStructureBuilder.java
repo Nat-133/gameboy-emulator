@@ -15,6 +15,7 @@ public class CpuStructureBuilder {
     private short sp;
     private short pc;
     private byte instructionRegister;
+    private boolean ime;
 
     private final Memory memory;
 
@@ -105,6 +106,11 @@ public class CpuStructureBuilder {
         return this;
     }
 
+    public CpuStructureBuilder withIME(boolean ime) {
+        this.ime = ime;
+        return this;
+    }
+
     public CpuStructureBuilder withAllRegistersSet(int value) {
         return this.withAF(value)
                 .withBC(value)
@@ -181,7 +187,7 @@ public class CpuStructureBuilder {
 
     public CpuStructure build() {
         return new CpuStructure(
-                new CpuRegisters(af, bc, de, hl, sp, pc, instructionRegister),
+                new CpuRegisters(af, bc, de, hl, sp, pc, instructionRegister, ime),
                 memory,
                 new ArithmeticUnit(),
                 new IncrementDecrementUnit(),

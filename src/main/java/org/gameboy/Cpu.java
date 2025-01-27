@@ -35,8 +35,12 @@ public class Cpu {
     private void execute(Instruction instruction) {
         instruction.execute(cpuStructure);
 
-        fetch();
+        if (!instruction.handlesFetch()) {
+            fetch();
 
-        cpuStructure.clock().tick();
+            instruction.postFetch(cpuStructure);
+
+            cpuStructure.clock().tick();
+        }
     }
 }
