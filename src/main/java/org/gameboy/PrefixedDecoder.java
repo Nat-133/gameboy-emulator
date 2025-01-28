@@ -11,6 +11,6 @@ public class PrefixedDecoder implements Decoder {
         int y = (uint(opcode) >> 3) & 0b00000111;
         int z = uint(opcode) & 0b00000111;
 
-        return Nop.NOP();
+        return Nop.nop();
     }
 }
