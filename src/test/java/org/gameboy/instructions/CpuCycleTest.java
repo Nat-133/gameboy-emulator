@@ -125,7 +125,9 @@ public class CpuCycleTest {
                 generateTestCase(Restart::rst_38H, 4),
 
                 generateTestCase(EnableInterrupts::ei, 1),
-                generateTestCase(DisableInterrupts::di, 1)
+                generateTestCase(DisableInterrupts::di, 1),
+
+                generateTestCase(ReturnFromInterruptHandler::reti, 4)
         ).flatMap(x -> x);
     }
 
