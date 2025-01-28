@@ -44,7 +44,6 @@ class UnprefixedDecoderTest {
             }
 
             jsonString = byteArrayOutputStream.toString();
-
         }
 
         opcodeJson = new GsonBuilder().create().fromJson(jsonString, OpcodeJson.class);
