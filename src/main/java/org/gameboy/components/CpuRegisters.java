@@ -154,7 +154,7 @@ public class CpuRegisters {
         ime = value;
     }
 
-    public boolean getIME() {
+    public boolean IME() {
         return ime;
     }
 

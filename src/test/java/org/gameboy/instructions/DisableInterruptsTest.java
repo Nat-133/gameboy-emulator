@@ -22,6 +22,6 @@ class DisableInterruptsTest {
 
         assertThatHex(cpuStructure.registers().PC()).isEqualTo((short) (pc + 1));
         assertThatHex(cpuStructure.registers().instructionRegister()).isEqualTo((byte) imm8);
-        assertThat(cpuStructure.registers().getIME()).isFalse();
+        assertThat(cpuStructure.registers().IME()).isFalse();
     }
 }

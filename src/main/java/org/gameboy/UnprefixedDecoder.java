@@ -122,7 +122,7 @@ public class UnprefixedDecoder implements Decoder {
                 case b0 -> Pop.pop_stk16(WordStackRegister.lookup(TwoBitValue.from(y, 1)));
                 case b1 -> switch(TwoBitValue.from(y, 1)) {
                     case b00 -> Return.ret();
-                    case b01 -> UNIMPLEMENTED;
+                    case b01 -> ReturnFromInterruptHandler.reti();
                     case b10 -> Jump.jp_HL();
                     case b11 -> Load.load_SP_HL();
                 };
