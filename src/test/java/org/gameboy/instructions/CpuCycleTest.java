@@ -36,6 +36,8 @@ public class CpuCycleTest {
 
     static Stream<Arguments> getInstructionExpectations() {
         return Stream.of(
+                generateTestCase(Nop::nop, 1),
+
                 generateR8TestCases(And::and_r8, 1),
                 generateTestCase(And::and_imm8, 2),
 
@@ -77,7 +79,7 @@ public class CpuCycleTest {
 
                 generateTestCase(Halt::HALT, 1),
 
-                generateTestCase(Nop::NOP, 1),
+                generateTestCase(Nop::nop, 1),
 
                 generateR8TestCases(Compare::cp_r8, 1),
                 generateTestCase(Compare::cp_imm8, 2),

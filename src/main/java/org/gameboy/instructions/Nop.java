@@ -7,7 +7,7 @@ public class Nop implements Instruction {
 
     private Nop() {}
 
-    public static Nop NOP() {
+    public static Nop nop() {
         return NOP;
     }
 
@@ -18,5 +18,10 @@ public class Nop implements Instruction {
     @Override
     public void execute(CpuStructure cpuStructure) {
 
+    }
+
+    @Override
+    public String toString() {
+        return representation();
     }
 }
