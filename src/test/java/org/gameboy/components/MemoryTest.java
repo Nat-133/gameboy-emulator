@@ -2,12 +2,12 @@ package org.gameboy.components;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MemoryTest {
     @Test
     public void givenMemorySave_whenMemoryLoad_thenCorrect() {
-        Memory memory = new Memory();
+        Memory memory = new BasicMemory();
         for (int i = 0x0000; i < 0xFFFF; i++) {
             memory.write((short) i, (byte) i);
         }
