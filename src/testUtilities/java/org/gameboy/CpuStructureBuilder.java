@@ -28,7 +28,7 @@ public class CpuStructureBuilder {
         this.pc = 0x0000;
         this.instructionRegister = 0x00;
 
-        this.memory = new Memory();
+        this.memory = new BasicMemory();
     }
 
     public CpuStructureBuilder withAF(int af) {
