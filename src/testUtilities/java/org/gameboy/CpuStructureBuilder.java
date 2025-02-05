@@ -18,6 +18,7 @@ public class CpuStructureBuilder {
     private boolean ime;
 
     private final Memory memory;
+    private Decoder decoder;
 
     public CpuStructureBuilder() {
         this.af = 0x0000;
@@ -29,6 +30,8 @@ public class CpuStructureBuilder {
         this.instructionRegister = 0x00;
 
         this.memory = new BasicMemory();
+
+        this.decoder = new UnprefixedDecoder();
     }
 
     public CpuStructureBuilder withAF(int af) {
@@ -189,6 +192,11 @@ public class CpuStructureBuilder {
         return this;
     }
 
+    public CpuStructureBuilder withDecoder(Decoder decoder) {
+        this.decoder = decoder;
+        return this;
+    }
+
     public CpuStructure build() {
         return new CpuStructure(
                 new CpuRegisters(af, bc, de, hl, sp, pc, instructionRegister, ime),
@@ -196,7 +204,8 @@ public class CpuStructureBuilder {
                 new ArithmeticUnit(),
                 new IncrementDecrementUnit(),
                 new CpuClock(),
-                new InterruptBus(memory)
+                new InterruptBus(memory),
+                decoder
         );
     }
 }

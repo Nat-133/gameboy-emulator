@@ -1,6 +1,9 @@
 package org.gameboy.instructions;
 
-import org.gameboy.*;
+import org.gameboy.Cpu;
+import org.gameboy.CpuStructureBuilder;
+import org.gameboy.Flag;
+import org.gameboy.FlagChangesetBuilder;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
@@ -14,6 +17,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertFlagsMatch;
+import static org.gameboy.TestDecoderFactory.testDecoder;
 
 class AndTest {
     static Stream<Arguments> getR8ValuePairs() {
@@ -67,9 +71,9 @@ class AndTest {
     @MethodSource("getR8ValuePairs")
     void givenByteRegister_whenAnd_thenClockIsCorrect(int ignored1, ByteRegister r8, int ignored2) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withDecoder(testDecoder(And.and_r8(r8)))
                 .build();
-        Decoder testDecoder = TestDecoderFactory.testDecoder(And.and_r8(r8));
-        Cpu cpu = new Cpu(cpuStructure, testDecoder, testDecoder);
+        Cpu cpu = new Cpu(cpuStructure);
 
         cpu.cycle();
 
@@ -79,9 +83,9 @@ class AndTest {
     @Test
     void givenCpu_whenAndHl_thenClockIsCorrect() {
         CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withDecoder(testDecoder(And.and_r8(ByteRegister.INDIRECT_HL)))
                 .build();
-        Decoder testDecoder = TestDecoderFactory.testDecoder(And.and_r8(ByteRegister.INDIRECT_HL));
-        Cpu cpu = new Cpu(cpuStructure, testDecoder, testDecoder);
+        Cpu cpu = new Cpu(cpuStructure);
 
         cpu.cycle();
 
@@ -91,9 +95,9 @@ class AndTest {
     @Test
     void givenCpu_whenAndImm8_thenClockIsCorrect() {
         CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withDecoder(testDecoder(And.and_imm8()))
                 .build();
-        Decoder testDecoder = TestDecoderFactory.testDecoder(And.and_imm8());
-        Cpu cpu = new Cpu(cpuStructure, testDecoder, testDecoder);
+        Cpu cpu = new Cpu(cpuStructure);
 
         cpu.cycle();
 
