@@ -1,6 +1,8 @@
 package org.gameboy.instructions;
 
-import org.gameboy.*;
+import org.gameboy.Cpu;
+import org.gameboy.CpuStructureBuilder;
+import org.gameboy.Flag;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.targets.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.gameboy.TestDecoderFactory.testDecoder;
 import static org.gameboy.TestUtils.getConditionFlags;
 
 @SuppressWarnings("SameParameterValue")
@@ -138,9 +141,9 @@ public class CpuCycleTest {
     void givenInstruction_whenRunOnCpu_thenClockCorrect(Instruction instruction, int expectedCycles, Flag... setFlags) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(setFlags)
+                .withDecoder(testDecoder(instruction))
                 .build();
-        Decoder testDecoder = TestDecoderFactory.testDecoder(instruction);
-        Cpu cpu = new Cpu(cpuStructure, testDecoder, testDecoder);
+        Cpu cpu = new Cpu(cpuStructure);
 
         cpu.cycle();
 

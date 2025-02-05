@@ -80,14 +80,14 @@ class HardwareInterruptTest {
     @Test
     void givenInterruptSent_whenHandleInterrupt_thenFiveCyclesUsed() {
         CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withDecoder(ignored -> Nop.nop())
                 .withIME(true)
                 .withMemory(IE_ADDRESS, 0xff)
                 .withMemory(IF_ADDRESS, 0xff)
                 .build();
         long initialTime = cpuStructure.clock().getTime();
 
-        Cpu cpu = new Cpu(cpuStructure, opcode -> Nop.nop(), opcode -> Nop.nop());
-        cpu.cycle();
+        new Cpu(cpuStructure).cycle();
 
         // nop + 5 for interrupt handler
         assertThatHex(cpuStructure.clock().getTime()).isEqualTo(initialTime + 6);

@@ -2,7 +2,6 @@ package org.gameboy.functional;
 
 import org.gameboy.Cpu;
 import org.gameboy.CpuStructureBuilder;
-import org.gameboy.UnprefixedDecoder;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.targets.Interrupt;
 import org.gameboy.utils.BitUtilities;
@@ -27,7 +26,7 @@ public class InterruptTests {
                 .withMemory(JOYPAD_HANDLER_ADDRESS, RETI_OPCODE)
                 .withMemory(IE_ADDRESS, 0xff)
                 .build();
-        Cpu cpu = new Cpu(cpuStructure, new UnprefixedDecoder(), new UnprefixedDecoder());
+        Cpu cpu = new Cpu(cpuStructure);
         long initialTime = cpuStructure.clock().getTime();
 
         cpu.cycle();  // NOP ==> pc_1 <- pc_0 + 1

@@ -5,19 +5,11 @@ import org.gameboy.instructions.HardwareInterrupt;
 import org.gameboy.instructions.Instruction;
 import org.gameboy.instructions.targets.Interrupt;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 public class Cpu {
-    private final Decoder unprefixedDecoder;
-    private final Decoder prefixedDecoder;
-    private final AtomicReference<Decoder> activeDecoder;
     private final CpuStructure cpuStructure;
 
-    public Cpu(CpuStructure cpuStructure, Decoder unprefixedDecoder, Decoder prefixedDecoder) {
+    public Cpu(CpuStructure cpuStructure) {
         this.cpuStructure = cpuStructure;
-        this.unprefixedDecoder = unprefixedDecoder;
-        this.prefixedDecoder = prefixedDecoder;
-        this.activeDecoder = new AtomicReference<>(unprefixedDecoder);
     }
 
     public void cycle() {
@@ -52,6 +44,6 @@ public class Cpu {
     }
 
     private Instruction decode(byte opcode) {
-        return activeDecoder.get().decode(opcode);
+        return cpuStructure.decoder().decode(opcode);
     }
 }
