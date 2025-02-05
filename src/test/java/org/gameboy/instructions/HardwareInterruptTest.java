@@ -5,7 +5,6 @@ import org.gameboy.CpuStructureBuilder;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.ControlFlow;
 import org.gameboy.instructions.targets.Interrupt;
-import org.gameboy.utils.BitUtilities;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -14,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertThatHex;
 import static org.gameboy.MemoryMapConstants.IE_ADDRESS;
 import static org.gameboy.MemoryMapConstants.IF_ADDRESS;
+import static org.gameboy.utils.BitUtilities.set_bit;
 
 class HardwareInterruptTest {
     @Test
@@ -38,6 +38,7 @@ class HardwareInterruptTest {
     void givenHardwareInterruptCalled_thenCorrectIFReset(Interrupt interrupt) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withMemory(IE_ADDRESS, 0xff)
+                .withMemory(IF_ADDRESS, set_bit((byte) 0, interrupt.index(), true))
                 .withSP(0x1234)
                 .withPC(0xabcd)
                 .withIME(true)
@@ -45,8 +46,7 @@ class HardwareInterruptTest {
 
         HardwareInterrupt.callInterruptHandler(cpuStructure, interrupt);
 
-        byte expectedValue = BitUtilities.set_bit((byte) 0xff, interrupt.index(), false);
-        assertThatHex(cpuStructure.memory().read(IE_ADDRESS)).isEqualTo(expectedValue);
+        assertThatHex(cpuStructure.memory().read(IF_ADDRESS)).isEqualTo((byte) 0);
     }
 
     @ParameterizedTest
@@ -89,6 +89,7 @@ class HardwareInterruptTest {
         Cpu cpu = new Cpu(cpuStructure, opcode -> Nop.nop(), opcode -> Nop.nop());
         cpu.cycle();
 
+        // nop + 5 for interrupt handler
         assertThatHex(cpuStructure.clock().getTime()).isEqualTo(initialTime + 6);
     }
 
