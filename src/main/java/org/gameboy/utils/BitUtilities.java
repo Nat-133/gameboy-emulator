@@ -102,7 +102,7 @@ public class BitUtilities {
         }
     }
 
-    public static boolean bit(short value, int i) {
+    public static boolean get_bit(short value, int i) {
         return (rshift(value, i) & 0b1) == 1;
     }
 
@@ -111,7 +111,13 @@ public class BitUtilities {
     }
 
     public static byte set_bit(byte value, int i, boolean bitValue) {
-        return or(value, lshift((byte) (bitValue ? 1 : 0), i));
+        byte bitmask = lshift((byte) 1, i);
+        if (bitValue) {
+            return or(value, bitmask);
+        }
+        else {
+            return and(value, not(bitmask));
+        }
     }
 
     public static byte calculate_carry_from_add(byte a, byte b, byte res) {
