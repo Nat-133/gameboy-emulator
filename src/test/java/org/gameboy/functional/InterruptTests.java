@@ -28,6 +28,7 @@ public class InterruptTests {
                 .withMemory(IE_ADDRESS, 0xff)
                 .build();
         Cpu cpu = new Cpu(cpuStructure, new UnprefixedDecoder(), new UnprefixedDecoder());
+        long initialTime = cpuStructure.clock().getTime();
 
         cpu.cycle();  // NOP ==> pc_1 <- pc_0 + 1
         cpuStructure.memory().write(IF_ADDRESS, JOYPAD_INTERRUPT_SET);  // Request Interrupt
@@ -39,5 +40,6 @@ public class InterruptTests {
         assertThatHex(cpuStructure.registers().SP()).isEqualTo((short) sp);
         assertThat(cpuStructure.registers().IME()).isTrue();
         assertThat(cpuStructure.interruptBus().activeInterrupts()).doesNotContain(Interrupt.JOYPAD);
+        assertThat(cpuStructure.clock().getTime()).isEqualTo(initialTime + 12);
     }
 }

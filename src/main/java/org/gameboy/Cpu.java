@@ -23,17 +23,29 @@ public class Cpu {
     public void cycle() {
         Instruction instruction = decode(cpuStructure.registers().instructionRegister());
 
-        execute(instruction);
+        instruction.execute(cpuStructure);
+
+        fetch_cycle(instruction);
+    }
+
+    private void fetch_cycle(Instruction instruction) {
+        if (!instruction.handlesFetch()) {
+            fetch();
+            instruction.postFetch(cpuStructure);
+            cpuStructure.clock().tick();
+
+            handlePotentialInterrupt();
+        }
     }
 
     private void fetch() {
         short pc = cpuStructure.registers().PC();
         cpuStructure.registers().setPC(cpuStructure.idu().increment(pc));
         this.cpuStructure.registers().setInstructionRegister(cpuStructure.memory().read(pc));
+    }
 
+    private void handlePotentialInterrupt() {
         if (!cpuStructure.interruptBus().activeInterrupts().isEmpty()) {
-            cpuStructure.clock().tick();
-
             Interrupt highestPriorityInterrupt = cpuStructure.interruptBus().activeInterrupts().getFirst();
             HardwareInterrupt.callInterruptHandler(cpuStructure, highestPriorityInterrupt);
         }
@@ -41,17 +53,5 @@ public class Cpu {
 
     private Instruction decode(byte opcode) {
         return activeDecoder.get().decode(opcode);
-    }
-
-    private void execute(Instruction instruction) {
-        instruction.execute(cpuStructure);
-
-        if (!instruction.handlesFetch()) {
-            fetch();
-
-            instruction.postFetch(cpuStructure);
-
-            cpuStructure.clock().tick();
-        }
     }
 }
