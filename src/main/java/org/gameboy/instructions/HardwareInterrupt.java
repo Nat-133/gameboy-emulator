@@ -20,12 +20,8 @@ public class HardwareInterrupt {
         cpuStructure.registers().setInstructionRegister(nextInstruction);
     }
 
-    public String representation() {
-        return "HARDWARE_INTERRUPT";
-    }
-
     @Override
     public String toString() {
-        return representation();
+        return "HARDWARE_INTERRUPT";
     }
 }
