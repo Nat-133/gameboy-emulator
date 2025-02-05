@@ -1,7 +1,9 @@
 package org.gameboy;
 
 import org.gameboy.components.CpuStructure;
+import org.gameboy.instructions.HardwareInterrupt;
 import org.gameboy.instructions.Instruction;
+import org.gameboy.instructions.targets.Interrupt;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -25,7 +27,16 @@ public class Cpu {
     }
 
     private void fetch() {
-        this.cpuStructure.registers().setInstructionRegister(cpuStructure.memory().read(cpuStructure.registers().PC()));
+        short pc = cpuStructure.registers().PC();
+        cpuStructure.registers().setPC(cpuStructure.idu().increment(pc));
+        this.cpuStructure.registers().setInstructionRegister(cpuStructure.memory().read(pc));
+
+        if (!cpuStructure.interruptBus().activeInterrupts().isEmpty()) {
+            cpuStructure.clock().tick();
+
+            Interrupt highestPriorityInterrupt = cpuStructure.interruptBus().activeInterrupts().getFirst();
+            HardwareInterrupt.callInterruptHandler(cpuStructure, highestPriorityInterrupt);
+        }
     }
 
     private Instruction decode(byte opcode) {

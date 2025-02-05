@@ -41,8 +41,8 @@ public class ArithmeticUnit {
                 new FlagChangesetBuilder()
                         .with(Z, res == 0)
                         .with(N, isSubtract)
-                        .with(H, bit(carry_bits, 3))
-                        .with(C, bit(carry_bits, 7))
+                        .with(H, get_bit(carry_bits, 3))
+                        .with(C, get_bit(carry_bits, 7))
                         .build()
         );
     }
@@ -102,7 +102,7 @@ public class ArithmeticUnit {
     }
 
     public ArithmeticResult rotate_right_circular(byte value) {
-        boolean carry = bit(value, 0);
+        boolean carry = get_bit(value, 0);
         byte res = set_bit(rshift(value, 1), 7, carry);
         return new ArithmeticResult(
                 res,
@@ -118,13 +118,13 @@ public class ArithmeticUnit {
         return new ArithmeticResult(
                 res,
                 new FlagChangesetBuilder().withAll(false)
-                        .with(Flag.C, BitUtilities.bit(value, 0))
+                        .with(Flag.C, BitUtilities.get_bit(value, 0))
                         .build()
         );
     }
 
     public ArithmeticResult rotate_left_circular(byte value) {
-        boolean carry = bit(value, 7);
+        boolean carry = get_bit(value, 7);
         byte res = set_bit(lshift(value, 1), 0, carry);
         return new ArithmeticResult(
                 res,
@@ -140,7 +140,7 @@ public class ArithmeticUnit {
         return new ArithmeticResult(
                 res,
                 new FlagChangesetBuilder().withAll(false)
-                        .with(Flag.C, BitUtilities.bit(value, 7))
+                        .with(Flag.C, BitUtilities.get_bit(value, 7))
                         .build()
         );
     }

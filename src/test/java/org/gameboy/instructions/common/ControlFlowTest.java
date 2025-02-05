@@ -18,7 +18,7 @@ import static org.gameboy.utils.BitUtilities.upper_byte;
 
 class ControlFlowTest {
     @Test
-    void givenCpuStructure_whenReadImm8_thenResultCorrect_andPCIncremented() {
+    void givenCpuStructure_whenReadIndirectPCAndIncrement_thenResultCorrect_andPCIncremented() {
         short initialPC = 54;
         byte expectedImm8 = 67;
         CpuStructure cpuStructure = new CpuStructureBuilder()
@@ -26,7 +26,7 @@ class ControlFlowTest {
                 .withImm8(expectedImm8)
                 .build();
 
-        byte actualImm8 = ControlFlow.readImm8(cpuStructure);
+        byte actualImm8 = ControlFlow.readIndirectPCAndIncrement(cpuStructure);
 
         assertThat(actualImm8).isEqualTo(expectedImm8);
         assertThat(cpuStructure.registers().PC()).isEqualTo((short) (initialPC + 1));
