@@ -25,7 +25,7 @@ public class ControlFlow {
         lsb = res.result();
 
         boolean carry = res.flagChanges().getOrDefault(Flag.C, false);
-        boolean negativeOffset = bit(signedByte, 7);
+        boolean negativeOffset = get_bit(signedByte, 7);
 
         cpuStructure.clock().tick();
 
@@ -50,7 +50,7 @@ public class ControlFlow {
         lsb = res.result();
 
         boolean carry = res.flagChanges().getOrDefault(Flag.C, false);
-        boolean negativeOffset = bit(signedByte, 7);
+        boolean negativeOffset = get_bit(signedByte, 7);
 
         if (carry && !negativeOffset) {
             msb = (byte) cpuStructure.idu().increment(msb);
@@ -68,7 +68,7 @@ public class ControlFlow {
         cpuStructure.registers().setPC(cpuStructure.idu().increment(cpuStructure.registers().PC()));
     }
 
-    public static byte readImm8(CpuStructure cpuStructure) {
+    public static byte readIndirectPCAndIncrement(CpuStructure cpuStructure) {
         byte value = cpuStructure.memory().read(cpuStructure.registers().PC());
         incrementPC(cpuStructure);
         cpuStructure.clock().tick();
@@ -76,9 +76,9 @@ public class ControlFlow {
     }
 
     public static short readImm16(CpuStructure cpuStructure) {
-        byte lsb = readImm8(cpuStructure);
+        byte lsb = readIndirectPCAndIncrement(cpuStructure);
 
-        byte msb = readImm8(cpuStructure);
+        byte msb = readIndirectPCAndIncrement(cpuStructure);
 
         return concat(msb, lsb);
     }

@@ -57,10 +57,10 @@ public class Jump implements Instruction{
     }
 
     private void executeJpImm16(CpuStructure cpuStructure) {
-        byte Z = ControlFlow.readImm8(cpuStructure);
+        byte Z = ControlFlow.readIndirectPCAndIncrement(cpuStructure);
 
         boolean doJump = evaluateCondition(cc, cpuStructure.registers());
-        byte W = ControlFlow.readImm8(cpuStructure);
+        byte W = ControlFlow.readIndirectPCAndIncrement(cpuStructure);
         short imm16 = BitUtilities.concat(W, Z);
 
         if (doJump) {

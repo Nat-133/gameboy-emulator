@@ -66,7 +66,7 @@ public class OperationTargetAccessor {
                 registers.setHL(idu.decrement(val));
                 yield val;
             }
-            case IMM_8 -> ControlFlow.readImm8(cpuStructure);
+            case IMM_8 -> ControlFlow.readIndirectPCAndIncrement(cpuStructure);
             case IMM_16 -> ControlFlow.readImm16(cpuStructure);
             case SP_OFFSET -> ControlFlow.signedAdditionWithIdu(
                     registers.SP(),

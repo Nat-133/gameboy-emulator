@@ -159,6 +159,10 @@ public class CpuStructureBuilder {
         return this;
     }
 
+    public CpuStructureBuilder withIF(int value) {
+        return this.withMemory(MemoryMapConstants.IF_ADDRESS, value);
+    }
+
     public CpuStructureBuilder withExclusivelySetFlags(Flag... flags) {
         this.af = BitUtilities.set_lower_byte(this.af, (byte) 0x00);
         return this.withSetFlags(flags);
@@ -191,7 +195,8 @@ public class CpuStructureBuilder {
                 memory,
                 new ArithmeticUnit(),
                 new IncrementDecrementUnit(),
-                new CpuClock()
+                new CpuClock(),
+                new InterruptBus(memory)
         );
     }
 }
