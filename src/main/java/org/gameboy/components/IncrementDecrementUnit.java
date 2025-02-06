@@ -1,10 +1,19 @@
 package org.gameboy.components;
 
 public class IncrementDecrementUnit {
+
+    private boolean disableNextIncrement;
+
     public IncrementDecrementUnit() {
+        disableNextIncrement = false;
     }
 
     public short increment(short value) {
+        if (disableNextIncrement) {
+            disableNextIncrement = false;
+            return value;
+        }
+
         return (short) (value + 1);
     }
 
@@ -14,5 +23,9 @@ public class IncrementDecrementUnit {
 
     public short passthrough(short value) {
         return value;
+    }
+
+    public void disableNextIncrement() {
+        this.disableNextIncrement = true;
     }
 }
