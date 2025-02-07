@@ -37,7 +37,7 @@ public class Cpu {
     }
 
     private void handlePotentialInterrupt() {
-        if (!cpuStructure.interruptBus().activeInterrupts().isEmpty()) {
+        if (cpuStructure.interruptBus().hasInterrupts()) {
             Interrupt highestPriorityInterrupt = cpuStructure.interruptBus().activeInterrupts().getFirst();
             HardwareInterrupt.callInterruptHandler(cpuStructure, highestPriorityInterrupt);
         }

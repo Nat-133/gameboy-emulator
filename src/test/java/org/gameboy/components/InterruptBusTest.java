@@ -6,6 +6,7 @@ import org.gameboy.utils.BitUtilities;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertThatHex;
@@ -47,5 +48,17 @@ class InterruptBusTest {
 
         byte expectedValue = BitUtilities.set_bit((byte) 0xff, interrupt.index(), false);
         assertThatHex(cpuStructure.memory().read(IF_ADDRESS)).isEqualTo(expectedValue);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints={0xff, 0xab, 0x11, 0x22, 0x42, 0x01})
+    void givenInterrupt_whenQueryHasInterrupt_thenCorrect(int ifValue) {
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withMemory(IF_ADDRESS, ifValue)
+                .withMemory(IE_ADDRESS, 0xfe)
+                .build();
+
+        InterruptBus interruptBus = cpuStructure.interruptBus();
+        assertThat(interruptBus.hasInterrupts()).isEqualTo(!interruptBus.activeInterrupts().isEmpty());
     }
 }
