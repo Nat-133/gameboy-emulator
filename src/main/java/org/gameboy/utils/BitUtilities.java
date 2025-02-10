@@ -26,16 +26,24 @@ public class BitUtilities {
         return (byte) (a & b);
     }
 
-    public static byte or(byte a, byte b) {
-        return (byte) (a | b);
-    }
-
     public static short and(short a, short b) {
         return (short) (a & b);
     }
 
+    public static byte or(byte a, byte b) {
+        return (byte) (a | b);
+    }
+
     public static short or(short a, short b) {
         return (short) (a | b);
+    }
+
+    public static byte xor(byte a, byte b) {
+        return (byte) (a ^ b);
+    }
+
+    public static short xor(short a, short b) {
+        return (short) (a ^ b);
     }
 
     public static byte not(byte val) {
