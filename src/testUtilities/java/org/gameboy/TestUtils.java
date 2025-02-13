@@ -2,7 +2,10 @@ package org.gameboy;
 
 import org.gameboy.instructions.targets.Condition;
 
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 public class TestUtils {
     public static Flag[] getConditionFlags(Condition condition, boolean pass) {
@@ -20,5 +23,15 @@ public class TestUtils {
                 .filter(f -> f != conditionFlag)
                 .toArray(Flag[]::new)
                 : new Flag[]{conditionFlag};
+    }
+
+    public static void waitFor(Supplier<Boolean> condition) throws TimeoutException {
+        Instant end = Instant.now().plusMillis(100);
+        while (!condition.get()) {
+            if (Instant.now().isAfter(end)) {
+                throw new TimeoutException("Timed out waiting for condition.");
+            }
+            Thread.yield();
+        }
     }
 }

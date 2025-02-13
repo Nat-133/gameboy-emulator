@@ -8,18 +8,17 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.gameboy.GameboyAssertions.assertThatHex;
 import static org.gameboy.MemoryMapConstants.IE_ADDRESS;
 import static org.gameboy.MemoryMapConstants.IF_ADDRESS;
+import static org.gameboy.TestUtils.waitFor;
 import static org.gameboy.instructions.targets.Interrupt.INTERRUPT_PRIORITY;
 
 class InterruptBusTest {
@@ -131,15 +130,5 @@ class InterruptBusTest {
             return;
         }
         fail("waitForInterrupt returned without interrupt.");
-    }
-
-    static void waitFor(Supplier<Boolean> condition) throws TimeoutException {
-        Instant end = Instant.now().plusMillis(100);
-        while (!condition.get()) {
-            if (Instant.now().isAfter(end)) {
-                throw new TimeoutException("Timed out waiting for condition.");
-            }
-            Thread.yield();
-        }
     }
 }
