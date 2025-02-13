@@ -80,7 +80,7 @@ public class CpuCycleTest {
                 generateTestCase(LoadHigher::ldh_A_imm8, 3),
                 generateTestCase(LoadHigher::ldh_imm8_A, 3),
 
-                generateTestCase(Halt::HALT, 1),
+                generateTestCase(Halt::halt, 1),
 
                 generateTestCase(Nop::nop, 1),
 

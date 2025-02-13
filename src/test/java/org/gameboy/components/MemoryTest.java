@@ -2,6 +2,10 @@ package org.gameboy.components;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.gameboy.MemoryMapConstants.IF_ADDRESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MemoryTest {
@@ -16,5 +20,16 @@ class MemoryTest {
             byte val = memory.read((short) i);
             assertEquals((byte) i, val);
         }
+    }
+
+    @Test
+    void givenMemoryListener_whenMemoryWriteToAddress_thenListenerNotified() {
+        Memory memory = new BasicMemory();
+        AtomicBoolean listenerCalled = new AtomicBoolean(false);
+        memory.registerMemoryListener(IF_ADDRESS, () -> listenerCalled.set(true));
+
+        memory.write(IF_ADDRESS, (byte) 0xa7);
+
+        assertThat(listenerCalled.get()).isTrue();
     }
 }
