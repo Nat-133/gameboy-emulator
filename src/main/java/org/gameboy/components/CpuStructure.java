@@ -7,7 +7,7 @@ public record CpuStructure(
         Memory memory,
         ArithmeticUnit alu,
         IncrementDecrementUnit idu,
-        CpuClock clock,
+        Clock clock,
         InterruptBus interruptBus,
         Decoder decoder
 ) {
