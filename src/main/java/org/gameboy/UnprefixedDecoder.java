@@ -48,7 +48,7 @@ public class UnprefixedDecoder implements Decoder {
             case b000 -> switch(y) {
                 case b000 -> Nop.nop();
                 case b001 -> Load.ld_imm16indirect_sp();
-                case b010 -> UNIMPLEMENTED; // STOP
+                case b010 -> Stop.stop(); // STOP
                 case b011 -> JumpRelative.jr();
                 default -> JumpRelative.jr_cc(Condition.lookup(TwoBitValue.from(y, 0)));
             };
