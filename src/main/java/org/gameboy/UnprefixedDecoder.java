@@ -85,7 +85,7 @@ public class UnprefixedDecoder implements Decoder {
 
     private Instruction decodeBlock1(ThreeBitValue y, ThreeBitValue z) {
         if (y == b110 && z == b110) {
-            return UNIMPLEMENTED;
+            return Halt.halt();
         }
 
         return Load.ld_r8_r8(ByteRegister.lookup(y), ByteRegister.lookup(z));

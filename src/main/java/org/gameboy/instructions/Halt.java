@@ -29,4 +29,9 @@ public class Halt implements Instruction {
     public String representation() {
         return "HALT";
     }
+
+    @Override
+    public String toString() {
+        return representation();
+    }
 }
