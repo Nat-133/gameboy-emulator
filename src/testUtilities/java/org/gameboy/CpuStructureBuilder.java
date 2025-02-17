@@ -29,6 +29,7 @@ public class CpuStructureBuilder {
         this.sp = 0x0000;
         this.pc = 0x0000;
         this.instructionRegister = 0x00;
+        this.ime = true;
 
         this.memory = new BasicMemory();
 
