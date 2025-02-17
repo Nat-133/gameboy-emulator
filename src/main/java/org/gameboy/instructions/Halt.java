@@ -13,7 +13,12 @@ public class Halt implements Instruction {
 
     @Override
     public void execute(CpuStructure cpuStructure) {
-        cpuStructure.idu().disableNextIncrement();
+        boolean IME = cpuStructure.registers().IME();
+        boolean interruptsPending = cpuStructure.interruptBus().hasInterrupts();
+
+        if (!IME && interruptsPending) {
+            cpuStructure.idu().disableNextIncrement();
+        }
 
         cpuStructure.clock().stop();
         cpuStructure.interruptBus().waitForInterrupt();
