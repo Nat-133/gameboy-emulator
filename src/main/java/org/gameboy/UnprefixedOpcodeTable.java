@@ -9,7 +9,7 @@ import org.gameboy.utils.MultiBitValue.TwoBitValue;
 import static org.gameboy.instructions.Unimplemented.UNIMPLEMENTED;
 import static org.gameboy.utils.MultiBitValue.ThreeBitValue.b110;
 
-public class UnprefixedDecoder implements Decoder {
+public class UnprefixedOpcodeTable implements OpcodeTable {
     /*
      * |-opcode--------|
      * |7 6 5 4 3 2 1 0|
@@ -28,7 +28,7 @@ public class UnprefixedDecoder implements Decoder {
         return ThreeBitValue.from(opcode, 0);
     }
 
-    public Instruction decode(byte opcode) {
+    public Instruction lookup(byte opcode) {
         ThreeBitValue y = get_y(opcode);
         ThreeBitValue z = get_z(opcode);
 

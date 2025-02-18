@@ -24,14 +24,14 @@ import static org.gameboy.instructions.Unimplemented.UNIMPLEMENTED;
 import static org.gameboy.utils.BitUtilities.uint;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-class UnprefixedDecoderTest {
+class UnprefixedOpcodeTableTest {
     private static OpcodeJson opcodeJson;
-    private UnprefixedDecoder unprefixedDecoder;
+    private UnprefixedOpcodeTable unprefixedOpcodeTable;
 
     @BeforeAll
     static void loadJson() throws IOException {
         String jsonString;
-        try (InputStream resource = UnprefixedDecoderTest.class.getClassLoader().getResourceAsStream("Opcodes.json.gz")) {
+        try (InputStream resource = UnprefixedOpcodeTableTest.class.getClassLoader().getResourceAsStream("Opcodes.json.gz")) {
             assert resource != null;
 
             GZIPInputStream gzipInputStream = new GZIPInputStream(resource);
@@ -52,7 +52,7 @@ class UnprefixedDecoderTest {
     @BeforeEach
     void setup()
     {
-        unprefixedDecoder = new UnprefixedDecoder();
+        unprefixedOpcodeTable = new UnprefixedOpcodeTable();
     }
 
     static Stream<Arguments> getAllOpcodes()
@@ -89,8 +89,8 @@ class UnprefixedDecoderTest {
 
     @ParameterizedTest(name="{1}")
     @MethodSource("getAllOpcodes")
-    public void givenNonPrefixedOpcode_whenDecode_thenCorrectInstructionGivenOrUnimplemented(byte opcode, String expectedResult) {
-        Instruction decodedInstruction = unprefixedDecoder.decode(opcode);
+    public void givenNonPrefixedOpcode_whenLookup_thenCorrectInstructionGivenOrUnimplemented(byte opcode, String expectedResult) {
+        Instruction decodedInstruction = unprefixedOpcodeTable.lookup(opcode);
 
         assumeTrue(decodedInstruction != UNIMPLEMENTED);
         assertThat(decodedInstruction.representation()).isEqualTo(expectedResult);

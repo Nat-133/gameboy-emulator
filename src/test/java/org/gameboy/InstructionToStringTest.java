@@ -15,10 +15,10 @@ class InstructionToStringTest {
 
     static Stream<Arguments> getAllUnprefixedInstructions()
     {
-        UnprefixedDecoder unprefixedDecoder = new UnprefixedDecoder();
+        UnprefixedOpcodeTable unprefixedOpcodeTable = new UnprefixedOpcodeTable();
         return IntStream.range(0, 0xFF+1)
                 .mapToObj(i -> (byte)i)
-                .map(unprefixedDecoder::decode)
+                .map(unprefixedOpcodeTable::lookup)
                 .map(instruction -> Arguments.of(Named.of(instruction.representation(), instruction)));
     }
 
