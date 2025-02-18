@@ -2,6 +2,7 @@ package org.gameboy;
 
 import com.google.gson.GsonBuilder;
 import org.gameboy.OpcodeJson.InstructionData;
+import org.gameboy.components.UnprefixedOpcodeTable;
 import org.gameboy.instructions.Instruction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
