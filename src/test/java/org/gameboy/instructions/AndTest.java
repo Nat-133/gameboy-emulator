@@ -71,7 +71,7 @@ class AndTest {
     @MethodSource("getR8ValuePairs")
     void givenByteRegister_whenAnd_thenClockIsCorrect(int ignored1, ByteRegister r8, int ignored2) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
-                .withDecoder(testDecoder(And.and_r8(r8)))
+                .withUnprefixedOpcodeTable(testDecoder(And.and_r8(r8)))
                 .build();
         Cpu cpu = new Cpu(cpuStructure);
 
@@ -83,7 +83,7 @@ class AndTest {
     @Test
     void givenCpu_whenAndHl_thenClockIsCorrect() {
         CpuStructure cpuStructure = new CpuStructureBuilder()
-                .withDecoder(testDecoder(And.and_r8(ByteRegister.INDIRECT_HL)))
+                .withUnprefixedOpcodeTable(testDecoder(And.and_r8(ByteRegister.INDIRECT_HL)))
                 .build();
         Cpu cpu = new Cpu(cpuStructure);
 
@@ -95,7 +95,7 @@ class AndTest {
     @Test
     void givenCpu_whenAndImm8_thenClockIsCorrect() {
         CpuStructure cpuStructure = new CpuStructureBuilder()
-                .withDecoder(testDecoder(And.and_imm8()))
+                .withUnprefixedOpcodeTable(testDecoder(And.and_imm8()))
                 .build();
         Cpu cpu = new Cpu(cpuStructure);
 

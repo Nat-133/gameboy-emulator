@@ -80,7 +80,7 @@ class HardwareInterruptTest {
     @Test
     void givenInterruptSent_whenHandleInterrupt_thenFiveCyclesUsed() {
         CpuStructure cpuStructure = new CpuStructureBuilder()
-                .withDecoder(ignored -> Nop.nop())
+                .withUnprefixedOpcodeTable(ignored -> Nop.nop())
                 .withIME(true)
                 .withMemory(IE_ADDRESS, 0xff)
                 .withMemory(IF_ADDRESS, 0xff)

@@ -130,7 +130,9 @@ public class CpuCycleTest {
                 generateTestCase(EnableInterrupts::ei, 1),
                 generateTestCase(DisableInterrupts::di, 1),
 
-                generateTestCase(ReturnFromInterruptHandler::reti, 4)
+                generateTestCase(ReturnFromInterruptHandler::reti, 4),
+
+                generateTestCase(Prefix::prefix, 1)
         ).flatMap(x -> x);
     }
 
@@ -139,7 +141,7 @@ public class CpuCycleTest {
     void givenInstruction_whenRunOnCpu_thenClockCorrect(Instruction instruction, int expectedCycles, Flag... setFlags) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(setFlags)
-                .withDecoder(testDecoder(instruction))
+                .withUnprefixedOpcodeTable(testDecoder(instruction))
                 .build();
         Cpu cpu = new Cpu(cpuStructure);
 
