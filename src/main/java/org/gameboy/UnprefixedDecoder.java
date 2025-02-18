@@ -48,7 +48,7 @@ public class UnprefixedDecoder implements Decoder {
             case b000 -> switch(y) {
                 case b000 -> Nop.nop();
                 case b001 -> Load.ld_imm16indirect_sp();
-                case b010 -> Stop.stop(); // STOP
+                case b010 -> Stop.stop();
                 case b011 -> JumpRelative.jr();
                 default -> JumpRelative.jr_cc(Condition.lookup(TwoBitValue.from(y, 0)));
             };
@@ -137,27 +137,27 @@ public class UnprefixedDecoder implements Decoder {
             case b011 -> switch (y) {
                 case b000 -> Jump.jp_nn();
                 case b001 -> UNIMPLEMENTED;
-                case b010 -> UNIMPLEMENTED;
-                case b011 -> UNIMPLEMENTED;
-                case b100 -> UNIMPLEMENTED;
-                case b101 -> UNIMPLEMENTED;
+                case b010 -> Illegal.illegal(y, z);
+                case b011 -> Illegal.illegal(y, z);
+                case b100 -> Illegal.illegal(y, z);
+                case b101 -> Illegal.illegal(y, z);
                 case b110 -> DisableInterrupts.di();
                 case b111 -> EnableInterrupts.ei();
             };
             case b100 -> switch(y) {
                 case b000, b001, b010, b011 -> Call.call_cc(Condition.lookup(TwoBitValue.from(y, 0)));
-                case b100 -> UNIMPLEMENTED;
-                case b101 -> UNIMPLEMENTED;
-                case b110 -> UNIMPLEMENTED;
-                case b111 -> UNIMPLEMENTED;
+                case b100 -> Illegal.illegal(y, z);
+                case b101 -> Illegal.illegal(y, z);
+                case b110 -> Illegal.illegal(y, z);
+                case b111 -> Illegal.illegal(y, z);
             };
             case b101 -> switch(q) {
                 case b0 -> Push.push_stk16(WordStackRegister.lookup(TwoBitValue.from(y, 1)));
                 case b1 -> switch(TwoBitValue.from(y, 1)) {
                     case b00 -> Call.call();
-                    case b01 -> UNIMPLEMENTED;
-                    case b10 -> UNIMPLEMENTED;
-                    case b11 -> UNIMPLEMENTED;
+                    case b01 -> Illegal.illegal(y, z);
+                    case b10 -> Illegal.illegal(y, z);
+                    case b11 -> Illegal.illegal(y, z);
                 };
             };
             case b110 -> switch(y) {
