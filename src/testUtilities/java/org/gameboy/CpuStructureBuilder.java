@@ -214,7 +214,7 @@ public class CpuStructureBuilder {
                 new IncrementDecrementUnit(),
                 clock,
                 new InterruptBus(memory),
-                opcodeTable
+                new Decoder(opcodeTable, new PrefixedOpcodeTable())
         );
     }
 }
