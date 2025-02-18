@@ -44,6 +44,6 @@ public class Cpu {
     }
 
     private Instruction decode(byte opcode) {
-        return cpuStructure.decoder().decode(opcode);
+        return cpuStructure.opcodeTable().lookup(opcode);
     }
 }

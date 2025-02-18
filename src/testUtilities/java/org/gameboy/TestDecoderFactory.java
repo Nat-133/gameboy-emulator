@@ -3,7 +3,7 @@ package org.gameboy;
 import org.gameboy.instructions.Instruction;
 
 public class TestDecoderFactory {
-    public static Decoder testDecoder(Instruction returnValue) {
+    public static OpcodeTable testDecoder(Instruction returnValue) {
         return ignored -> returnValue;
     }
 }
