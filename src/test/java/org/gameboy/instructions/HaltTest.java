@@ -54,7 +54,7 @@ class HaltTest {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withMemory(IF_ADDRESS, 0x00)
                 .withMemory(IE_ADDRESS, 0x0f)
-                .withDecoder(opcode -> Halt.halt())
+                .withUnprefixedOpcodeTable(opcode -> Halt.halt())
                 .withIME(false)
                 .withPC(pc)
                 .build();
@@ -83,7 +83,7 @@ class HaltTest {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withMemory(IF_ADDRESS, 0x0f)
                 .withMemory(IE_ADDRESS, 0x0f)
-                .withDecoder(opcode -> Halt.halt())
+                .withUnprefixedOpcodeTable(opcode -> Halt.halt())
                 .withIME(false)
                 .withPC(pc)
                 .build();

@@ -18,7 +18,8 @@ public class CpuStructureBuilder {
     private boolean ime;
 
     private final Memory memory;
-    private OpcodeTable opcodeTable;
+    private OpcodeTable unprefixedTable;
+    private OpcodeTable prefixedTable;
     private Clock clock;
 
     public CpuStructureBuilder() {
@@ -33,7 +34,8 @@ public class CpuStructureBuilder {
 
         this.memory = new BasicMemory();
 
-        this.opcodeTable = new UnprefixedOpcodeTable();
+        this.unprefixedTable = new UnprefixedOpcodeTable();
+        this.prefixedTable = new PrefixedOpcodeTable();
 
         this.clock = new CpuClock();
     }
@@ -196,8 +198,13 @@ public class CpuStructureBuilder {
         return this;
     }
 
-    public CpuStructureBuilder withDecoder(OpcodeTable opcodeTable) {
-        this.opcodeTable = opcodeTable;
+    public CpuStructureBuilder withUnprefixedOpcodeTable(OpcodeTable opcodeTable) {
+        this.unprefixedTable = opcodeTable;
+        return this;
+    }
+
+    public CpuStructureBuilder withPrefixedOpcodeTable(OpcodeTable opcodeTable) {
+        this.prefixedTable = opcodeTable;
         return this;
     }
 
@@ -214,7 +221,7 @@ public class CpuStructureBuilder {
                 new IncrementDecrementUnit(),
                 clock,
                 new InterruptBus(memory),
-                new Decoder(opcodeTable, new PrefixedOpcodeTable())
+                new Decoder(unprefixedTable, prefixedTable)
         );
     }
 }

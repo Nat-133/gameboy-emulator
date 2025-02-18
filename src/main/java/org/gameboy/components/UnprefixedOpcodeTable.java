@@ -6,7 +6,6 @@ import org.gameboy.utils.MultiBitValue.OneBitValue;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
-import static org.gameboy.instructions.Unimplemented.UNIMPLEMENTED;
 import static org.gameboy.utils.MultiBitValue.ThreeBitValue.b110;
 
 public class UnprefixedOpcodeTable implements OpcodeTable {
@@ -136,7 +135,7 @@ public class UnprefixedOpcodeTable implements OpcodeTable {
             };
             case b011 -> switch (y) {
                 case b000 -> Jump.jp_nn();
-                case b001 -> UNIMPLEMENTED;
+                case b001 -> Prefix.prefix();
                 case b010 -> Illegal.illegal(y, z);
                 case b011 -> Illegal.illegal(y, z);
                 case b100 -> Illegal.illegal(y, z);
