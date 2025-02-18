@@ -2,7 +2,7 @@ package org.gameboy;
 
 import java.util.Map;
 
-record OpcodeJson(
+public record OpcodeJson(
         Map<String, InstructionData> unprefixed,
         Map<String, InstructionData> prefixed
 ){

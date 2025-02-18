@@ -1,6 +1,7 @@
 package org.gameboy;
 
-import org.gameboy.instructions.targets.Condition;
+import org.gameboy.cpu.Flag;
+import org.gameboy.cpu.instructions.targets.Condition;
 
 import java.time.Instant;
 import java.util.Arrays;

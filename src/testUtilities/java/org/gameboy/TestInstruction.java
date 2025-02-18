@@ -1,7 +1,7 @@
 package org.gameboy;
 
-import org.gameboy.components.CpuStructure;
-import org.gameboy.instructions.Instruction;
+import org.gameboy.cpu.components.CpuStructure;
+import org.gameboy.cpu.instructions.Instruction;
 
 import java.util.Objects;
 import java.util.function.Consumer;

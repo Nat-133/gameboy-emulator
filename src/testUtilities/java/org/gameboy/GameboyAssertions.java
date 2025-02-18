@@ -1,6 +1,7 @@
 package org.gameboy;
 
-import org.gameboy.components.CpuStructure;
+import org.gameboy.cpu.Flag;
+import org.gameboy.cpu.components.CpuStructure;
 
 import java.util.Hashtable;
 

@@ -1,5 +1,7 @@
 package org.gameboy;
 
+import org.gameboy.cpu.Flag;
+
 import java.util.Map.Entry;
 
 public class FlagValue implements Entry<Flag, Boolean> {
