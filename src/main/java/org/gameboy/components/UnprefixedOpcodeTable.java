@@ -1,4 +1,4 @@
-package org.gameboy;
+package org.gameboy.components;
 
 import org.gameboy.instructions.*;
 import org.gameboy.instructions.targets.*;

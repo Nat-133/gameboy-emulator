@@ -1,5 +1,6 @@
 package org.gameboy;
 
+import org.gameboy.components.UnprefixedOpcodeTable;
 import org.gameboy.instructions.Instruction;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
