@@ -53,4 +53,17 @@ public class DecimalAdjustAcumulator implements Instruction{
     public String toString() {
         return representation();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Instruction other) {
+            return this.representation().equals(other.representation());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.representation().hashCode();
+    }
 }

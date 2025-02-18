@@ -1,7 +1,7 @@
 package org.gameboy.instructions;
 
-import org.gameboy.Flag;
 import org.gameboy.ArithmeticResult;
+import org.gameboy.Flag;
 import org.gameboy.components.CpuStructure;
 import org.gameboy.instructions.common.OperationTargetAccessor;
 import org.gameboy.instructions.targets.ByteRegister;
@@ -42,5 +42,18 @@ public class SubWithCarry implements Instruction{
     @Override
     public String toString() {
         return this.representation();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Instruction other) {
+            return this.representation().equals(other.representation());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.representation().hashCode();
     }
 }

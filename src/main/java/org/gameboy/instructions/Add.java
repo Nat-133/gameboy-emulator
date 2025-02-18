@@ -42,12 +42,10 @@ public class Add implements Instruction {
         if (!this.left.isByteTarget() && !this.right.isByteTarget()) {
             // 16-bit addition
             executeSixteenBitAddition(cpuStructure);
-        }
-        else if (!this.left.isByteTarget()) { // && this.right.isByteTarget()
+        } else if (!this.left.isByteTarget()) { // && this.right.isByteTarget()
             // 16-bit + 8-bit signed
             executeSignedAddition(cpuStructure);
-        }
-        else {
+        } else {
             executeEightBitAddition(cpuStructure);
         }
     }
@@ -107,5 +105,18 @@ public class Add implements Instruction {
     @Override
     public String toString() {
         return representation();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Instruction other) {
+            return this.representation().equals(other.representation());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.representation().hashCode();
     }
 }

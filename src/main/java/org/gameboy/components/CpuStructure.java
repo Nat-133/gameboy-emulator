@@ -1,6 +1,6 @@
 package org.gameboy.components;
 
-import org.gameboy.OpcodeTable;
+import org.gameboy.Decoder;
 
 public record CpuStructure(
         CpuRegisters registers,
@@ -9,6 +9,6 @@ public record CpuStructure(
         IncrementDecrementUnit idu,
         Clock clock,
         InterruptBus interruptBus,
-        OpcodeTable opcodeTable
+        Decoder decoder
 ) {
 }
