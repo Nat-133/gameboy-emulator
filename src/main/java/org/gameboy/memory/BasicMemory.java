@@ -1,4 +1,4 @@
-package org.gameboy.cpu.components;
+package org.gameboy.memory;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

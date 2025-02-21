@@ -1,6 +1,8 @@
 package org.gameboy.cpu.components;
 
 import org.gameboy.cpu.instructions.targets.Interrupt;
+import org.gameboy.memory.Memory;
+import org.gameboy.memory.MemoryListener;
 
 import java.util.ArrayDeque;
 import java.util.List;
