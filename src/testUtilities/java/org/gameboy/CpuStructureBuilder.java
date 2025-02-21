@@ -4,6 +4,8 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.MemoryMapConstants;
 import org.gameboy.cpu.components.*;
 import org.gameboy.cpu.utils.BitUtilities;
+import org.gameboy.memory.BasicMemory;
+import org.gameboy.memory.Memory;
 
 import static org.gameboy.cpu.utils.BitUtilities.lower_byte;
 import static org.gameboy.cpu.utils.BitUtilities.upper_byte;

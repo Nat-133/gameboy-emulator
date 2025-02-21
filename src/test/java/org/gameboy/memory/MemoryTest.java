@@ -1,4 +1,4 @@
-package org.gameboy.cpu.components;
+package org.gameboy.memory;
 
 import org.junit.jupiter.api.Test;
 

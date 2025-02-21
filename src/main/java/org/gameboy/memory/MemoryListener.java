@@ -1,4 +1,4 @@
-package org.gameboy.cpu.components;
+package org.gameboy.memory;
 
 public interface MemoryListener {
     void onMemoryWrite();

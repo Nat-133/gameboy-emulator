@@ -3,9 +3,9 @@ package org.gameboy.cpu.instructions.common;
 import org.gameboy.cpu.components.CpuRegisters;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.components.IncrementDecrementUnit;
-import org.gameboy.cpu.components.Memory;
 import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
 import org.gameboy.cpu.instructions.targets.OperationTarget;
+import org.gameboy.memory.Memory;
 
 import static org.gameboy.cpu.utils.BitUtilities.set_upper_byte;
 import static org.gameboy.cpu.utils.BitUtilities.uint;

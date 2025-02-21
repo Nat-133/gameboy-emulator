@@ -3,6 +3,8 @@ package org.gameboy.cpu.components;
 import org.gameboy.CpuStructureBuilder;
 import org.gameboy.cpu.instructions.targets.Interrupt;
 import org.gameboy.cpu.utils.BitUtilities;
+import org.gameboy.memory.BasicMemory;
+import org.gameboy.memory.Memory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
