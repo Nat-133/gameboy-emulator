@@ -3,7 +3,7 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.ControlFlow;
 
-import static org.gameboy.cpu.utils.BitUtilities.uint;
+import static org.gameboy.utils.BitUtilities.uint;
 
 public class Restart implements Instruction {
     private final short address;

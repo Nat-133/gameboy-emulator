@@ -3,12 +3,12 @@ package org.gameboy;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.MemoryMapConstants;
 import org.gameboy.cpu.components.*;
-import org.gameboy.cpu.utils.BitUtilities;
 import org.gameboy.memory.BasicMemory;
 import org.gameboy.memory.Memory;
+import org.gameboy.utils.BitUtilities;
 
-import static org.gameboy.cpu.utils.BitUtilities.lower_byte;
-import static org.gameboy.cpu.utils.BitUtilities.upper_byte;
+import static org.gameboy.utils.BitUtilities.lower_byte;
+import static org.gameboy.utils.BitUtilities.upper_byte;
 
 @SuppressWarnings("unused")
 public class CpuStructureBuilder {

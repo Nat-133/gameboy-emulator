@@ -1,6 +1,6 @@
 package org.gameboy.cpu.instructions.targets;
 
-import org.gameboy.cpu.utils.MultiBitValue;
+import org.gameboy.utils.MultiBitValue;
 
 public enum WordStackRegister {
     // stk16

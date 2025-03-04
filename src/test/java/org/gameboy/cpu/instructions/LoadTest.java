@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.gameboy.cpu.utils.BitUtilities.lower_byte;
-import static org.gameboy.cpu.utils.BitUtilities.set_lower_byte;
+import static org.gameboy.utils.BitUtilities.lower_byte;
+import static org.gameboy.utils.BitUtilities.set_lower_byte;
 
 class LoadTest {
     @ParameterizedTest

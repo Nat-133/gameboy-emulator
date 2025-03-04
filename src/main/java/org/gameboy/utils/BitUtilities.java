@@ -1,4 +1,4 @@
-package org.gameboy.cpu.utils;
+package org.gameboy.utils;
 
 @SuppressWarnings("unused")
 public class BitUtilities {

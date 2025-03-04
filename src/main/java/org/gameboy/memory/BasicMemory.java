@@ -3,7 +3,7 @@ package org.gameboy.memory;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static org.gameboy.cpu.utils.BitUtilities.uint;
+import static org.gameboy.utils.BitUtilities.uint;
 
 public class BasicMemory implements Memory {
     private final byte[] memory;

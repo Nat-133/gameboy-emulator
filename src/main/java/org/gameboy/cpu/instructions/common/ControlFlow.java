@@ -9,7 +9,7 @@ import org.gameboy.cpu.instructions.targets.Condition;
 
 import java.util.Hashtable;
 
-import static org.gameboy.cpu.utils.BitUtilities.*;
+import static org.gameboy.utils.BitUtilities.*;
 
 public class ControlFlow {
     public static short signedAdditionOnlyAlu(short a, byte signedByte, CpuStructure cpuStructure) {

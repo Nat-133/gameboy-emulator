@@ -5,7 +5,7 @@ import org.gameboy.cpu.Flag;
 import java.util.Arrays;
 import java.util.Hashtable;
 
-import static org.gameboy.cpu.utils.BitUtilities.set_values_from_mask;
+import static org.gameboy.utils.BitUtilities.set_values_from_mask;
 
 public class CpuRegisters {
     private short af;

@@ -1,4 +1,4 @@
-package org.gameboy.cpu.utils;
+package org.gameboy.utils;
 
 public class MultiBitValue {
     public interface BitValue {

@@ -4,7 +4,7 @@ import org.gameboy.CpuStructureBuilder;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
-import org.gameboy.cpu.utils.BitUtilities;
+import org.gameboy.utils.BitUtilities;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 import static org.gameboy.cpu.MemoryMapConstants.IE_ADDRESS;
 import static org.gameboy.cpu.MemoryMapConstants.IF_ADDRESS;
 import static org.gameboy.cpu.instructions.targets.Interrupt.INTERRUPT_PRIORITY;
-import static org.gameboy.cpu.utils.BitUtilities.*;
+import static org.gameboy.utils.BitUtilities.*;
 
 public class InterruptBus {
     private final Memory memory;
