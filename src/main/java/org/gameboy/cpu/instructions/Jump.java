@@ -5,7 +5,7 @@ import org.gameboy.cpu.instructions.common.ControlFlow;
 import org.gameboy.cpu.instructions.targets.Condition;
 import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
 import org.gameboy.cpu.instructions.targets.OperationTarget;
-import org.gameboy.cpu.utils.BitUtilities;
+import org.gameboy.utils.BitUtilities;
 
 import static org.gameboy.cpu.instructions.common.ControlFlow.evaluateCondition;
 

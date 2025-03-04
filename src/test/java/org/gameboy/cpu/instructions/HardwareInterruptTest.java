@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertThatHex;
 import static org.gameboy.cpu.MemoryMapConstants.IE_ADDRESS;
 import static org.gameboy.cpu.MemoryMapConstants.IF_ADDRESS;
-import static org.gameboy.cpu.utils.BitUtilities.set_bit;
+import static org.gameboy.utils.BitUtilities.set_bit;
 
 class HardwareInterruptTest {
     @Test

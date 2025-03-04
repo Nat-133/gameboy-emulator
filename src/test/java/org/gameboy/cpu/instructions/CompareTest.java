@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertFlagsMatch;
-import static org.gameboy.cpu.utils.BitUtilities.lower_nibble;
+import static org.gameboy.utils.BitUtilities.lower_nibble;
 
 class CompareTest {
     static Stream<Arguments> getR8ValuePairs() {

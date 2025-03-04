@@ -1,6 +1,6 @@
 package org.gameboy.cpu.instructions.targets;
 
-import org.gameboy.cpu.utils.MultiBitValue.ThreeBitValue;
+import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 
 public enum ByteRegister {
     // r8

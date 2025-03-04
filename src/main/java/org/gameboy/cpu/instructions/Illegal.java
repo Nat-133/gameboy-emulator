@@ -1,7 +1,7 @@
 package org.gameboy.cpu.instructions;
 
 import org.gameboy.cpu.components.CpuStructure;
-import org.gameboy.cpu.utils.MultiBitValue.ThreeBitValue;
+import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 
 public class Illegal implements Instruction{
     private final int value;

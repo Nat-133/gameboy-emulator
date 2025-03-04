@@ -7,8 +7,8 @@ import org.gameboy.cpu.components.CpuStructure;
 
 import java.util.Hashtable;
 
-import static org.gameboy.cpu.utils.BitUtilities.lower_nibble;
-import static org.gameboy.cpu.utils.BitUtilities.uint;
+import static org.gameboy.utils.BitUtilities.lower_nibble;
+import static org.gameboy.utils.BitUtilities.uint;
 
 public class DecimalAdjustAcumulator implements Instruction{
     private DecimalAdjustAcumulator() {

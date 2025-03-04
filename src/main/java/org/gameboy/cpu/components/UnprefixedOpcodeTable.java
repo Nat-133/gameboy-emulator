@@ -2,11 +2,11 @@ package org.gameboy.cpu.components;
 
 import org.gameboy.cpu.instructions.*;
 import org.gameboy.cpu.instructions.targets.*;
-import org.gameboy.cpu.utils.MultiBitValue.OneBitValue;
-import org.gameboy.cpu.utils.MultiBitValue.ThreeBitValue;
-import org.gameboy.cpu.utils.MultiBitValue.TwoBitValue;
+import org.gameboy.utils.MultiBitValue.OneBitValue;
+import org.gameboy.utils.MultiBitValue.ThreeBitValue;
+import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
-import static org.gameboy.cpu.utils.MultiBitValue.ThreeBitValue.b110;
+import static org.gameboy.utils.MultiBitValue.ThreeBitValue.b110;
 
 public class UnprefixedOpcodeTable implements OpcodeTable {
     /*

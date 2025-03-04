@@ -18,8 +18,8 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 import static org.gameboy.cpu.instructions.targets.WordGeneralRegister.*;
-import static org.gameboy.cpu.utils.BitUtilities.lower_nibble;
-import static org.gameboy.cpu.utils.BitUtilities.uint;
+import static org.gameboy.utils.BitUtilities.lower_nibble;
+import static org.gameboy.utils.BitUtilities.uint;
 
 class AddTest {
     static Stream<Arguments> getR8ValuePairs() {

@@ -3,10 +3,10 @@ package org.gameboy.cpu.components;
 import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
-import org.gameboy.cpu.utils.BitUtilities;
+import org.gameboy.utils.BitUtilities;
 
 import static org.gameboy.cpu.Flag.*;
-import static org.gameboy.cpu.utils.BitUtilities.*;
+import static org.gameboy.utils.BitUtilities.*;
 
 public class ArithmeticUnit {
     public ArithmeticResult inc(byte value) {

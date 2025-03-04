@@ -4,7 +4,7 @@ import org.gameboy.CpuStructureBuilder;
 import org.gameboy.cpu.Cpu;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.targets.Interrupt;
-import org.gameboy.cpu.utils.BitUtilities;
+import org.gameboy.utils.BitUtilities;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

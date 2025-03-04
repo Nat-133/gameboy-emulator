@@ -20,7 +20,7 @@ import static org.gameboy.FlagValue.setFlag;
 import static org.gameboy.FlagValue.unsetFlag;
 import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 import static org.gameboy.cpu.Flag.*;
-import static org.gameboy.cpu.utils.BitUtilities.uint;
+import static org.gameboy.utils.BitUtilities.uint;
 
 class ArithmeticUnitTest {
     private ArithmeticUnit alu;

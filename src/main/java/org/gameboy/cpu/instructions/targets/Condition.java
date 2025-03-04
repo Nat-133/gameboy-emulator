@@ -1,6 +1,6 @@
 package org.gameboy.cpu.instructions.targets;
 
-import org.gameboy.cpu.utils.MultiBitValue.TwoBitValue;
+import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
 public enum Condition {
     NZ,

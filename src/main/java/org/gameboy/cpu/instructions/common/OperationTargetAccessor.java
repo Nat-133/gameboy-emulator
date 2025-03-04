@@ -7,8 +7,8 @@ import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
 import org.gameboy.cpu.instructions.targets.OperationTarget;
 import org.gameboy.memory.Memory;
 
-import static org.gameboy.cpu.utils.BitUtilities.set_upper_byte;
-import static org.gameboy.cpu.utils.BitUtilities.uint;
+import static org.gameboy.utils.BitUtilities.set_upper_byte;
+import static org.gameboy.utils.BitUtilities.uint;
 
 public class OperationTargetAccessor {
     private final Memory memory;

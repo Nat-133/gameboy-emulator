@@ -13,8 +13,8 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertThatHex;
-import static org.gameboy.cpu.utils.BitUtilities.lower_byte;
-import static org.gameboy.cpu.utils.BitUtilities.upper_byte;
+import static org.gameboy.utils.BitUtilities.lower_byte;
+import static org.gameboy.utils.BitUtilities.upper_byte;
 
 class ControlFlowTest {
     @Test

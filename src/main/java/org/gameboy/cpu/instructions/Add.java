@@ -10,7 +10,7 @@ import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
 import org.gameboy.cpu.instructions.targets.OperationTarget;
 import org.gameboy.cpu.instructions.targets.WordGeneralRegister;
 
-import static org.gameboy.cpu.utils.BitUtilities.*;
+import static org.gameboy.utils.BitUtilities.*;
 
 public class Add implements Instruction {
     private final GenericOperationTarget left;

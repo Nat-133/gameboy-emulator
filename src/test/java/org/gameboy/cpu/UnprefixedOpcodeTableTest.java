@@ -23,7 +23,7 @@ import java.util.zip.GZIPInputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.cpu.instructions.Unimplemented.UNIMPLEMENTED;
-import static org.gameboy.cpu.utils.BitUtilities.uint;
+import static org.gameboy.utils.BitUtilities.uint;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class UnprefixedOpcodeTableTest {
