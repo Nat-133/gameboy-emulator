@@ -6,7 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class FifoReadRecorder implements FifoReadListener {
     private final ReentrantLock lock = new ReentrantLock();
     private final Condition read = lock.newCondition();
-    private boolean readOccurred = false;
+    private volatile boolean readOccurred = false;
 
     public void waitForFifoRead() {
         lock.lock();
