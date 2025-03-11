@@ -31,5 +31,4 @@ public class BasicMemory implements Memory {
     public void registerMemoryListener(short address, MemoryListener listener) {
         memoryListeners.put(address, listener);
     }
-
 }
