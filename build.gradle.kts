@@ -31,6 +31,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.assertj:assertj-core:3.11.1")
     testImplementation("com.google.code.gson:gson:2.11.0")
+    testImplementation("org.mockito:mockito-core:5.16.0")
 }
 
 tasks.test {
