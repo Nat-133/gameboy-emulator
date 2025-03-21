@@ -32,6 +32,7 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.11.1")
     testImplementation("com.google.code.gson:gson:2.11.0")
     testImplementation("org.mockito:mockito-core:5.16.0")
+    testRuntimeOnly("net.bytebuddy:byte-buddy-agent:1.15.11")
 }
 
 tasks.test {
@@ -40,4 +41,12 @@ tasks.test {
         html.required.set(false)
     }
     useJUnitPlatform()
+
+    doFirst {
+        val agentJar = configurations.testRuntimeClasspath.get()
+            .firstOrNull { it.name.contains("byte-buddy-agent") }
+        if (agentJar != null) {
+            jvmArgs = jvmArgs + "-javaagent:${agentJar.absolutePath}"
+        }
+    }
 }
