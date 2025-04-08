@@ -26,13 +26,13 @@ public class PixelFifo {
     // we can wait for `pop occurred`
     // javafx.beans ObservableBooleanValue
 
-    public void writeToFifo(List<TwoBitValue> values) {
+    public void write(List<TwoBitValue> values) {
         values.stream()
                 .skip(fifo.size())
                 .forEach(fifo::add);
     }
 
-    public TwoBitValue readFromFifo() {
+    public TwoBitValue read() {
         TwoBitValue value = fifo.pop();
         readListeners.forEach(FifoReadListener::onRead);
         return value;
