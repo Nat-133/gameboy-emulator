@@ -15,10 +15,10 @@ class PixelFifoTest {
         PixelFifo fifo = new PixelFifo();
 
         List<TwoBitValue> expectedElements = IntStream.range(0, 8).mapToObj(TwoBitValue::from).toList();
-        fifo.writeToFifo(expectedElements);
+        fifo.write(expectedElements);
 
         for (int i = 0; i < expectedElements.size(); i++) {
-            TwoBitValue actual = fifo.readFromFifo();
+            TwoBitValue actual = fifo.read();
             assertThat(actual)
                     .withFailMessage("expected fifo element %d to be %s, but was %s".formatted(i, expectedElements.get(i), actual))
                     .isEqualTo(expectedElements.get(i));
@@ -28,15 +28,15 @@ class PixelFifoTest {
     @Test
     void givenFifoWithTwoElements_whenAddEightElements_thenFirstTwoAddedElementsDiscarded() {
         PixelFifo fifo = new PixelFifo();
-        fifo.writeToFifo(List.of(TwoBitValue.b11, TwoBitValue.b10));
+        fifo.write(List.of(TwoBitValue.b11, TwoBitValue.b10));
 
         List<TwoBitValue> expectedElements = IntStream.range(0, 8).mapToObj(TwoBitValue::from).toList();
-        fifo.writeToFifo(expectedElements);
+        fifo.write(expectedElements);
 
-        assertThat(fifo.readFromFifo()).withFailMessage("fifo element 0 unexpectedly overwritten").isEqualTo(TwoBitValue.b11);
-        assertThat(fifo.readFromFifo()).withFailMessage("fifo element 1 unexpectedly overwritten").isEqualTo(TwoBitValue.b10);
+        assertThat(fifo.read()).withFailMessage("fifo element 0 unexpectedly overwritten").isEqualTo(TwoBitValue.b11);
+        assertThat(fifo.read()).withFailMessage("fifo element 1 unexpectedly overwritten").isEqualTo(TwoBitValue.b10);
         for (int i = 2; i < expectedElements.size(); i++) {
-            TwoBitValue actual = fifo.readFromFifo();
+            TwoBitValue actual = fifo.read();
             assertThat(actual)
                     .withFailMessage("expected fifo element %d to be %s, but was %s".formatted(i, expectedElements.get(i), actual))
                     .isEqualTo(expectedElements.get(i));
@@ -44,13 +44,13 @@ class PixelFifoTest {
     }
 
     @Test
-    void givenFifoWithElements_whenReadFromFifo_thenListenerNotified() {
+    void givenFifoWithElements_whenRead_thenListenerNotified() {
         PixelFifo fifo = new PixelFifo();
-        fifo.writeToFifo(List.of(TwoBitValue.b11, TwoBitValue.b10));
+        fifo.write(List.of(TwoBitValue.b11, TwoBitValue.b10));
         AtomicInteger readCount = new AtomicInteger(0);
         fifo.registerReadListener(readCount::incrementAndGet);
 
-        fifo.readFromFifo();
+        fifo.read();
 
         assertThat(readCount.get()).isEqualTo(1);
     }
