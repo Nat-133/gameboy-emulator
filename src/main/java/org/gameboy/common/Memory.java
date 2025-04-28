@@ -1,4 +1,4 @@
-package org.gameboy.memory;
+package org.gameboy.common;
 
 public interface Memory {
     byte read(short address);

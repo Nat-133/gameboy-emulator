@@ -114,6 +114,10 @@ public class BitUtilities {
         return (rshift(value, i) & 0b1) == 1;
     }
 
+    public static boolean get_bit(byte value, int i) {
+        return (rshift(value, i) & 0b1) == 1;
+    }
+
     public static short set_bit(short value, int i) {
         return or(value, lshift((short) 1, i));
     }
@@ -133,5 +137,9 @@ public class BitUtilities {
         int intB = uint(b);
         int intRes = uint(res);
         return (byte) ((intA&intB) | ((intA^intB) & ~intRes));
+    }
+
+    public static int mod(byte a, int b) {
+        return Byte.toUnsignedInt(a) % b;
     }
 }

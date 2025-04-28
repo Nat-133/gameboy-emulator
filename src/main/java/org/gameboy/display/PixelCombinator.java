@@ -1,9 +1,9 @@
 package org.gameboy.display;
 
-import org.gameboy.utils.MultiBitValue;
+import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
 public class PixelCombinator {
-    public PixelValue combinePixels(MultiBitValue.TwoBitValue read) {
-        return PixelValue.of(read);
+    public PixelValue combinePixels(TwoBitValue backgroundPixel) {
+        return PixelValue.of(backgroundPixel);
     }
 }
