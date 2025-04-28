@@ -1,16 +1,24 @@
-package org.gameboy.memory;
+package org.gameboy;
+
+import org.gameboy.common.Memory;
+import org.gameboy.common.MemoryListener;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static org.gameboy.utils.BitUtilities.uint;
 
-public class BasicMemory implements Memory {
+public class TestMemory implements Memory {
     private final byte[] memory;
     private final ConcurrentMap<Short, MemoryListener> memoryListeners = new ConcurrentHashMap<>();
 
-    public BasicMemory() {
+    public TestMemory() {
         memory = new byte[0xFFFF+1];
+    }
+
+    public TestMemory withMemoryDump(MemoryDump memoryDump) {
+        System.arraycopy(memoryDump.memory(), 0, memory, uint(memoryDump.startAddress()), memoryDump.length());
+        return this;
     }
 
     @Override

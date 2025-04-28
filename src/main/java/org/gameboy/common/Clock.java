@@ -1,4 +1,4 @@
-package org.gameboy.cpu.components;
+package org.gameboy.common;
 
 public interface Clock {
     void tick();

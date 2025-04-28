@@ -1,12 +1,13 @@
 package org.gameboy.display;
 
-import org.gameboy.cpu.components.Clock;
+import org.gameboy.common.Clock;
 import org.gameboy.cpu.components.CpuClock;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,10 +18,10 @@ class ScanlineControllerTest {
     void givenBackgroundFifoContinuouslyFilled_whenRenderScanline_thenCorrectDataRendered() {
         PixelFifo backgroundFifo = mock(PixelFifo.class);
         AtomicInteger i = new AtomicInteger(0);
-        when(backgroundFifo.read()).thenAnswer(invocation -> TwoBitValue.from(i.getAndIncrement()));
+        when(backgroundFifo.read()).thenAnswer(invocation -> Optional.of(TwoBitValue.from(i.getAndIncrement())));
         Display display = mock(Display.class);
 
-        ScanlineController controller = new ScanlineController(mock(Clock.class), display, backgroundFifo, new PixelCombinator());
+        ScanlineController controller = new ScanlineController(mock(Clock.class), display, backgroundFifo, new PixelCombinator(), new PpuRegisters(), mock(BackgroundFetcher.class));
 
         controller.renderScanline(4);
 
@@ -48,10 +49,10 @@ class ScanlineControllerTest {
     void givenBackgroundFifoContinuouslyFilled_whenRenderScanline_thenClockRegistersCorrectTime() {
         Display display = mock(Display.class);
         PixelFifo backgroundFifo = mock(PixelFifo.class);
-        when(backgroundFifo.read()).thenReturn(TwoBitValue.b01);
+        when(backgroundFifo.read()).thenReturn(Optional.of(TwoBitValue.b01));
 
         Clock clock = new CpuClock();
-        ScanlineController controller = new ScanlineController(clock, display, backgroundFifo, new PixelCombinator());
+        ScanlineController controller = new ScanlineController(clock, display, backgroundFifo, new PixelCombinator(), new PpuRegisters(), mock(BackgroundFetcher.class));
 
         controller.renderScanline(4);
 

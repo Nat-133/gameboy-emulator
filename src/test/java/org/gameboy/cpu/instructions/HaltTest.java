@@ -1,8 +1,8 @@
 package org.gameboy.cpu.instructions;
 
 import org.gameboy.CpuStructureBuilder;
+import org.gameboy.common.Clock;
 import org.gameboy.cpu.Cpu;
-import org.gameboy.cpu.components.Clock;
 import org.gameboy.cpu.components.CpuStructure;
 import org.junit.jupiter.api.Test;
 
