@@ -1,6 +1,8 @@
 package org.gameboy.cpu.components;
 
-public class CpuClock implements Clock{
+import org.gameboy.common.Clock;
+
+public class CpuClock implements Clock {
     private long time;
 
     public CpuClock() {

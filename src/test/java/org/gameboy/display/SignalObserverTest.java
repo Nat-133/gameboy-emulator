@@ -6,14 +6,14 @@ import java.util.concurrent.TimeoutException;
 
 import static org.gameboy.TestUtils.waitFor;
 
-class FifoReadRecorderTest {
+class SignalObserverTest {
     @Test
     void givenReadHasHappened_whenWaitForRead_thenImmediateReturn() throws TimeoutException {
-        FifoReadRecorder fifoReadRecorder = new FifoReadRecorder();
+        SignalObserver signalObserver = new SignalObserver();
 
-        fifoReadRecorder.onRead();
+        signalObserver.signal();
 
-        Thread waitThread = new Thread(fifoReadRecorder::waitForFifoRead);
+        Thread waitThread = new Thread(signalObserver::waitForSignal);
 
         waitThread.start();
         waitFor(() -> !waitThread.isAlive());
@@ -21,29 +21,29 @@ class FifoReadRecorderTest {
 
     @Test
     void givenNoRead_whenWaitForRead_thenOnlyReturnsWhenReadHappens() throws TimeoutException {
-        FifoReadRecorder fifoReadRecorder = new FifoReadRecorder();
+        SignalObserver signalObserver = new SignalObserver();
 
-        Thread waitThread = new Thread(fifoReadRecorder::waitForFifoRead);
+        Thread waitThread = new Thread(signalObserver::waitForSignal);
 
         waitThread.start();
         waitFor(() -> waitThread.getState() == Thread.State.WAITING || waitThread.getState() == Thread.State.BLOCKED);
 
-        fifoReadRecorder.onRead();
+        signalObserver.signal();
 
         waitFor(() -> !waitThread.isAlive());
     }
 
     @Test
     void givenRead_whenReset_thenListenerWaitsForNextRead() throws TimeoutException {
-        FifoReadRecorder fifoReadRecorder = new FifoReadRecorder();
-        fifoReadRecorder.onRead();
+        SignalObserver signalObserver = new SignalObserver();
+        signalObserver.signal();
 
-        fifoReadRecorder.reset();
+        signalObserver.reset();
 
-        Thread waitThread = new Thread(fifoReadRecorder::waitForFifoRead);
+        Thread waitThread = new Thread(signalObserver::waitForSignal);
         waitThread.start();
         waitFor(() -> waitThread.getState() == Thread.State.WAITING || waitThread.getState() == Thread.State.BLOCKED);
-        fifoReadRecorder.onRead();
+        signalObserver.signal();
         waitFor(() -> !waitThread.isAlive());
     }
 }

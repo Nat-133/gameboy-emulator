@@ -3,10 +3,7 @@ package org.gameboy.display;
 
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 public class PixelFifo {
     private final Deque<TwoBitValue> fifo = new ArrayDeque<>(8);
@@ -27,18 +24,39 @@ public class PixelFifo {
     // javafx.beans ObservableBooleanValue
 
     public void write(List<TwoBitValue> values) {
-        values.stream()
-                .skip(fifo.size())
-                .forEach(fifo::add);
+        synchronized (fifo) {
+            values.stream()
+                    .skip(fifo.size())
+                    .forEach(fifo::add);
+        }
     }
 
-    public TwoBitValue read() {
-        TwoBitValue value = fifo.pop();
+    public Optional<TwoBitValue> read() {
+        Optional<TwoBitValue> value;
+        synchronized (fifo) {
+            try {
+                value = Optional.of(fifo.pop());
+            } catch (NoSuchElementException ignored) {
+                value = Optional.empty();
+            }
+        }
         readListeners.forEach(FifoReadListener::onRead);
         return value;
     }
 
+    public boolean isEmpty() {
+        synchronized (fifo) {
+            return fifo.isEmpty();
+        }
+    }
+
     public void registerReadListener(FifoReadListener listener) {
         readListeners.add(listener);
+    }
+
+    public void clear() {
+        synchronized (fifo) {
+            fifo.clear();
+        }
     }
 }

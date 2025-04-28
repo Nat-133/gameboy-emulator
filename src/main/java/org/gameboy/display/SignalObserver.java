@@ -3,16 +3,16 @@ package org.gameboy.display;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class FifoReadRecorder implements FifoReadListener {
+public class SignalObserver {
     private final ReentrantLock lock = new ReentrantLock();
-    private final Condition read = lock.newCondition();
-    private volatile boolean readOccurred = false;
+    private final Condition signal = lock.newCondition();
+    private volatile boolean signalOccured = false;
 
-    public void waitForFifoRead() {
+    public void waitForSignal() {
         lock.lock();
         try {
-            if (!readOccurred) {
-                read.await();
+            if (!signalOccured) {
+                signal.await();
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -24,18 +24,17 @@ public class FifoReadRecorder implements FifoReadListener {
     public void reset() {
         lock.lock();
         try {
-            readOccurred = false;
+            signalOccured = false;
         } finally {
             lock.unlock();
         }
     }
 
-    @Override
-    public void onRead() {
+    public void signal() {
         lock.lock();
         try {
-            readOccurred = true;
-            read.signalAll();
+            signalOccured = true;
+            signal.signalAll();
         } finally {
             lock.unlock();
         }

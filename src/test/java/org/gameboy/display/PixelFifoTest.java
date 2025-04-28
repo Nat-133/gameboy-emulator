@@ -4,6 +4,7 @@ import org.gameboy.utils.MultiBitValue.TwoBitValue;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -18,7 +19,7 @@ class PixelFifoTest {
         fifo.write(expectedElements);
 
         for (int i = 0; i < expectedElements.size(); i++) {
-            TwoBitValue actual = fifo.read();
+            TwoBitValue actual = fifo.read().get();
             assertThat(actual)
                     .withFailMessage("expected fifo element %d to be %s, but was %s".formatted(i, expectedElements.get(i), actual))
                     .isEqualTo(expectedElements.get(i));
@@ -36,7 +37,7 @@ class PixelFifoTest {
         assertThat(fifo.read()).withFailMessage("fifo element 0 unexpectedly overwritten").isEqualTo(TwoBitValue.b11);
         assertThat(fifo.read()).withFailMessage("fifo element 1 unexpectedly overwritten").isEqualTo(TwoBitValue.b10);
         for (int i = 2; i < expectedElements.size(); i++) {
-            TwoBitValue actual = fifo.read();
+            Optional<TwoBitValue> actual = fifo.read();
             assertThat(actual)
                     .withFailMessage("expected fifo element %d to be %s, but was %s".formatted(i, expectedElements.get(i), actual))
                     .isEqualTo(expectedElements.get(i));
@@ -50,7 +51,7 @@ class PixelFifoTest {
         AtomicInteger readCount = new AtomicInteger(0);
         fifo.registerReadListener(readCount::incrementAndGet);
 
-        fifo.read();
+        fifo.read().get();
 
         assertThat(readCount.get()).isEqualTo(1);
     }
