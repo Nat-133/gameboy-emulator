@@ -27,6 +27,7 @@ public class Main {
 //        frame.pack();
 
         PpuRegisters registers = new PpuRegisters();
+        registers.write(PpuRegisters.PpuRegister.SCX, (byte)(8*27));
         PixelFifo backgroundFifo = new PixelFifo();
         SynchronisedClock ppuClock = new SynchronisedClock();
 //        MemoryDump tetrisVram = MemoryDump.from(Paths.get("/Users/nathaniel.manley/vcs/personal/gameboy-emulator/src/test/resources/tetris_vmem_8000_9fff.txt"));
@@ -36,7 +37,7 @@ public class Main {
         ppuClock.registerParallelOperation();
         var backgroundFetcher = new BackgroundFetcher(memory, registers, backgroundFifo, ppuClock);
         var scanlineController = new ScanlineController(ppuClock, display, backgroundFifo, new PixelCombinator(),registers, backgroundFetcher);
-        var ppu = new PictureProcessingUnit(scanlineController);
+        var ppu = new PictureProcessingUnit(scanlineController, registers);
 
 
         Executor executor = new ScheduledThreadPoolExecutor(1);

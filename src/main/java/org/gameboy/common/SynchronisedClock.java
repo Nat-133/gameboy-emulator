@@ -15,6 +15,10 @@ public class SynchronisedClock implements Clock{
         phaser.register();
     }
 
+    public void unregisterParallelOperation() {
+        phaser.arriveAndDeregister();
+    }
+
     @Override
     public void tick() {
         phaser.arriveAndAwaitAdvance();

@@ -1,7 +1,7 @@
 package org.gameboy.display;
 
 import org.gameboy.common.Clock;
-import org.gameboy.utils.MultiBitValue;
+import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
 import java.util.Optional;
 
@@ -39,7 +39,7 @@ public class ScanlineController {
         int x=0;
         while (x<160) {
             ppuClock.tick();
-            Optional<MultiBitValue.TwoBitValue> pixelData = backgroundFifo.read();
+            Optional<TwoBitValue> pixelData = backgroundFifo.read();
 
             if (pixelData.isPresent()) {
                 PixelValue pixel = pixelCombinator.combinePixels(pixelData.get());
@@ -52,17 +52,20 @@ public class ScanlineController {
 
         backgroundFetcher.resetAndPause();  // this needs to block until the dude is actually paused
         registers.write(LY, (byte) ((uint(registers.read(LY)) + 1) % 144));
-        ppuClock.tick();
+
+        for (int i=0; i<10; i++) {
+            ppuClock.tick();
+        }
     }
 
     private void discardOffscreenPixels() {
         int x=0;
         while (x < mod(registers.read(SCX), 8)) {
-            Optional<MultiBitValue.TwoBitValue> pixelData = backgroundFifo.read();
+            ppuClock.tick();
+            Optional<TwoBitValue> pixelData = backgroundFifo.read();
             if (pixelData.isPresent()) {
                 x++;
             }
-            ppuClock.tick();
         }
     }
 }
