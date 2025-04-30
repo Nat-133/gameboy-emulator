@@ -1,7 +1,7 @@
 package org.gameboy.display;
 
-import org.gameboy.common.Clock;
 import org.gameboy.common.Memory;
+import org.gameboy.common.SynchronisedClock;
 import org.gameboy.utils.BitUtilities;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.gameboy.display.PpuRegisters.PpuRegister.LY;
+import static org.gameboy.display.PpuRegisters.PpuRegister.*;
 import static org.gameboy.utils.BitUtilities.uint;
 
 public class BackgroundFetcher {
@@ -20,17 +20,20 @@ public class BackgroundFetcher {
     private final PpuRegisters registers;
     private final PixelFifo backgroundFifo;
     //    private int WINDOW_LINE_COUNTER = 0;  // should be on fetcher, not background fetcher
-    private int X_POSITION_COUNTER = 0;
+    private int X_POSITION_COUNTER = 0;  // tile coordinate, not pixel
     private byte currentTileNumber;
     private byte tileDataLow;
     private byte tileDataHigh;
-    private Clock clock;
+    private SynchronisedClock clock;
     private SignalObserver pauseObserver;
     private boolean paused;
 
     public List<List<TwoBitValue>> history = new ArrayList<>();
 
-    public BackgroundFetcher(Memory memory, PpuRegisters registers, PixelFifo backgroundFifo, Clock clock) {
+    public BackgroundFetcher(Memory memory,
+                             PpuRegisters registers,
+                             PixelFifo backgroundFifo,
+                             SynchronisedClock clock) {
         this.memory = memory;
         this.registers = registers;
         this.backgroundFifo = backgroundFifo;
@@ -40,7 +43,7 @@ public class BackgroundFetcher {
     }
 
     private int getTilemapIndex(int x, int y, int background_offset_x, int background_offset_y) {
-        return x + (( background_offset_x) / 8 & 0x1f) + 32 * (((y + background_offset_y) & 0xff) / 8);
+        return ((x+((background_offset_x) / 8)) & 0x1f) + 32 * (((y + background_offset_y) & 0xff) / 8);
     }
 
     private int getTileNumberAddress(int tileNumber) {
@@ -65,7 +68,6 @@ public class BackgroundFetcher {
             }
 
             pauseAndWait();
-//            if (uint(registers.read(LY)) == 0 && history.size() > 1) System.out.println(printList(history.getLast()).equals(printList(history.get(history.size() - 2))));
             currentStep = Step.FETCH_TILE_NO;
             paused = false;
         }
@@ -74,9 +76,13 @@ public class BackgroundFetcher {
     private void pauseAndWait() {
         backgroundFifo.clear();
         X_POSITION_COUNTER = 0;
-        clock.tick();
+
+        clock.unregisterParallelOperation();
+
         pauseObserver.waitForSignal();
         pauseObserver.reset();
+
+        clock.registerParallelOperation();
     }
 
     public void resetAndPause() {
@@ -97,7 +103,7 @@ public class BackgroundFetcher {
     }
 
     private Step fetchTileNo() {
-        int tileIndex = getTilemapIndex(X_POSITION_COUNTER, registers.read(LY), 0, 0);
+        int tileIndex = getTilemapIndex(X_POSITION_COUNTER, uint(registers.read(LY)), uint(registers.read(SCX)), uint(registers.read(SCY)));
         short tileNumberAddress = (short) (BACKGROUND_MAP_A_ADDRESS + tileIndex);
 
         currentTileNumber = memory.read(tileNumberAddress);
