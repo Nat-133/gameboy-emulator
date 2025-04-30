@@ -3,15 +3,20 @@ package org.gameboy.display;
 public class PictureProcessingUnit {
 
     private final ScanlineController scanlineController;
+    private final PpuRegisters registers;
 
-    public PictureProcessingUnit(ScanlineController scanlineController) {
+    public PictureProcessingUnit(ScanlineController scanlineController, PpuRegisters registers) {
         this.scanlineController = scanlineController;
+        this.registers = registers;
     }
 
     public void renderAllScanlines() {
         for (int y = 0; y < 144; y++) {
             scanlineController.renderScanline(y);
         }
+
+        byte read = registers.read(PpuRegisters.PpuRegister.SCX);
+        registers.write(PpuRegisters.PpuRegister.SCX, (byte)(read +1));
     }
 
     // scanline controller:
