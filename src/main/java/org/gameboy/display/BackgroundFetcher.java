@@ -7,7 +7,6 @@ import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.gameboy.display.PpuRegisters.PpuRegister.*;
@@ -24,8 +23,8 @@ public class BackgroundFetcher {
     private byte currentTileNumber;
     private byte tileDataLow;
     private byte tileDataHigh;
-    private SynchronisedClock clock;
-    private SignalObserver pauseObserver;
+    private final SynchronisedClock clock;
+    private final SignalObserver pauseObserver;
     private boolean paused;
 
     public List<List<TwoBitValue>> history = new ArrayList<>();
@@ -99,6 +98,9 @@ public class BackgroundFetcher {
             case FETCH_TILE_DATA_LOW -> fetchTileDataLow();
             case FETCH_TILE_DATA_HIGH -> fetchTileDataHigh();
             case PUSH_TO_FIFO -> pushToFifo();
+            case TICK_FETCH_TILE_NO,
+                 TICK_FETCH_TILE_DATA_LOW,
+                 TICK_FETCH_TILE_DATA_HIGH -> extraTick(step);
         };
     }
 
@@ -109,8 +111,7 @@ public class BackgroundFetcher {
         currentTileNumber = memory.read(tileNumberAddress);
 
         clock.tick();
-        clock.tick();
-        return Step.FETCH_TILE_DATA_LOW;
+        return Step.FETCH_TILE_NO.next();
     }
 
     private Step fetchTileDataLow() {
@@ -118,8 +119,7 @@ public class BackgroundFetcher {
         int rowDataAddress = getTileRow(tileDataAddress, registers.read(LY), 0);
         tileDataLow = memory.read((short) rowDataAddress);
         clock.tick();
-        clock.tick();
-        return Step.FETCH_TILE_DATA_HIGH;
+        return Step.FETCH_TILE_DATA_LOW.next();
     }
 
     private Step fetchTileDataHigh() {
@@ -127,8 +127,7 @@ public class BackgroundFetcher {
         int rowDataAddress = 1 + getTileRow(tileDataAddress, registers.read(LY), 0);
         tileDataHigh = memory.read((short) rowDataAddress);
         clock.tick();
-        clock.tick();
-        return Step.PUSH_TO_FIFO;
+        return Step.FETCH_TILE_DATA_HIGH.next();
     }
 
     private Step pushToFifo() {
@@ -146,25 +145,29 @@ public class BackgroundFetcher {
         backgroundFifo.write(pixelData);
         clock.tick();
         X_POSITION_COUNTER++;
+
         return Step.FETCH_TILE_NO;
+    }
+
+    private Step extraTick(Step step) {
+        clock.tick();
+        return step.next();
     }
 
     private enum Step {
         FETCH_TILE_NO,
+        TICK_FETCH_TILE_NO,
+
         FETCH_TILE_DATA_LOW,
+        TICK_FETCH_TILE_DATA_LOW,
+
         FETCH_TILE_DATA_HIGH,
+        TICK_FETCH_TILE_DATA_HIGH,
+
         PUSH_TO_FIFO;
 
         public Step next() {
             return values()[(this.ordinal() + 1) % values().length];
         }
-    }
-
-    public static String printList(List<?> list) {
-        String result = list.stream()
-                .limit(160)
-                .map(String::valueOf)
-                .collect(Collectors.joining(", "));
-        return result;
     }
 }
