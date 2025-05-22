@@ -2,8 +2,8 @@ package org.gameboy.cpu.components;
 
 import org.gameboy.CpuStructureBuilder;
 import org.gameboy.common.BasicMemory;
+import org.gameboy.common.Interrupt;
 import org.gameboy.common.Memory;
-import org.gameboy.cpu.instructions.targets.Interrupt;
 import org.gameboy.utils.BitUtilities;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

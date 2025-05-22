@@ -1,8 +1,8 @@
 package org.gameboy.cpu.instructions;
 
+import org.gameboy.common.Interrupt;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.ControlFlow;
-import org.gameboy.cpu.instructions.targets.Interrupt;
 
 public class HardwareInterrupt {
     public static void callInterruptHandler(CpuStructure cpuStructure, Interrupt interrupt) {
