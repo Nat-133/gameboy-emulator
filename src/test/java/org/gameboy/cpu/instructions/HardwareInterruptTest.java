@@ -1,10 +1,10 @@
 package org.gameboy.cpu.instructions;
 
 import org.gameboy.CpuStructureBuilder;
+import org.gameboy.common.Interrupt;
 import org.gameboy.cpu.Cpu;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.ControlFlow;
-import org.gameboy.cpu.instructions.targets.Interrupt;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;

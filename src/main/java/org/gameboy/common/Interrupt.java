@@ -1,4 +1,4 @@
-package org.gameboy.cpu.instructions.targets;
+package org.gameboy.common;
 
 import static org.gameboy.cpu.MemoryMapConstants.*;
 

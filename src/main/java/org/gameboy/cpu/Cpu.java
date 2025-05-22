@@ -1,9 +1,9 @@
 package org.gameboy.cpu;
 
+import org.gameboy.common.Interrupt;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.HardwareInterrupt;
 import org.gameboy.cpu.instructions.Instruction;
-import org.gameboy.cpu.instructions.targets.Interrupt;
 
 public class Cpu {
     private final CpuStructure cpuStructure;
