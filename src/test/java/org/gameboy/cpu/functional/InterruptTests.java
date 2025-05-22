@@ -1,9 +1,9 @@
 package org.gameboy.cpu.functional;
 
 import org.gameboy.CpuStructureBuilder;
+import org.gameboy.common.Interrupt;
 import org.gameboy.cpu.Cpu;
 import org.gameboy.cpu.components.CpuStructure;
-import org.gameboy.cpu.instructions.targets.Interrupt;
 import org.gameboy.utils.BitUtilities;
 import org.junit.jupiter.api.Test;
 
