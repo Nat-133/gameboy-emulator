@@ -10,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -21,9 +22,16 @@ import static org.gameboy.GameboyAssertions.assertThatHex;
 import static org.gameboy.TestUtils.waitFor;
 import static org.gameboy.cpu.MemoryMapConstants.IE_ADDRESS;
 import static org.gameboy.cpu.MemoryMapConstants.IF_ADDRESS;
-import static org.gameboy.cpu.instructions.targets.Interrupt.INTERRUPT_PRIORITY;
 
 class InterruptBusTest {
+    private static final List<Interrupt> INTERRUPT_PRIORITY = List.of(
+            Interrupt.JOYPAD,
+            Interrupt.SERIAL,
+            Interrupt.TIMER,
+            Interrupt.STAT,
+            Interrupt.VBLANK
+    );
+
     @Test
     void givenAllInterruptsAndNoInterruptEnabled_whenGetActiveInterrupts_thenNoInterrupts() {
         Memory memory = new BasicMemory();
