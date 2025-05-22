@@ -12,10 +12,17 @@ import java.util.concurrent.ExecutionException;
 
 import static org.gameboy.cpu.MemoryMapConstants.IE_ADDRESS;
 import static org.gameboy.cpu.MemoryMapConstants.IF_ADDRESS;
-import static org.gameboy.cpu.instructions.targets.Interrupt.INTERRUPT_PRIORITY;
 import static org.gameboy.utils.BitUtilities.*;
 
 public class InterruptBus {
+    private static final List<Interrupt> INTERRUPT_PRIORITY = List.of(
+            Interrupt.JOYPAD,
+            Interrupt.SERIAL,
+            Interrupt.TIMER,
+            Interrupt.STAT,
+            Interrupt.VBLANK
+    );
+
     private final Memory memory;
     private final Object interruptByteLock;
     private byte currentActiveInterruptByte;

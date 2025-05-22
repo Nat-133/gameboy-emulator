@@ -1,7 +1,5 @@
 package org.gameboy.cpu.instructions.targets;
 
-import java.util.List;
-
 import static org.gameboy.cpu.MemoryMapConstants.*;
 
 public enum Interrupt {
@@ -10,14 +8,6 @@ public enum Interrupt {
     TIMER,
     SERIAL,
     JOYPAD;
-
-    public static final List<Interrupt> INTERRUPT_PRIORITY = List.of(
-            JOYPAD,
-            SERIAL,
-            TIMER,
-            STAT,
-            VBLANK
-    );
 
     public int index() {
         return switch (this) {
