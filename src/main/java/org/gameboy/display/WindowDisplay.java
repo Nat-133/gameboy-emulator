@@ -6,9 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class WindowDisplay extends JPanel implements Display {
-    private static final int DISPLAY_WIDTH = 160;
-    private static final int DISPLAY_HEIGHT = 144;
-    PixelValue[][] pixels = new PixelValue[160][144];
+    PixelValue[][] pixels = new PixelValue[DISPLAY_WIDTH][DISPLAY_HEIGHT];
     private static final int PIXEL_SIZE = 2;
 
     public WindowDisplay() {

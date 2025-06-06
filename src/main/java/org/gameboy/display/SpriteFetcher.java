@@ -9,60 +9,51 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.gameboy.display.PpuRegisters.PpuRegister.*;
+import static org.gameboy.display.PpuRegisters.PpuRegister.LY;
 import static org.gameboy.utils.BitUtilities.uint;
 
-public class BackgroundFetcher implements Fetcher {
-    public static final int BACKGROUND_MAP_A_ADDRESS = 0x9800;
-    public static final int BACKGROUND_MAP_B_ADDRESS = 0x9C00;
+public class SpriteFetcher implements Fetcher {
+    private static final SpriteData EMPTY_SPRITE = new SpriteData((byte) 0, (byte) 0, (byte) 0, (byte) 0);
+
+    private final SpriteBuffer spriteBuffer;
     private final Memory memory;
     private final PpuRegisters registers;
-    private final PixelFifo backgroundFifo;
+    private final PixelFifo spriteFifo;
+    private int pixelXPosition;
     //    private int WINDOW_LINE_COUNTER = 0;  // should be on fetcher, not background fetcher
     private int X_POSITION_COUNTER = 0;  // tile coordinate, not pixel
-    private byte currentTileNumber;
     private byte tileDataLow;
     private byte tileDataHigh;
     private final SynchronisedClock clock;
 
     public List<List<TwoBitValue>> history = new ArrayList<>();
     private Step currentStep;
+    private SpriteData currentSpriteData;
 
-    public BackgroundFetcher(Memory memory,
-                             PpuRegisters registers,
-                             PixelFifo backgroundFifo,
-                             SynchronisedClock clock) {
+    public SpriteFetcher(SpriteBuffer spriteBuffer,
+                         Memory memory,
+                         PpuRegisters registers,
+                         PixelFifo spriteFifo,
+                         SynchronisedClock clock) {
+        this.spriteBuffer = spriteBuffer;
         this.memory = memory;
         this.registers = registers;
-        this.backgroundFifo = backgroundFifo;
+        this.spriteFifo = spriteFifo;
         this.clock = clock;
         this.currentStep = Step.FETCH_TILE_NO;
+        this.pixelXPosition = 0;
     }
 
-    private int getTilemapIndex(int x, int y, int background_offset_x, int background_offset_y) {
-        return ((x+((background_offset_x) / 8)) & 0x1f) + 32 * (((y + background_offset_y) & 0xff) / 8);
-    }
-
-    private int getTileNumberAddress(int tileNumber) {
-        return 0x8000 + (tileNumber * 16);
-    }
-
-    private int getSignedTileNumberAddress(int tileNumber) {
-        return 0x9000 + (((byte)tileNumber) * 16);
-    }
-
-    private int getTileRow(int tileDataAddress, int ly, int scy) {
-        return tileDataAddress + 2 * ((ly + scy) % 8);
-    }
-
-    @Override
     public void runSingleTickCycle() {
         currentStep = runStep(currentStep);
     }
 
-    public void reset() {
-        currentStep = Step.FETCH_TILE_NO;
-        X_POSITION_COUNTER = 0;
+    public void setupFetch(int x) {
+        pixelXPosition = x;
+    }
+
+    public boolean fetchComplete() {
+        return currentStep == Step.COMPLETE;
     }
 
     private Step runStep(Step step) {
@@ -71,54 +62,52 @@ public class BackgroundFetcher implements Fetcher {
             case FETCH_TILE_DATA_LOW -> fetchTileDataLow();
             case FETCH_TILE_DATA_HIGH -> fetchTileDataHigh();
             case PUSH_TO_FIFO -> pushToFifo();
-            case TICK_FETCH_TILE_NO,
-                 TICK_FETCH_TILE_DATA_LOW,
+            case TICK_FETCH_TILE_DATA_LOW,
                  TICK_FETCH_TILE_DATA_HIGH -> extraTick(step);
+            case COMPLETE -> Step.COMPLETE;
         };
     }
 
     private Step fetchTileNo() {
-        int tileIndex = getTilemapIndex(X_POSITION_COUNTER, uint(registers.read(LY)), uint(registers.read(SCX)), uint(registers.read(SCY)));
-        short tileNumberAddress = (short) (BACKGROUND_MAP_A_ADDRESS + tileIndex);
-
-        currentTileNumber = memory.read(tileNumberAddress);
+        currentSpriteData = spriteBuffer.getSprite(pixelXPosition).orElse(EMPTY_SPRITE);
 
         clock.tick();
         return Step.FETCH_TILE_NO.next();
     }
 
     private Step fetchTileDataLow() {
-        int tileDataAddress = getSignedTileNumberAddress(currentTileNumber);
-        int rowDataAddress = getTileRow(tileDataAddress, registers.read(LY), 0);
+        int tileDataAddress = getTileNumberAddress(uint(currentSpriteData.tileNumber()));
+        int rowDataAddress = getTileRow(tileDataAddress, uint(registers.read(LY)), uint(currentSpriteData.y()));
         tileDataLow = memory.read((short) rowDataAddress);
         clock.tick();
         return Step.FETCH_TILE_DATA_LOW.next();
     }
 
     private Step fetchTileDataHigh() {
-        int tileDataAddress = getSignedTileNumberAddress(currentTileNumber);
-        int rowDataAddress = 1 + getTileRow(tileDataAddress, registers.read(LY), 0);
+        int tileDataAddress = getTileNumberAddress(uint(currentSpriteData.tileNumber()));
+        int rowDataAddress = 1 + getTileRow(tileDataAddress, uint(registers.read(LY)), uint(currentSpriteData.y()));
         tileDataHigh = memory.read((short) rowDataAddress);
         clock.tick();
         return Step.FETCH_TILE_DATA_HIGH.next();
     }
 
     private Step pushToFifo() {
-        if (!backgroundFifo.isEmpty()) {
+        if (!spriteFifo.isEmpty()) {
             clock.tick();
             return Step.PUSH_TO_FIFO;
         }
 
-        List<TwoBitValue> pixelData = IntStream.range(0, 8).map(i -> 7-i)
+        List<TwoBitValue> pixelData = IntStream.range(0, 8)
+                .map(i -> !currentSpriteData.xFlipFlag() ? i : 7-i)
                 .map(i -> (BitUtilities.get_bit(tileDataLow, i) ? 1 : 0)
                         + (BitUtilities.get_bit(tileDataHigh, i) ? 2 : 0))
                 .mapToObj(TwoBitValue::from)
                 .toList();
-        backgroundFifo.write(pixelData);
+        spriteFifo.write(pixelData);
         clock.tick();
         X_POSITION_COUNTER++;
 
-        return Step.FETCH_TILE_NO;
+        return Step.COMPLETE;
     }
 
     private Step extraTick(Step step) {
@@ -126,9 +115,18 @@ public class BackgroundFetcher implements Fetcher {
         return step.next();
     }
 
+    private int getTileNumberAddress(int tileNumber) {
+        return 0x8000 + (tileNumber * 16);
+    }
+
+    private int getTileRow(int tileDataAddress, int ly, int spriteY) {
+        int spriteHeight = 8;
+        int spriteRow = spriteHeight - (spriteY - ly);
+        return tileDataAddress + 2 * (spriteRow);  // todo: sprite flippin'
+    }
+
     private enum Step {
         FETCH_TILE_NO,
-        TICK_FETCH_TILE_NO,
 
         FETCH_TILE_DATA_LOW,
         TICK_FETCH_TILE_DATA_LOW,
@@ -136,7 +134,8 @@ public class BackgroundFetcher implements Fetcher {
         FETCH_TILE_DATA_HIGH,
         TICK_FETCH_TILE_DATA_HIGH,
 
-        PUSH_TO_FIFO;
+        PUSH_TO_FIFO,
+        COMPLETE;
 
         public Step next() {
             return values()[(this.ordinal() + 1) % values().length];
