@@ -22,7 +22,7 @@ public class CpuStructureBuilder {
     private byte instructionRegister;
     private boolean ime;
 
-    private final Memory memory;
+    private Memory memory;
     private OpcodeTable unprefixedTable;
     private OpcodeTable prefixedTable;
     private Clock clock;
@@ -164,6 +164,11 @@ public class CpuStructureBuilder {
 
     public CpuStructureBuilder withMemory(int address, int value) {
         this.memory.write((short) address, (byte) value);
+        return this;
+    }
+
+    public CpuStructureBuilder withMemory(Memory memory) {
+        this.memory = memory;
         return this;
     }
 

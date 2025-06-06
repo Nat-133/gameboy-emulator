@@ -1,9 +1,13 @@
 package org.gameboy.display;
 
+import org.gameboy.CpuStructureBuilder;
 import org.gameboy.MemoryDump;
 import org.gameboy.TestMemory;
+import org.gameboy.common.Clock;
+import org.gameboy.common.ClockWithParallelProcess;
 import org.gameboy.common.Memory;
 import org.gameboy.common.SynchronisedClock;
+import org.gameboy.cpu.components.CpuStructure;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,8 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -25,28 +27,43 @@ public class Main {
         frame.add(display, BorderLayout.CENTER);
         frame.setVisible(true);
 //        frame.pack();
-
-        PpuRegisters registers = new PpuRegisters();
-        registers.write(PpuRegisters.PpuRegister.SCX, (byte)(8*27));
-        PixelFifo backgroundFifo = new PixelFifo();
-        SynchronisedClock ppuClock = new SynchronisedClock();
-//        MemoryDump tetrisVram = MemoryDump.from(Paths.get("/Users/nathaniel.manley/vcs/personal/gameboy-emulator/src/test/resources/tetris_vmem_8000_9fff.txt"));
+        byte[] test_memory = loadGbRom("dmg-acid2.gb");
         byte[] mario_memory = loadHexMemoryDump();
         MemoryDump mario_vram = new MemoryDump((short) 0, mario_memory);
         Memory memory = new TestMemory().withMemoryDump(mario_vram);
-        ppuClock.registerParallelOperation();
+        ObjectAttributeMemory oam = new ObjectAttributeMemory(memory);
+
+        PpuRegisters registers = new PpuRegisters();
+//        registers.write(PpuRegisters.PpuRegister.SCX, (byte)(8*27));
+        PixelFifo backgroundFifo = new PixelFifo();
+        PixelFifo spriteFifo = new PixelFifo();
+        SynchronisedClock ppuClock = new SynchronisedClock();
+//        MemoryDump tetrisVram = MemoryDump.from(Paths.get("/Users/nathaniel.manley/vcs/personal/gameboy-emulator/src/test/resources/tetris_vmem_8000_9fff.txt"));
+
+        SpriteBuffer spriteBuffer = new SpriteBuffer(oam);
+
         var backgroundFetcher = new BackgroundFetcher(memory, registers, backgroundFifo, ppuClock);
-        var scanlineController = new ScanlineController(ppuClock, display, backgroundFifo, new PixelCombinator(),registers, backgroundFetcher);
-        var ppu = new PictureProcessingUnit(scanlineController, registers);
+        var spriteFetcher = new SpriteFetcher(spriteBuffer, memory, registers, spriteFifo, ppuClock);
+        var pixelFetcher = new PixelFetcher(backgroundFetcher, spriteFetcher);
+        var scanlineController = new ScanlineController(ppuClock, display, backgroundFifo, spriteFifo, new PixelCombinator(), registers, backgroundFetcher, spriteFetcher, spriteBuffer);
+        var ppu = new PictureProcessingUnit(scanlineController, registers, oam, ppuClock, spriteBuffer, new InterruptController(memory));
 
+        Clock cpuClock = new ClockWithParallelProcess(() -> {
+            ppu.renderAllScanlines();
+        });
+        CpuStructure cpuStructure = new CpuStructureBuilder().withMemory(memory).withClock(cpuClock).build();
 
-        Executor executor = new ScheduledThreadPoolExecutor(1);
-        executor.execute(backgroundFetcher::runFetcher);
 
         while (true) {
             ppu.renderAllScanlines();
             frame.revalidate();
         }
+    }
+
+    private static byte[] loadGbRom(String filepath) throws IOException {
+        Path filePath = Paths.get(filepath);
+
+        return Files.readAllBytes(filePath);
     }
 
     static byte[] loadHexMemoryDump() throws IOException {
