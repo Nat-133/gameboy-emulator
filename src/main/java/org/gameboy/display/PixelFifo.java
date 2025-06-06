@@ -50,6 +50,10 @@ public class PixelFifo {
         }
     }
 
+    public int size() {
+        return fifo.size();
+    }
+
     public void registerReadListener(FifoReadListener listener) {
         readListeners.add(listener);
     }
