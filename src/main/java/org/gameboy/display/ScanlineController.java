@@ -22,6 +22,7 @@ public class ScanlineController {
     private final BackgroundFetcher backgroundFetcher;
     private final SpriteFetcher spriteFetcher;
     private final SpriteBuffer spriteBuffer;
+    private State state;
 
     private int LX;
 
@@ -45,39 +46,54 @@ public class ScanlineController {
         this.spriteBuffer = spriteBuffer;
 
         LX = 0;
+
+        this.state = State.DISCARD_PIXELS;
     }
 
     public void performSingleClockCycle() {
-        if (LX >= DISPLAY_WIDTH) {
-            ppuClock.tick();
-        }
-        else if (LX == 0 && shouldDiscardPixel()) {
-            discardPixel();
-        }
-        else if (shouldPerformSpriteFetch(LX)) {
-            // need to somehow reset the fetcher.
-            // if shouldPerformSpriteFetch || !fetcher.isCOmplete
-            //      if shouldPerformSpriteFetch => reset fetcher
-            spriteFetch();
-        }
-        else {
-            pushPixel();
-        }
+        this.state = switch (this.state) {
+            case DISCARD_PIXELS -> discardPixel();
+            case PIXEL_FETCHING -> executeFetch();
+            case SPRITE_FETCHING -> spriteFetch();
+            case COMPLETE -> nop();
+        };
+    }
+
+    private State nop() {
+        ppuClock.tick();
+        return State.COMPLETE;
     }
 
     public void setupScanline() {
+        LX = 0;
         backgroundFetcher.reset();
-        discardPixel();
+        state = shouldDiscardPixel() ? State.DISCARD_PIXELS : State.PIXEL_FETCHING;
     }
 
-    public void discardPixel() {
+    private State discardPixel() {
         backgroundFetcher.runSingleTickCycle();
         backgroundFifo.read();
 
         ppuClock.tick();
+
+        return shouldDiscardPixel() ? State.DISCARD_PIXELS : State.PIXEL_FETCHING;
     }
 
-    public void pushPixel() {
+    private State executeFetch() {
+        if (LX >= DISPLAY_WIDTH) {
+            return nop();
+        }
+        if (shouldPerformSpriteFetch(LX)) {
+            spriteFetcher.setupFetch(LX);
+            return spriteFetch();
+        }
+
+        pushPixel();
+
+        return State.PIXEL_FETCHING;
+    }
+
+    private void pushPixel() {
         backgroundFetcher.runSingleTickCycle();
         Optional<TwoBitValue> pixelData = getPixelData();
 
@@ -91,8 +107,9 @@ public class ScanlineController {
         ppuClock.tick();
     }
 
-    public void spriteFetch() {
+    private State spriteFetch() {
         spriteFetcher.runSingleTickCycle();
+        return spriteFetcher.fetchComplete() ? State.PIXEL_FETCHING : State.SPRITE_FETCHING;
     }
 
     private boolean shouldPerformSpriteFetch(int x) {
@@ -139,8 +156,10 @@ public class ScanlineController {
         LX = 0;
     }
 
-    // states are:
-    //  regular fetchin'/drawin'
-    //  sprite fetchin'
-    //  discardin' pixels
+    private enum State {
+        DISCARD_PIXELS,
+        PIXEL_FETCHING,
+        SPRITE_FETCHING,
+        COMPLETE
+    }
 }

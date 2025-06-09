@@ -19,9 +19,12 @@ public class SpriteBuffer {
     }
 
     public Optional<SpriteData> getSprite(int x) {
-        return buffer.stream()
+        Optional<SpriteData> firstMatchingSprite = buffer.stream()
                 .filter(data -> data.x() == x)
                 .findFirst();
+        firstMatchingSprite.ifPresent(buffer::remove);
+
+        return firstMatchingSprite;
     };
 
     public void scanOAM(ObjectAttributeMemory oam, int LY, Clock clock) {

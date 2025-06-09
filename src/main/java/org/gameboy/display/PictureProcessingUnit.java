@@ -40,8 +40,9 @@ public class PictureProcessingUnit {
             }
 
             spriteBuffer.scanOAM(oam, uint(registers.read(LY)), clock);
-//            scanlineController.renderScanline(y);
-            for (int i=0; i<173; i++) scanlineController.performSingleClockCycle();
+
+            scanlineController.setupScanline();
+            for (int i=0; i<200; i++) scanlineController.performSingleClockCycle();
 
             scanlineController.reset();
 
