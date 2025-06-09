@@ -50,6 +50,7 @@ public class SpriteFetcher implements Fetcher {
 
     public void setupFetch(int x) {
         pixelXPosition = x;
+        currentStep = Step.FETCH_TILE_NO;
     }
 
     public boolean fetchComplete() {
