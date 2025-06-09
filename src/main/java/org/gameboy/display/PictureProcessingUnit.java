@@ -12,6 +12,7 @@ public class PictureProcessingUnit {
     private final ObjectAttributeMemory oam;
     private final Clock clock;
     private final SpriteBuffer spriteBuffer;
+    private final OamScanner oamScanner;
     private final InterruptController interruptController;
     private int count = 0;
 
@@ -20,12 +21,14 @@ public class PictureProcessingUnit {
                                  ObjectAttributeMemory oam,
                                  Clock clock,
                                  SpriteBuffer spriteBuffer,
+                                 OamScanner oamScanner,
                                  InterruptController interruptController) {
         this.scanlineController = scanlineController;
         this.registers = registers;
         this.oam = oam;
         this.clock = clock;
         this.spriteBuffer = spriteBuffer;
+        this.oamScanner = oamScanner;
         this.interruptController = interruptController;
     }
 
@@ -39,12 +42,11 @@ public class PictureProcessingUnit {
                 interruptController.sendScanlineAtWindow();
             }
 
-            spriteBuffer.scanOAM(oam, uint(registers.read(LY)), clock);
+            oamScanner.setupOamScan(uint(registers.read(LY)));
+            for (int i=0; i < 40*2; i++) oamScanner.performOneClockCycle();
 
             scanlineController.setupScanline();
             for (int i=0; i<200; i++) scanlineController.performSingleClockCycle();
-
-            scanlineController.reset();
 
             interruptController.sendHBLANK();
             performHblankPadding();
