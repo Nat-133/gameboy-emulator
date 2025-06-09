@@ -40,13 +40,14 @@ public class Main {
         SynchronisedClock ppuClock = new SynchronisedClock();
 //        MemoryDump tetrisVram = MemoryDump.from(Paths.get("/Users/nathaniel.manley/vcs/personal/gameboy-emulator/src/test/resources/tetris_vmem_8000_9fff.txt"));
 
-        SpriteBuffer spriteBuffer = new SpriteBuffer(oam);
+        SpriteBuffer spriteBuffer = new SpriteBuffer();
 
         var backgroundFetcher = new BackgroundFetcher(memory, registers, backgroundFifo, ppuClock);
         var spriteFetcher = new SpriteFetcher(spriteBuffer, memory, registers, spriteFifo, ppuClock);
         var pixelFetcher = new PixelFetcher(backgroundFetcher, spriteFetcher);
         var scanlineController = new ScanlineController(ppuClock, display, backgroundFifo, spriteFifo, new PixelCombinator(), registers, backgroundFetcher, spriteFetcher, spriteBuffer);
-        var ppu = new PictureProcessingUnit(scanlineController, registers, oam, ppuClock, spriteBuffer, new InterruptController(memory));
+        var oamScanner = new OamScanner(oam, ppuClock, spriteBuffer);
+        var ppu = new PictureProcessingUnit(scanlineController, registers, oam, ppuClock, spriteBuffer, oamScanner, new InterruptController(memory));
 
         Clock cpuClock = new ClockWithParallelProcess(() -> {
             ppu.renderAllScanlines();

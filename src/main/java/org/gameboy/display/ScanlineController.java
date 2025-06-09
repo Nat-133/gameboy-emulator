@@ -67,6 +67,7 @@ public class ScanlineController {
     public void setupScanline() {
         LX = 0;
         backgroundFetcher.reset();
+        backgroundFifo.clear();
         state = shouldDiscardPixel() ? State.DISCARD_PIXELS : State.PIXEL_FETCHING;
     }
 
@@ -148,12 +149,6 @@ public class ScanlineController {
         int pixelsToDiscard = mod(registers.read(SCX), 8);
         int discardedPixels = (8 - backgroundFifo.size());
         return discardedPixels % 8 != pixelsToDiscard;
-    }
-
-    public void reset() {
-        backgroundFetcher.reset();
-        backgroundFifo.clear();
-        LX = 0;
     }
 
     private enum State {
