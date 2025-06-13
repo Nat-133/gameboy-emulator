@@ -7,6 +7,7 @@ import static org.gameboy.utils.BitUtilities.uint;
 
 public class PictureProcessingUnit {
 
+    public static final int SCANLINE_TICK_COUNT = 200;
     private final ScanlineController scanlineController;
     private final PpuRegisters registers;
     private final ObjectAttributeMemory oam;
@@ -15,6 +16,7 @@ public class PictureProcessingUnit {
     private final OamScanner oamScanner;
     private final InterruptController interruptController;
     private int count = 0;
+    private Step step;
 
     public PictureProcessingUnit(ScanlineController scanlineController,
                                  PpuRegisters registers,
@@ -30,36 +32,64 @@ public class PictureProcessingUnit {
         this.spriteBuffer = spriteBuffer;
         this.oamScanner = oamScanner;
         this.interruptController = interruptController;
+        this.step = Step.OAM_SETUP;
     }
 
-    public void renderAllScanlines() {
-        for (int y = 0; y < 144; y++) {
-            // ly=wy interrupt still needs to happen
-            // or was that x = wx interrupt?
-            // no, I'm pretty sure it was the y one.
-            registers.write(LY, (byte) y);
-            if (y == uint(registers.read(PpuRegisters.PpuRegister.SCY))) {
-                interruptController.sendScanlineAtWindow();
-            }
+    public void performOneClockCycle() {
+        step = switch(step) {
+            case OAM_SETUP -> setupOamScan();
+            case OAM_SCAN -> oamScan();
+            case SCANLINE_SETUP -> setupScanline();
+            case SCANLINE_DRAWING -> drawScanline();
+            case VBLANK -> vblank();
+        };
+    }
 
-            oamScanner.setupOamScan(uint(registers.read(LY)));
-            for (int i=0; i < 40*2; i++) oamScanner.performOneClockCycle();
+    private Step setupOamScan() {
+        oamScanner.setupOamScan(uint(registers.read(LY)));
+        count = 0;
+        return oamScan();
+    }
 
-            scanlineController.setupScanline();
-            for (int i=0; i<200; i++) scanlineController.performSingleClockCycle();
+    private Step oamScan() {
+        oamScanner.performOneClockCycle();
+        count++;
+        return count < 40*2 ? Step.OAM_SCAN : Step.SCANLINE_SETUP;
+    }
 
-            interruptController.sendHBLANK();
-            performHblankPadding();
+    private Step setupScanline() {
+        scanlineController.setupScanline();
+        count = 0;
+        return drawScanline();
+    }
+
+    private Step drawScanline() {
+        scanlineController.performSingleClockCycle();
+        count++;
+
+        if (count < SCANLINE_TICK_COUNT) {
+            return Step.SCANLINE_DRAWING;
         }
 
-        // send vblank interrupt
-        interruptController.sendVBLANK();
-        performVblankPadding();
+        registers.write(LY, (byte) (registers.read(LY) + 1));
 
-        // do nothing for a few scanlines worth of time
+        if (uint(registers.read(LY)) >= Display.DISPLAY_HEIGHT) {
+            count = 0;
+            return Step.VBLANK;
+        }
 
-        byte read = registers.read(PpuRegisters.PpuRegister.SCX);
-//        if (count++ % 10 == 0) registers.write(PpuRegisters.PpuRegister.SCX, (byte)(read + 1));
+        return Step.OAM_SETUP;
+    }
+
+    private Step vblank() {
+        clock.tick();
+        count++;
+        if (count < SCANLINE_TICK_COUNT * 40) {
+            return Step.VBLANK;
+        }
+
+        registers.write(LY, (byte) 0);
+        return Step.OAM_SETUP;
     }
 
     private void performHblankPadding() {
@@ -73,45 +103,11 @@ public class PictureProcessingUnit {
             performHblankPadding();
         }
     }
-
-    // scanline controller:
-    //  OAM scannin'
-    //  x register
-    //  fetcher pausing/playing
-    //  Sprite detection -> switching fetch modes
-    //  HBlank padding
-    //
-    // PPU:
-    //  VBlank padding
-    //  y register
-    //  triggering the scanline controller
-
-
-    // tests
-    // givenSpritesAtY_whenOamScanned_thenCorrectSpritesFound
-    // givenNoSpritesAtY_whenOamScanned_thenCorrectSpritesFound
-    //
-    // givenSevenSpritesInBuffer_whenScanlineDrawn_thenTakesNTicksToDraw
-    // givenSevenSpritesInBuffer_whenScanlineDrawn_thenHBlankIsNTicks
-    //
-    // givenSpriteAtCurrentX_whenAdvance_thenBackgroundFetcherCorrectlyPaused
-    // givenSpriteFetchOccurring_whenItFinishes_thenBackgroundFetcherIsResumed
-    // givenTwoOverlappingSprites_whenSecondFetchOccurs_thenFirstSpriteTakesPrecedent
-    //
-    // 144 scanlines drawn + hblank scanlines
-    // total screen refresh takes some time, for various sprites
-    // correct interrupts sent
-    //
-
-
-    /*
-     *separate components:
-     *  OAM scanner
-     *  fetcher
-     *      background
-     *      sprite
-     *  drawing to screen part of the scanline
-     *  hblank mode part of scanline
-     *  vblank part of drawing screen
-     */
+    private enum Step {
+        OAM_SETUP,
+        OAM_SCAN,
+        SCANLINE_SETUP,
+        SCANLINE_DRAWING,
+        VBLANK
+    }
 }

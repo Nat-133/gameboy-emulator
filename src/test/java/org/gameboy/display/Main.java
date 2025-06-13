@@ -50,14 +50,13 @@ public class Main {
         var ppu = new PictureProcessingUnit(scanlineController, registers, oam, ppuClock, spriteBuffer, oamScanner, new InterruptController(memory));
 
         Clock cpuClock = new ClockWithParallelProcess(() -> {
-            ppu.renderAllScanlines();
+            ppu.performOneClockCycle();
         });
         CpuStructure cpuStructure = new CpuStructureBuilder().withMemory(memory).withClock(cpuClock).build();
 
 
         while (true) {
-            ppu.renderAllScanlines();
-            frame.revalidate();
+            ppu.performOneClockCycle();
         }
     }
 
