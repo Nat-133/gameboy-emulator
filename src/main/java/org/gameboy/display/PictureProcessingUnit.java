@@ -10,27 +10,21 @@ public class PictureProcessingUnit {
     public static final int SCANLINE_TICK_COUNT = 200;
     private final ScanlineController scanlineController;
     private final PpuRegisters registers;
-    private final ObjectAttributeMemory oam;
     private final Clock clock;
-    private final SpriteBuffer spriteBuffer;
-    private final OamScanner oamScanner;
+    private final OamScanController oamScanController;
     private final InterruptController interruptController;
     private int count = 0;
     private Step step;
 
     public PictureProcessingUnit(ScanlineController scanlineController,
                                  PpuRegisters registers,
-                                 ObjectAttributeMemory oam,
                                  Clock clock,
-                                 SpriteBuffer spriteBuffer,
-                                 OamScanner oamScanner,
+                                 OamScanController oamScanController,
                                  InterruptController interruptController) {
         this.scanlineController = scanlineController;
         this.registers = registers;
-        this.oam = oam;
         this.clock = clock;
-        this.spriteBuffer = spriteBuffer;
-        this.oamScanner = oamScanner;
+        this.oamScanController = oamScanController;
         this.interruptController = interruptController;
         this.step = Step.OAM_SETUP;
     }
@@ -46,13 +40,13 @@ public class PictureProcessingUnit {
     }
 
     private Step setupOamScan() {
-        oamScanner.setupOamScan(uint(registers.read(LY)));
+        oamScanController.setupOamScan(uint(registers.read(LY)));
         count = 0;
         return oamScan();
     }
 
     private Step oamScan() {
-        oamScanner.performOneClockCycle();
+        oamScanController.performOneClockCycle();
         count++;
         return count < 40*2 ? Step.OAM_SCAN : Step.SCANLINE_SETUP;
     }
@@ -92,17 +86,6 @@ public class PictureProcessingUnit {
         return Step.OAM_SETUP;
     }
 
-    private void performHblankPadding() {
-        for (int i=0; i<= 160; i++) {
-            clock.tick();
-        }
-    }
-
-    private void performVblankPadding() {
-        for (int i=0; i<= 70; i++) {
-            performHblankPadding();
-        }
-    }
     private enum Step {
         OAM_SETUP,
         OAM_SCAN,
