@@ -5,7 +5,7 @@ import org.gameboy.utils.BitUtilities;
 
 import static org.gameboy.utils.BitUtilities.uint;
 
-public class OamScanner {
+public class OamScanController {
     private final ObjectAttributeMemory oam;
     private final Clock clock;
     private final SpriteBuffer spriteBuffer;
@@ -16,7 +16,7 @@ public class OamScanner {
     private byte currentSpriteY;
     private byte currentSpriteX;
 
-    public OamScanner(ObjectAttributeMemory oam, Clock clock, SpriteBuffer spriteBuffer) {
+    public OamScanController(ObjectAttributeMemory oam, Clock clock, SpriteBuffer spriteBuffer) {
         this.oam = oam;
         this.clock = clock;
         this.spriteBuffer = spriteBuffer;
