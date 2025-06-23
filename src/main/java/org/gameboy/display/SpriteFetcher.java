@@ -5,7 +5,6 @@ import org.gameboy.common.SynchronisedClock;
 import org.gameboy.utils.BitUtilities;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -21,12 +20,11 @@ public class SpriteFetcher implements Fetcher {
     private final PixelFifo spriteFifo;
     private int pixelXPosition;
     //    private int WINDOW_LINE_COUNTER = 0;  // should be on fetcher, not background fetcher
-    private int X_POSITION_COUNTER = 0;  // tile coordinate, not pixel
+    // tile coordinate, not pixel
     private byte tileDataLow;
     private byte tileDataHigh;
     private final SynchronisedClock clock;
 
-    public List<List<TwoBitValue>> history = new ArrayList<>();
     private Step currentStep;
     private SpriteData currentSpriteData;
 
@@ -70,7 +68,7 @@ public class SpriteFetcher implements Fetcher {
     }
 
     private Step fetchTileNo() {
-        currentSpriteData = spriteBuffer.getSprite(pixelXPosition).orElse(EMPTY_SPRITE);
+        currentSpriteData = spriteBuffer.popSprite(pixelXPosition).orElse(EMPTY_SPRITE);
 
         clock.tick();
         return Step.FETCH_TILE_NO.next();
@@ -106,7 +104,6 @@ public class SpriteFetcher implements Fetcher {
                 .toList();
         spriteFifo.write(pixelData);
         clock.tick();
-        X_POSITION_COUNTER++;
 
         return Step.COMPLETE;
     }
