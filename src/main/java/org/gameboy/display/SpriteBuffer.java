@@ -12,13 +12,18 @@ public class SpriteBuffer {
     }
 
     public Optional<SpriteData> getSprite(int x) {
-        Optional<SpriteData> firstMatchingSprite = buffer.stream()
-                .filter(data -> data.x() == x)
+        return buffer.stream()
+                .filter(data -> data.x() <= x)
                 .findFirst();
+    }
+
+    public Optional<SpriteData> popSprite(int x) {
+        Optional<SpriteData> firstMatchingSprite = getSprite(x);
+
         firstMatchingSprite.ifPresent(buffer::remove);
 
         return firstMatchingSprite;
-    };
+    }
 
     public void add(SpriteData spriteData) {
         buffer.add(spriteData);
