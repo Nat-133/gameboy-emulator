@@ -4,9 +4,12 @@ import org.gameboy.CpuStructureBuilder;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
+import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
+import org.gameboy.cpu.instructions.targets.ByteRegister;
 import org.gameboy.utils.BitUtilities;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Hashtable;
@@ -14,6 +17,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertFlagsMatch;
+import static org.gameboy.GameboyAssertions.assertThatHex;
 
 class RotateRightTest {
     static Stream<Arguments> getRotateRightValues() {
@@ -61,6 +65,78 @@ class RotateRightTest {
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
                 .with(Flag.C, (a & 0b0000_0001) != 0)
+                .build();
+        assertFlagsMatch(expectedFlags, cpuStructure);
+    }
+
+    @ParameterizedTest
+    @EnumSource(ByteRegister.class)
+    void givenByteRegister_whenRRwithCarrySet_thenStateIsCorrect(ByteRegister r8) {
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withExclusivelySetFlags(Flag.C)
+                .build();
+        OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
+
+        byte initialValue = (byte) 0b0101_0101;
+        byte expectedValue = (byte) 0b1010_1010;
+        accessor.setValue(r8.convert(), initialValue);
+
+        RotateRight.rr_r8(r8).execute(cpuStructure);
+
+        byte actualValue = (byte) accessor.getValue(r8.convert());
+        assertThatHex(actualValue).isEqualTo(expectedValue);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .withAll(false)
+                .with(Flag.C, true)
+                .build();
+        assertFlagsMatch(expectedFlags, cpuStructure);
+    }
+
+    @ParameterizedTest
+    @EnumSource(ByteRegister.class)
+    void givenByteRegister_whenRRwithCarryUnset_thenStateIsCorrect(ByteRegister r8) {
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withExclusivelyUnsetFlags(Flag.C)
+                .build();
+        OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
+
+        byte initialValue = (byte) 0b0101_0101;
+        byte expectedValue = (byte) 0b0010_1010;
+        accessor.setValue(r8.convert(), initialValue);
+
+        RotateRight.rr_r8(r8).execute(cpuStructure);
+
+        byte actualValue = (byte) accessor.getValue(r8.convert());
+        assertThatHex(actualValue).isEqualTo(expectedValue);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .withAll(false)
+                .with(Flag.C, true)
+                .build();
+        assertFlagsMatch(expectedFlags, cpuStructure);
+    }
+
+    @ParameterizedTest
+    @EnumSource(ByteRegister.class)
+    void givenByteRegister_whenRRwithNoLSBSet_thenCarryUnset(ByteRegister r8) {
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withExclusivelySetFlags(Flag.C)
+                .build();
+        OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
+
+        byte initialValue = (byte) 0b1010_1010;
+        byte expectedValue = (byte) 0b1101_0101;
+        accessor.setValue(r8.convert(), initialValue);
+
+        RotateRight.rr_r8(r8).execute(cpuStructure);
+
+        byte actualValue = (byte) accessor.getValue(r8.convert());
+        assertThatHex(actualValue).isEqualTo(expectedValue);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .withAll(false)
+                .with(Flag.C, false)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
