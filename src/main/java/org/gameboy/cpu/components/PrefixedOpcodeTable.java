@@ -2,6 +2,7 @@ package org.gameboy.cpu.components;
 
 import org.gameboy.cpu.instructions.Instruction;
 import org.gameboy.cpu.instructions.RotateLeftCircular;
+import org.gameboy.cpu.instructions.RotateRightCircular;
 import org.gameboy.cpu.instructions.targets.ByteRegister;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
@@ -36,7 +37,7 @@ public class PrefixedOpcodeTable implements OpcodeTable {
         return switch(x) {
             case b00 -> switch(y) {
                 case b000 -> RotateLeftCircular.rlc_r8(ByteRegister.lookup(z));
-                case b001 -> UNIMPLEMENTED;
+                case b001 -> RotateRightCircular.rrc_r8(ByteRegister.lookup(z));
                 case b010 -> UNIMPLEMENTED;
                 case b011 -> UNIMPLEMENTED;
                 case b100 -> UNIMPLEMENTED;
