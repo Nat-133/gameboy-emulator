@@ -7,6 +7,7 @@ import org.gameboy.common.Clock;
 import org.gameboy.common.ClockWithParallelProcess;
 import org.gameboy.common.Memory;
 import org.gameboy.common.SynchronisedClock;
+import org.gameboy.cpu.Cpu;
 import org.gameboy.cpu.components.CpuStructure;
 
 import javax.swing.*;
@@ -27,10 +28,15 @@ public class Main {
         frame.add(display, BorderLayout.CENTER);
         frame.setVisible(true);
 //        frame.pack();
+        byte[] boot_rom_memory = loadGbRom("dmg_boot.bin");
+
         byte[] test_memory = loadGbRom("dmg-acid2.gb");
         byte[] mario_memory = loadHexMemoryDump();
-        MemoryDump mario_vram = new MemoryDump((short) 0, mario_memory);
-        Memory memory = new TestMemory().withMemoryDump(mario_vram);
+        MemoryDump mario_vram = new MemoryDump((short) 0, test_memory);
+        MemoryDump boot_rom = new MemoryDump((short) 0, boot_rom_memory);
+        Memory memory = new TestMemory()
+                .withMemoryDump(mario_vram)
+                .withMemoryDump(boot_rom);
         ObjectAttributeMemory oam = new ObjectAttributeMemory(memory);
 
         PpuRegisters registers = new PpuRegisters();
@@ -44,19 +50,23 @@ public class Main {
 
         var backgroundFetcher = new BackgroundFetcher(memory, registers, backgroundFifo, ppuClock);
         var spriteFetcher = new SpriteFetcher(spriteBuffer, memory, registers, spriteFifo, ppuClock);
-        var pixelFetcher = new PixelFetcher(backgroundFetcher, spriteFetcher);
         var scanlineController = new ScanlineController(ppuClock, display, backgroundFifo, spriteFifo, new PixelCombinator(), registers, backgroundFetcher, spriteFetcher, spriteBuffer);
-        var oamScanner = new OamScanController(oam, ppuClock, spriteBuffer);
+        var oamScanner = new OamScanController(oam, ppuClock, spriteBuffer, registers);
         var ppu = new PictureProcessingUnit(scanlineController, registers, ppuClock, oamScanner, new InterruptController(memory));
 
         Clock cpuClock = new ClockWithParallelProcess(() -> {
-            ppu.performOneClockCycle();
+            for (int i=0; i<4; i++) {
+                ppu.performOneClockCycle();
+            }
         });
-        CpuStructure cpuStructure = new CpuStructureBuilder().withMemory(memory).withClock(cpuClock).build();
-
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withMemory(memory)
+                .withClock(cpuClock)
+                .build();
+        Cpu cpu = new Cpu(cpuStructure);
 
         while (true) {
-            ppu.performOneClockCycle();
+            cpu.cycle();
         }
     }
 

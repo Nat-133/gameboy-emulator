@@ -10,8 +10,8 @@ import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static org.gameboy.cpu.MemoryMapConstants.IE_ADDRESS;
-import static org.gameboy.cpu.MemoryMapConstants.IF_ADDRESS;
+import static org.gameboy.common.MemoryMapConstants.IE_ADDRESS;
+import static org.gameboy.common.MemoryMapConstants.IF_ADDRESS;
 import static org.gameboy.utils.BitUtilities.*;
 
 public class InterruptBus {

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertThatHex;
-import static org.gameboy.cpu.MemoryMapConstants.*;
+import static org.gameboy.common.MemoryMapConstants.*;
 
 public class InterruptTests {
 

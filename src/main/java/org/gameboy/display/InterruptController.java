@@ -2,7 +2,7 @@ package org.gameboy.display;
 
 import org.gameboy.common.Interrupt;
 import org.gameboy.common.Memory;
-import org.gameboy.cpu.MemoryMapConstants;
+import org.gameboy.common.MemoryMapConstants;
 
 import static org.gameboy.utils.BitUtilities.set_bit;
 

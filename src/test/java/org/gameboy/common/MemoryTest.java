@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.gameboy.cpu.MemoryMapConstants.IF_ADDRESS;
+import static org.gameboy.common.MemoryMapConstants.IF_ADDRESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MemoryTest {

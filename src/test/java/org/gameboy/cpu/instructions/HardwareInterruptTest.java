@@ -11,8 +11,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertThatHex;
-import static org.gameboy.cpu.MemoryMapConstants.IE_ADDRESS;
-import static org.gameboy.cpu.MemoryMapConstants.IF_ADDRESS;
+import static org.gameboy.common.MemoryMapConstants.IE_ADDRESS;
+import static org.gameboy.common.MemoryMapConstants.IF_ADDRESS;
 import static org.gameboy.utils.BitUtilities.set_bit;
 
 class HardwareInterruptTest {

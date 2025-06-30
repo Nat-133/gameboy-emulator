@@ -3,8 +3,8 @@ package org.gameboy;
 import org.gameboy.common.BasicMemory;
 import org.gameboy.common.Clock;
 import org.gameboy.common.Memory;
+import org.gameboy.common.MemoryMapConstants;
 import org.gameboy.cpu.Flag;
-import org.gameboy.cpu.MemoryMapConstants;
 import org.gameboy.cpu.components.*;
 import org.gameboy.utils.BitUtilities;
 

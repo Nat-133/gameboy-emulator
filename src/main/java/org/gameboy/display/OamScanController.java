@@ -3,12 +3,15 @@ package org.gameboy.display;
 import org.gameboy.common.Clock;
 import org.gameboy.utils.BitUtilities;
 
+import static org.gameboy.display.LcdcParser.spriteSize;
+import static org.gameboy.display.PpuRegisters.PpuRegister.LCDC;
 import static org.gameboy.utils.BitUtilities.uint;
 
 public class OamScanController {
     private final ObjectAttributeMemory oam;
     private final Clock clock;
     private final SpriteBuffer spriteBuffer;
+    private final PpuRegisters registers;
     private State state;
     private int currentSpriteIndex;
     private int LY;
@@ -16,17 +19,18 @@ public class OamScanController {
     private byte currentSpriteY;
     private byte currentSpriteX;
 
-    public OamScanController(ObjectAttributeMemory oam, Clock clock, SpriteBuffer spriteBuffer) {
+    public OamScanController(ObjectAttributeMemory oam, Clock clock, SpriteBuffer spriteBuffer, PpuRegisters registers) {
         this.oam = oam;
         this.clock = clock;
         this.spriteBuffer = spriteBuffer;
+        this.registers = registers;
     }
 
     public void setupOamScan(int LY) {
         state = State.READ_SPRITE_COORDINATE;
         currentSpriteIndex = 0;
         this.LY = LY;
-        this.spriteHeight = 8;
+        this.spriteHeight = spriteSize(registers.read(LCDC));
         spriteBuffer.clear();
     }
 

@@ -1,4 +1,4 @@
-package org.gameboy.cpu;
+package org.gameboy.common;
 
 public class MemoryMapConstants {
     public static final short IE_ADDRESS = (short) 0xffff;
@@ -9,4 +9,7 @@ public class MemoryMapConstants {
     public static final short TIMER_HANDLER_ADDRESS = (short) 0x0050;
     public static final short SERIAL_HANDLER_ADDRESS = (short) 0x0058;
     public static final short JOYPAD_HANDLER_ADDRESS = (short) 0x0060;
+
+    public static final int TILE_MAP_A_ADDRESS = 0x9800;
+    public static final int TILE_MAP_B_ADDRESS = 0x9C00;
 }

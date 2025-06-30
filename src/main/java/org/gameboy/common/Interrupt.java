@@ -1,6 +1,6 @@
 package org.gameboy.common;
 
-import static org.gameboy.cpu.MemoryMapConstants.*;
+import static org.gameboy.common.MemoryMapConstants.*;
 
 public enum Interrupt {
     VBLANK,
