@@ -18,6 +18,10 @@ public class RotateRightCircular implements Instruction{
         return new RotateRightCircular(ByteRegister.A, false);
     }
 
+    public static RotateRightCircular rrc_r8(ByteRegister target) {
+        return new RotateRightCircular(target, true);
+    }
+
     @Override
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
