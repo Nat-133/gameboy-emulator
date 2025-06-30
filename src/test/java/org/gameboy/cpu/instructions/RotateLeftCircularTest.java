@@ -58,7 +58,7 @@ class RotateLeftCircularTest {
         byte expectedValue = (byte) 0b0101_0101;
         accessor.setValue(r8.convert(), initialValue);
 
-        RotateLeftCircular.rlc_r(r8).execute(cpuStructure);
+        RotateLeftCircular.rlc_r8(r8).execute(cpuStructure);
 
         byte actualValue = (byte) accessor.getValue(r8.convert());
         assertThatHex(actualValue).isEqualTo(expectedValue);
@@ -82,7 +82,7 @@ class RotateLeftCircularTest {
         byte expectedValue = (byte) 0b1010_1010;
         accessor.setValue(r8.convert(), initialValue);
 
-        RotateLeftCircular.rlc_r(r8).execute(cpuStructure);
+        RotateLeftCircular.rlc_r8(r8).execute(cpuStructure);
 
         byte actualValue = (byte) accessor.getValue(r8.convert());
         assertThatHex(actualValue).isEqualTo(expectedValue);
