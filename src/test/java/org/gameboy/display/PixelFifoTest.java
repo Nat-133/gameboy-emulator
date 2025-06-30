@@ -34,13 +34,13 @@ class PixelFifoTest {
         List<TwoBitValue> expectedElements = IntStream.range(0, 8).mapToObj(TwoBitValue::from).toList();
         fifo.write(expectedElements);
 
-        assertThat(fifo.read()).withFailMessage("fifo element 0 unexpectedly overwritten").isEqualTo(TwoBitValue.b11);
-        assertThat(fifo.read()).withFailMessage("fifo element 1 unexpectedly overwritten").isEqualTo(TwoBitValue.b10);
+        assertThat(fifo.read()).withFailMessage("fifo element 0 unexpectedly overwritten").contains(TwoBitValue.b11);
+        assertThat(fifo.read()).withFailMessage("fifo element 1 unexpectedly overwritten").contains(TwoBitValue.b10);
         for (int i = 2; i < expectedElements.size(); i++) {
             Optional<TwoBitValue> actual = fifo.read();
             assertThat(actual)
                     .withFailMessage("expected fifo element %d to be %s, but was %s".formatted(i, expectedElements.get(i), actual))
-                    .isEqualTo(expectedElements.get(i));
+                    .contains(expectedElements.get(i));
         }
     }
 
