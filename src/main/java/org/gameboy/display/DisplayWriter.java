@@ -12,7 +12,7 @@ public class DisplayWriter {
     }
 
     public void pushPixelToDisplay(int x, int y) {
-        TwoBitValue value = backgroundFifo.readFromFifo();
+        TwoBitValue value = backgroundFifo.read();
         PixelValue pixel = PixelValue.of(value);
 
         display.setPixel(x, y, pixel);

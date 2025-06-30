@@ -9,7 +9,7 @@ class DisplayWriterTest {
     @Test
     void givenFifo_whenPushPixel_thenCorrectPixelPushed() {
         PixelFifo backgroundFifo = mock(PixelFifo.class);
-        when(backgroundFifo.readFromFifo()).thenReturn(TwoBitValue.b01);
+        when(backgroundFifo.read()).thenReturn(TwoBitValue.b01);
         Display display = mock(Display.class);
         var displayWriter = new DisplayWriter(display, backgroundFifo);
 
