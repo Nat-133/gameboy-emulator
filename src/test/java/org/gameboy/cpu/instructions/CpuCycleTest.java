@@ -132,7 +132,9 @@ public class CpuCycleTest {
 
                 generateTestCase(ReturnFromInterruptHandler::reti, 4),
 
-                generateTestCase(Prefix::prefix, 1)
+                generateTestCase(Prefix::prefix, 1),
+
+                generateR8TestCases(RotateLeftCircular::rlc_r, 1, 3)
         ).flatMap(x -> x);
     }
 
@@ -193,9 +195,13 @@ public class CpuCycleTest {
     }
 
     static Stream<Arguments> generateR8TestCases(Function<ByteRegister, Instruction> constructor, int expectedCyclesNoMemoryLoad) {
+        return generateR8TestCases(constructor, expectedCyclesNoMemoryLoad, expectedCyclesNoMemoryLoad + 1);
+    }
+
+    static Stream<Arguments> generateR8TestCases(Function<ByteRegister, Instruction> constructor, int expectedCyclesNoMemoryLoad, int expectedCyclesWithMemoryLoad) {
         return Stream.of(
                 generateTestCases(constructor, CpuCycleTest.DIRECT_BYTE_REGISTERS, expectedCyclesNoMemoryLoad),
-                generateTestCase(constructor, ByteRegister.INDIRECT_HL, expectedCyclesNoMemoryLoad + 1)
+                generateTestCase(constructor, ByteRegister.INDIRECT_HL, expectedCyclesWithMemoryLoad)
         ).flatMap(x -> x);
     }
 
