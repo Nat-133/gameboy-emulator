@@ -18,7 +18,7 @@ public class RotateLeftCircular implements Instruction{
         return new RotateLeftCircular(ByteRegister.A, false);
     }
 
-    public static RotateLeftCircular rlc_r(ByteRegister target) {
+    public static RotateLeftCircular rlc_r8(ByteRegister target) {
         return new RotateLeftCircular(target, true);
     }
 

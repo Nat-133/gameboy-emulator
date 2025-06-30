@@ -35,7 +35,7 @@ public class PrefixedOpcodeTable implements OpcodeTable {
 
         return switch(x) {
             case b00 -> switch(y) {
-                case b000 -> RotateLeftCircular.rlc_r(ByteRegister.lookup(z));
+                case b000 -> RotateLeftCircular.rlc_r8(ByteRegister.lookup(z));
                 case b001 -> UNIMPLEMENTED;
                 case b010 -> UNIMPLEMENTED;
                 case b011 -> UNIMPLEMENTED;
