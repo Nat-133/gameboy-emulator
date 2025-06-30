@@ -19,6 +19,10 @@ public class RotateLeft implements Instruction{
         return new RotateLeft(ByteRegister.A, false);
     }
 
+    public static RotateLeft rl_r8(ByteRegister target) {
+        return new RotateLeft(target, true);
+    }
+
     @Override
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
