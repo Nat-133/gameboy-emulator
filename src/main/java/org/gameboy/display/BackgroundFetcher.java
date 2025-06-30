@@ -1,6 +1,7 @@
 package org.gameboy.display;
 
 import org.gameboy.common.Memory;
+import org.gameboy.common.MemoryMapConstants;
 import org.gameboy.common.SynchronisedClock;
 import org.gameboy.utils.BitUtilities;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
@@ -13,8 +14,6 @@ import static org.gameboy.display.PpuRegisters.PpuRegister.*;
 import static org.gameboy.utils.BitUtilities.uint;
 
 public class BackgroundFetcher implements Fetcher {
-    public static final int BACKGROUND_MAP_A_ADDRESS = 0x9800;
-    public static final int BACKGROUND_MAP_B_ADDRESS = 0x9C00;
     private final Memory memory;
     private final PpuRegisters registers;
     private final PixelFifo backgroundFifo;
@@ -79,7 +78,7 @@ public class BackgroundFetcher implements Fetcher {
 
     private Step fetchTileNo() {
         int tileIndex = getTilemapIndex(X_POSITION_COUNTER, uint(registers.read(LY)), uint(registers.read(SCX)), uint(registers.read(SCY)));
-        short tileNumberAddress = (short) (BACKGROUND_MAP_A_ADDRESS + tileIndex);
+        short tileNumberAddress = (short) (MemoryMapConstants.TILE_MAP_A_ADDRESS + tileIndex);
 
         currentTileNumber = memory.read(tileNumberAddress);
 

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeoutException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertThatHex;
 import static org.gameboy.TestUtils.waitFor;
-import static org.gameboy.cpu.MemoryMapConstants.*;
+import static org.gameboy.common.MemoryMapConstants.*;
 
 class HaltTest {
     @Test

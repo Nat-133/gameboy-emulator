@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.gameboy.GameboyAssertions.assertThatHex;
 import static org.gameboy.TestUtils.waitFor;
-import static org.gameboy.cpu.MemoryMapConstants.IE_ADDRESS;
-import static org.gameboy.cpu.MemoryMapConstants.IF_ADDRESS;
+import static org.gameboy.common.MemoryMapConstants.IE_ADDRESS;
+import static org.gameboy.common.MemoryMapConstants.IF_ADDRESS;
 
 class InterruptBusTest {
     private static final List<Interrupt> INTERRUPT_PRIORITY = List.of(
