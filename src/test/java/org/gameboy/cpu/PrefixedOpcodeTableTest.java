@@ -3,7 +3,7 @@ package org.gameboy.cpu;
 import com.google.gson.GsonBuilder;
 import org.gameboy.OpcodeJson;
 import org.gameboy.OpcodeJson.InstructionData;
-import org.gameboy.cpu.components.UnprefixedOpcodeTable;
+import org.gameboy.cpu.components.PrefixedOpcodeTable;
 import org.gameboy.cpu.instructions.Instruction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,14 +26,14 @@ import static org.gameboy.cpu.instructions.Unimplemented.UNIMPLEMENTED;
 import static org.gameboy.utils.BitUtilities.uint;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-class UnprefixedOpcodeTableTest {
+class PrefixedOpcodeTableTest {
     private static OpcodeJson opcodeJson;
-    private UnprefixedOpcodeTable unprefixedOpcodeTable;
+    private PrefixedOpcodeTable prefixedOpcodeTable;
 
     @BeforeAll
     static void loadJson() throws IOException {
         String jsonString;
-        try (InputStream resource = UnprefixedOpcodeTableTest.class.getClassLoader().getResourceAsStream("Opcodes.json.gz")) {
+        try (InputStream resource = PrefixedOpcodeTableTest.class.getClassLoader().getResourceAsStream("Opcodes.json.gz")) {
             assert resource != null;
 
             GZIPInputStream gzipInputStream = new GZIPInputStream(resource);
@@ -54,7 +54,7 @@ class UnprefixedOpcodeTableTest {
     @BeforeEach
     void setup()
     {
-        unprefixedOpcodeTable = new UnprefixedOpcodeTable();
+        prefixedOpcodeTable = new PrefixedOpcodeTable();
     }
 
     static Stream<Arguments> getAllOpcodes()
@@ -71,7 +71,7 @@ class UnprefixedOpcodeTableTest {
 
     static String getInstruction(String hexCode)
     {
-        Map<String, InstructionData> instructionTable = opcodeJson.unprefixed();
+        Map<String, InstructionData> instructionTable = opcodeJson.prefixed();
 
         InstructionData instructionData = instructionTable.get(hexCode);
 
@@ -92,7 +92,7 @@ class UnprefixedOpcodeTableTest {
     @ParameterizedTest(name="{1}")
     @MethodSource("getAllOpcodes")
     public void givenNonPrefixedOpcode_whenLookup_thenCorrectInstructionGivenOrUnimplemented(byte opcode, String expectedResult) {
-        Instruction decodedInstruction = unprefixedOpcodeTable.lookup(opcode);
+        Instruction decodedInstruction = prefixedOpcodeTable.lookup(opcode);
 
         assumeTrue(decodedInstruction != UNIMPLEMENTED);
         assertThat(decodedInstruction.representation()).isEqualTo(expectedResult);
