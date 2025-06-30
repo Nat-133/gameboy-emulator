@@ -46,7 +46,7 @@ tasks.test {
         val agentJar = configurations.testRuntimeClasspath.get()
             .firstOrNull { it.name.contains("byte-buddy-agent") }
         if (agentJar != null) {
-            jvmArgs = jvmArgs + "-javaagent:${agentJar.absolutePath}"
+            jvmArgs = (jvmArgs ?: emptyList()) + "-javaagent:${agentJar.absolutePath}"
         }
     }
 }
