@@ -118,7 +118,7 @@ public class ArithmeticUnit {
         return new ArithmeticResult(
                 res,
                 new FlagChangesetBuilder().withAll(false)
-                        .with(Flag.C, BitUtilities.get_bit(value, 0))
+                        .with(Flag.C, get_bit(value, 0))
                         .build()
         );
     }
@@ -140,7 +140,17 @@ public class ArithmeticUnit {
         return new ArithmeticResult(
                 res,
                 new FlagChangesetBuilder().withAll(false)
-                        .with(Flag.C, BitUtilities.get_bit(value, 7))
+                        .with(Flag.C, get_bit(value, 7))
+                        .build()
+        );
+    }
+
+    public ArithmeticResult arithmetic_shift_left(byte value) {
+        byte res = lshift(value, 1);
+        return new ArithmeticResult(
+                res,
+                new FlagChangesetBuilder().withAll(false)
+                        .with(Flag.C, get_bit(value, 7))
                         .build()
         );
     }
