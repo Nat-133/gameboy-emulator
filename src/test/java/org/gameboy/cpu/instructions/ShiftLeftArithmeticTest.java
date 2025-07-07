@@ -41,7 +41,7 @@ class ShiftLeftArithmeticTest {
 
     @ParameterizedTest
     @EnumSource(ByteRegister.class)
-    void givenByteRegister_whenRLwithCarryUnset_thenStateIsCorrect(ByteRegister r8) {
+    void givenByteRegister_whenSLAwithCarryUnset_thenStateIsCorrect(ByteRegister r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelyUnsetFlags(Flag.C)
                 .build();
@@ -65,7 +65,7 @@ class ShiftLeftArithmeticTest {
 
     @ParameterizedTest
     @EnumSource(ByteRegister.class)
-    void givenByteRegister_whenRLwithNoMSBSet_thenCarryUnset(ByteRegister r8) {
+    void givenByteRegister_whenSLAwithNoMSBSet_thenCarryUnset(ByteRegister r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.C)
                 .build();
