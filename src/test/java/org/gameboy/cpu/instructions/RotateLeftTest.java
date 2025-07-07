@@ -45,6 +45,7 @@ class RotateLeftTest {
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
                 .with(Flag.C, (a & 0b1000_0000) != 0)
+                .with(Flag.Z, expectedResult == 0)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
@@ -65,6 +66,7 @@ class RotateLeftTest {
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
                 .with(Flag.C, (a & 0b1000_0000) != 0)
+                .with(Flag.Z, expectedResult == 0)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
@@ -89,6 +91,7 @@ class RotateLeftTest {
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
                 .with(Flag.C, true)
+                .with(Flag.Z, expectedValue == 0)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
@@ -113,6 +116,7 @@ class RotateLeftTest {
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
                 .with(Flag.C, true)
+                .with(Flag.Z, expectedValue == 0)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
@@ -137,6 +141,32 @@ class RotateLeftTest {
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
                 .with(Flag.C, false)
+                .with(Flag.Z, expectedValue == 0)
+                .build();
+        assertFlagsMatch(expectedFlags, cpuStructure);
+    }
+
+    @ParameterizedTest
+    @EnumSource(ByteRegister.class)
+    void givenByteRegisterWithZeroValue_whenRL_thenZeroFlagSet(ByteRegister r8) {
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withUnsetFlags(Flag.C)
+                .build();
+        OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
+
+        byte initialValue = (byte) 0b0000_0000;
+        byte expectedValue = (byte) 0b0000_0000;
+        accessor.setValue(r8.convert(), initialValue);
+
+        RotateLeft.rl_r8(r8).execute(cpuStructure);
+
+        byte actualValue = (byte) accessor.getValue(r8.convert());
+        assertThatHex(actualValue).isEqualTo(expectedValue);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .withAll(false)
+                .with(Flag.C, false)
+                .with(Flag.Z, true)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
