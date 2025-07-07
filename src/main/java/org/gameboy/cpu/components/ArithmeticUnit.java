@@ -155,6 +155,16 @@ public class ArithmeticUnit {
         );
     }
 
+    public ArithmeticResult arithmetic_shift_right(byte value) {
+        byte res = arithmetic_rshift(value, 1);
+        return new ArithmeticResult(
+                res,
+                new FlagChangesetBuilder().withAll(false)
+                        .with(Flag.C, get_bit(value, 0))
+                        .build()
+        );
+    }
+
     public ArithmeticResult compliment(byte value) {
         return new ArithmeticResult(
                 BitUtilities.not(value),
