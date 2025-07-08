@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.Hashtable;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 import static org.gameboy.GameboyAssertions.assertThatHex;
 
@@ -33,9 +34,10 @@ class ShiftRightArithmeticTest {
         assertThatHex(actualValue).isEqualTo(expectedValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
-                .withAll(false)
-                .with(Flag.C, false)
                 .with(Flag.Z, expectedValue == 0)
+                .with(Flag.N, false)
+                .with(Flag.H, false)
+                .with(Flag.C, false)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
@@ -58,9 +60,10 @@ class ShiftRightArithmeticTest {
         assertThatHex(actualValue).isEqualTo(expectedValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
-                .withAll(false)
-                .with(Flag.C, false)
                 .with(Flag.Z, expectedValue == 0)
+                .with(Flag.N, false)
+                .with(Flag.H, false)
+                .with(Flag.C, false)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
@@ -83,9 +86,10 @@ class ShiftRightArithmeticTest {
         assertThatHex(actualValue).isEqualTo(expectedValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
-                .withAll(false)
-                .with(Flag.C, true)
                 .with(Flag.Z, expectedValue == 0)
+                .with(Flag.N, false)
+                .with(Flag.H, false)
+                .with(Flag.C, true)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
@@ -108,10 +112,28 @@ class ShiftRightArithmeticTest {
         assertThatHex(actualValue).isEqualTo(expectedValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
-                .withAll(false)
-                .with(Flag.C, false)
                 .with(Flag.Z, true)
+                .with(Flag.N, false)
+                .with(Flag.H, false)
+                .with(Flag.C, false)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
+    }
+
+    @ParameterizedTest
+    @EnumSource(ByteRegister.class)
+    void givenByteRegister_whenSRA_thenNAndHFlagsAlwaysZero(ByteRegister r8) {
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withExclusivelySetFlags(Flag.N, Flag.H)
+                .build();
+        OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
+
+        byte initialValue = (byte) 0b1010_1010;
+        accessor.setValue(r8.convert(), initialValue);
+
+        ShiftRightArithmetic.sra_r8(r8).execute(cpuStructure);
+
+        assertThat(cpuStructure.registers().getFlag(Flag.N)).isFalse();
+        assertThat(cpuStructure.registers().getFlag(Flag.H)).isFalse();
     }
 }

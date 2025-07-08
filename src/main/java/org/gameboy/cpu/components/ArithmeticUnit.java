@@ -109,6 +109,7 @@ public class ArithmeticUnit {
                 new FlagChangesetBuilder()
                         .withAll(false)
                         .with(C, carry)
+                        .with(Z, res == 0)
                         .build()
         );
     }
@@ -119,6 +120,7 @@ public class ArithmeticUnit {
                 res,
                 new FlagChangesetBuilder().withAll(false)
                         .with(Flag.C, get_bit(value, 0))
+                        .with(Flag.Z, res == 0)
                         .build()
         );
     }
@@ -131,6 +133,7 @@ public class ArithmeticUnit {
                 new FlagChangesetBuilder()
                         .withAll(false)
                         .with(C, carry)
+                        .with(Z, res == 0)
                         .build()
         );
     }
@@ -139,8 +142,10 @@ public class ArithmeticUnit {
         byte res = set_bit(lshift(value, 1), 0, carry_in);
         return new ArithmeticResult(
                 res,
-                new FlagChangesetBuilder().withAll(false)
+                new FlagChangesetBuilder()
+                        .withAll(false)
                         .with(Flag.C, get_bit(value, 7))
+                        .with(Flag.Z, res == 0)
                         .build()
         );
     }
@@ -149,8 +154,10 @@ public class ArithmeticUnit {
         byte res = lshift(value, 1);
         return new ArithmeticResult(
                 res,
-                new FlagChangesetBuilder().withAll(false)
+                new FlagChangesetBuilder()
+                        .withAll(false)
                         .with(Flag.C, get_bit(value, 7))
+                        .with(Flag.Z, res == 0)
                         .build()
         );
     }
@@ -159,8 +166,10 @@ public class ArithmeticUnit {
         byte res = arithmetic_rshift(value, 1);
         return new ArithmeticResult(
                 res,
-                new FlagChangesetBuilder().withAll(false)
+                new FlagChangesetBuilder()
+                        .withAll(false)
                         .with(Flag.C, get_bit(value, 0))
+                        .with(Flag.Z, res == 0)
                         .build()
         );
     }

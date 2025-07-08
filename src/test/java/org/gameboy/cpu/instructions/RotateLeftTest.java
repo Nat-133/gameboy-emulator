@@ -7,6 +7,7 @@ import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
 import org.gameboy.cpu.instructions.targets.ByteRegister;
 import org.gameboy.utils.BitUtilities;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -43,9 +44,10 @@ class RotateLeftTest {
         assertThat(cpuStructure.registers().A()).isEqualTo(expectedResult);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
-                .withAll(false)
+                .with(Flag.Z, false)
+                .with(Flag.N, false)
+                .with(Flag.H, false)
                 .with(Flag.C, (a & 0b1000_0000) != 0)
-                .with(Flag.Z, expectedResult == 0)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
@@ -64,9 +66,10 @@ class RotateLeftTest {
         assertThat(cpuStructure.registers().A()).isEqualTo(expectedResult);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
-                .withAll(false)
+                .with(Flag.Z, false)
+                .with(Flag.N, false)
+                .with(Flag.H, false)
                 .with(Flag.C, (a & 0b1000_0000) != 0)
-                .with(Flag.Z, expectedResult == 0)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
@@ -89,9 +92,10 @@ class RotateLeftTest {
         assertThatHex(actualValue).isEqualTo(expectedValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
-                .withAll(false)
-                .with(Flag.C, true)
                 .with(Flag.Z, expectedValue == 0)
+                .with(Flag.N, false)
+                .with(Flag.H, false)
+                .with(Flag.C, true)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
@@ -114,9 +118,10 @@ class RotateLeftTest {
         assertThatHex(actualValue).isEqualTo(expectedValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
-                .withAll(false)
-                .with(Flag.C, true)
                 .with(Flag.Z, expectedValue == 0)
+                .with(Flag.N, false)
+                .with(Flag.H, false)
+                .with(Flag.C, true)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
@@ -139,9 +144,10 @@ class RotateLeftTest {
         assertThatHex(actualValue).isEqualTo(expectedValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
-                .withAll(false)
-                .with(Flag.C, false)
                 .with(Flag.Z, expectedValue == 0)
+                .with(Flag.N, false)
+                .with(Flag.H, false)
+                .with(Flag.C, false)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
     }
@@ -164,10 +170,42 @@ class RotateLeftTest {
         assertThatHex(actualValue).isEqualTo(expectedValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
-                .withAll(false)
-                .with(Flag.C, false)
                 .with(Flag.Z, true)
+                .with(Flag.N, false)
+                .with(Flag.H, false)
+                .with(Flag.C, false)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
+    }
+
+    @ParameterizedTest
+    @EnumSource(ByteRegister.class)
+    void givenByteRegister_whenRL_thenNAndHFlagsAlwaysZero(ByteRegister r8) {
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withExclusivelySetFlags(Flag.N, Flag.H)
+                .build();
+        OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
+
+        byte initialValue = (byte) 0b1010_1010;
+        accessor.setValue(r8.convert(), initialValue);
+
+        RotateLeft.rl_r8(r8).execute(cpuStructure);
+
+        assertThat(cpuStructure.registers().getFlag(Flag.N)).isFalse();
+        assertThat(cpuStructure.registers().getFlag(Flag.H)).isFalse();
+    }
+
+    @Test
+    void givenA_whenRLA_thenZNAndHFlagsAlwaysZero() {
+        CpuStructure cpuStructure = new CpuStructureBuilder()
+                .withExclusivelySetFlags(Flag.Z, Flag.N, Flag.H)
+                .withA(0b1010_1010)
+                .build();
+
+        RotateLeft.rla().execute(cpuStructure);
+
+        assertThat(cpuStructure.registers().getFlag(Flag.Z)).isFalse();
+        assertThat(cpuStructure.registers().getFlag(Flag.N)).isFalse();
+        assertThat(cpuStructure.registers().getFlag(Flag.H)).isFalse();
     }
 }

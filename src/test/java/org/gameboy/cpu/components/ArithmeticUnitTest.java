@@ -251,6 +251,7 @@ class ArithmeticUnitTest {
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
                 .with(C, (val & 0b1000_0000) != 0)
+                .with(Z, expectedResult == 0)
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
         assertThat(res.result()).isEqualTo((byte) expectedResult);
@@ -273,6 +274,7 @@ class ArithmeticUnitTest {
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
                 .with(C, (val & 0b1) == 1)
+                .with(Z, expectedResult == 0)
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
         assertThat(res.result()).isEqualTo((byte) expectedResult);
@@ -295,6 +297,7 @@ class ArithmeticUnitTest {
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
                 .with(C, (val & 0b1000_0000) != 0)
+                .with(Z, expectedResult == 0)
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
         assertThat(res.result()).isEqualTo((byte) expectedResult);
@@ -317,6 +320,7 @@ class ArithmeticUnitTest {
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
                 .with(C, (val & 0b1) == 1)
+                .with(Z, expectedResult == 0)
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
         assertThat(res.result()).isEqualTo((byte) expectedResult);
@@ -339,6 +343,7 @@ class ArithmeticUnitTest {
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
                 .with(C, (val & 0b1000_0000) > 0)
+                .with(Z, expectedResult == 0)
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
         assertThat(res.result()).isEqualTo((byte) expectedResult);
@@ -361,6 +366,7 @@ class ArithmeticUnitTest {
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .withAll(false)
                 .with(C, (val & 0b0000_0001) > 0)
+                .with(Z, expectedResult == 0)
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
         assertThat(res.result()).isEqualTo((byte) expectedResult);
