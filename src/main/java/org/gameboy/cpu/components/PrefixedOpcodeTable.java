@@ -31,21 +31,19 @@ public class PrefixedOpcodeTable implements OpcodeTable {
         TwoBitValue x = get_x(opcode);
         ThreeBitValue y = get_y(opcode);
         ThreeBitValue z = get_z(opcode);
+        ByteRegister target = ByteRegister.lookup(z);
 
         return switch(x) {
-            case b00 -> {
-                ByteRegister target = ByteRegister.lookup(z);
-                yield switch(y) {
-                    case b000 -> RotateLeftCircular.rlc_r8(target);
-                    case b001 -> RotateRightCircular.rrc_r8(target);
-                    case b010 -> RotateLeft.rl_r8(target);
-                    case b011 -> RotateRight.rr_r8(target);
-                    case b100 -> ShiftLeftArithmetic.sla_r8(target);
-                    case b101 -> ShiftRightArithmetic.sra_r8(target);
-                    case b110 -> Swap.swap_r8(target);
-                    case b111 -> ShiftRightLogical.srl_r8(target);
-                };
-            }
+            case b00 -> switch(y) {
+                case b000 -> RotateLeftCircular.rlc_r8(target);
+                case b001 -> RotateRightCircular.rrc_r8(target);
+                case b010 -> RotateLeft.rl_r8(target);
+                case b011 -> RotateRight.rr_r8(target);
+                case b100 -> ShiftLeftArithmetic.sla_r8(target);
+                case b101 -> ShiftRightArithmetic.sra_r8(target);
+                case b110 -> Swap.swap_r8(target);
+                case b111 -> ShiftRightLogical.srl_r8(target);
+            };
             case b01 -> UNIMPLEMENTED;
             case b10 -> UNIMPLEMENTED;
             case b11 -> UNIMPLEMENTED;
