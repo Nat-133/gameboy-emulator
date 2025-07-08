@@ -372,6 +372,29 @@ class ArithmeticUnitTest {
         assertThat(res.result()).isEqualTo((byte) expectedResult);
     }
 
+    static Stream<Arguments> getLogicalRightShiftValues() {
+        return Stream.of(
+                Arguments.of(0b01010101, 0b00101010),
+                Arguments.of(0b00000000, 0b00000000),
+                Arguments.of(0b11111111, 0b01111111),
+                Arguments.of(0b11101000, 0b01110100)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getLogicalRightShiftValues")
+    void givenByte_whenLogicalRightShift_thenResultIsCorrect(int val, int expectedResult) {
+        ArithmeticResult res = alu.logical_shift_right((byte) val);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .withAll(false)
+                .with(C, (val & 0b0000_0001) > 0)
+                .with(Z, expectedResult == 0)
+                .build();
+        assertFlagsMatch(expectedFlags, res.flagChanges());
+        assertThat(res.result()).isEqualTo((byte) expectedResult);
+    }
+
     static Stream<Arguments> getComplimentaryValues() {
         return Stream.of(
                 Arguments.of(0b01010101, 0b10101010),

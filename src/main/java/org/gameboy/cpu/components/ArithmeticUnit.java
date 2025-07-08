@@ -174,6 +174,18 @@ public class ArithmeticUnit {
         );
     }
 
+    public ArithmeticResult logical_shift_right(byte value) {
+        byte res = rshift(value, 1);
+        return new ArithmeticResult(
+                res,
+                new FlagChangesetBuilder()
+                        .withAll(false)
+                        .with(Flag.C, get_bit(value, 0))
+                        .with(Flag.Z, res == 0)
+                        .build()
+        );
+    }
+
     public ArithmeticResult compliment(byte value) {
         return new ArithmeticResult(
                 BitUtilities.not(value),
