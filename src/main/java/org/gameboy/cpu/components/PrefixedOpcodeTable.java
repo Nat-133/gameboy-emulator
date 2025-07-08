@@ -42,7 +42,7 @@ public class PrefixedOpcodeTable implements OpcodeTable {
                     case b011 -> RotateRight.rr_r8(target);
                     case b100 -> ShiftLeftArithmetic.sla_r8(target);
                     case b101 -> ShiftRightArithmetic.sra_r8(target);
-                    case b110 -> UNIMPLEMENTED;
+                    case b110 -> Swap.swap_r8(target);
                     case b111 -> UNIMPLEMENTED;
                 };
             }
