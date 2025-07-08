@@ -140,7 +140,8 @@ public class CpuCycleTest {
                 generateR8TestCases(RotateRight::rr_r8, 1, 3),
                 generateR8TestCases(ShiftLeftArithmetic::sla_r8, 1, 3),
                 generateR8TestCases(ShiftRightArithmetic::sra_r8, 1, 3),
-                generateR8TestCases(Swap::swap_r8, 1, 3)
+                generateR8TestCases(Swap::swap_r8, 1, 3),
+                generateR8TestCases(ShiftRightLogical::srl_r8, 1, 3)
         ).flatMap(x -> x);
     }
 
