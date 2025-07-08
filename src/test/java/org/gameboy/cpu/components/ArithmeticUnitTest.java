@@ -418,4 +418,34 @@ class ArithmeticUnitTest {
                 .build();
         assertFlagsMatch(expectedFlags, res.flagChanges());
     }
+
+    static Stream<Arguments> getSwapValues() {
+        return Stream.of(
+                Arguments.of(0x12, 0x21),
+                Arguments.of(0x34, 0x43),
+                Arguments.of(0xAB, 0xBA),
+                Arguments.of(0xF0, 0x0F),
+                Arguments.of(0x00, 0x00)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSwapValues")
+    void givenByte_whenSwap_thenResultCorrect(int value, int expectedResult) {
+        ArithmeticResult result = alu.swap((byte) value);
+
+        assertThat(result.result()).isEqualTo((byte) expectedResult);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSwapValues")
+    void givenByte_whenSwap_thenFlagsCorrect(int value, int expectedResult) {
+        ArithmeticResult result = alu.swap((byte) value);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .withAll(false)
+                .with(Z, expectedResult == 0)
+                .build();
+        assertFlagsMatch(expectedFlags, result.flagChanges());
+    }
 }

@@ -205,4 +205,19 @@ public class ArithmeticUnit {
                         .build()
         );
     }
+
+    public ArithmeticResult swap(byte value) {
+        int lower_nibble = BitUtilities.bit_range(3, 0, value);
+        int upper_nibble = BitUtilities.bit_range(7, 4, value);
+        
+        byte res = (byte) ((lower_nibble<<4) | upper_nibble);
+        
+        return new ArithmeticResult(
+                res,
+                new FlagChangesetBuilder()
+                        .withAll(false)
+                        .with(Z, res == 0)
+                        .build()
+        );
+    }
 }
