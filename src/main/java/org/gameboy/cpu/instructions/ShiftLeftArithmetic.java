@@ -1,6 +1,7 @@
 package org.gameboy.cpu.instructions;
 
 import org.gameboy.cpu.ArithmeticResult;
+import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
 import org.gameboy.cpu.instructions.targets.ByteRegister;
@@ -23,7 +24,10 @@ public class ShiftLeftArithmetic implements Instruction{
         ArithmeticResult result = cpuStructure.alu().arithmetic_shift_left(value);
 
         accessor.setValue(target.convert(), result.result());
-        cpuStructure.registers().setFlags(result.flagChanges());
+        
+        FlagChangesetBuilder flagBuilder = new FlagChangesetBuilder(result.flagChanges());
+
+        cpuStructure.registers().setFlags(flagBuilder.build());
     }
 
     @Override

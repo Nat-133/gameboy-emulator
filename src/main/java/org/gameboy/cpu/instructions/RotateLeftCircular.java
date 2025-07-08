@@ -1,6 +1,8 @@
 package org.gameboy.cpu.instructions;
 
 import org.gameboy.cpu.ArithmeticResult;
+import org.gameboy.cpu.Flag;
+import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
 import org.gameboy.cpu.instructions.targets.ByteRegister;
@@ -29,7 +31,13 @@ public class RotateLeftCircular implements Instruction{
         ArithmeticResult result = cpuStructure.alu().rotate_left_circular(value);
 
         accessor.setValue(target.convert(), result.result());
-        cpuStructure.registers().setFlags(result.flagChanges());
+        
+        FlagChangesetBuilder flagBuilder = new FlagChangesetBuilder(result.flagChanges());
+
+        if (!isPrefixInstruction) {
+            flagBuilder.with(Flag.Z, false);
+        }
+        cpuStructure.registers().setFlags(flagBuilder.build());
     }
 
     @Override
