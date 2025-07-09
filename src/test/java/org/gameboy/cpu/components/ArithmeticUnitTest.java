@@ -471,4 +471,32 @@ class ArithmeticUnitTest {
                 .build();
         assertFlagsMatch(expectedFlags, result.flagChanges());
     }
+
+    static Stream<Arguments> getBitTestValues() {
+        return Stream.of(
+                Arguments.of(0, (byte) 0b0000_0001, false),
+                Arguments.of(0, (byte) 0b0000_0000, true),
+                Arguments.of(7, (byte) 0b1000_0000, false),
+                Arguments.of(7, (byte) 0b0111_1111, true),
+                Arguments.of(3, (byte) 0b0000_1000, false),
+                Arguments.of(3, (byte) 0b1111_0111, true),
+                Arguments.of(4, (byte) 0b0001_0000, false),
+                Arguments.of(4, (byte) 0b1110_1111, true)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getBitTestValues")
+    void givenByteAndBitIndex_whenBitTest_thenResultIsZeroAndFlagsCorrect(int bitIndex, byte value, boolean expectedZeroFlag) {
+        ArithmeticResult result = alu.bit_test(bitIndex, value);
+
+        assertThat(result.result()).isEqualTo((byte) 0);
+
+        Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
+                .with(Z, expectedZeroFlag)
+                .with(N, false)
+                .with(H, true)
+                .build();
+        assertFlagsMatch(expectedFlags, result.flagChanges());
+    }
 }
