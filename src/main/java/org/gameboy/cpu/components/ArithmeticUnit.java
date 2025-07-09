@@ -232,4 +232,17 @@ public class ArithmeticUnit {
                         .build()
         );
     }
+
+    public ArithmeticResult bit_test(int bitIndex, byte value) {
+        boolean bitValue = get_bit(value, bitIndex);
+        
+        return new ArithmeticResult(
+                (byte) 0,
+                new FlagChangesetBuilder()
+                        .with(Z, !bitValue)
+                        .with(N, false)
+                        .with(H, true)
+                        .build()
+        );
+    }
 }
