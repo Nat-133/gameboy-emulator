@@ -103,7 +103,7 @@ public class ArithmeticUnit {
 
     public ArithmeticResult rotate_right_circular(byte value) {
         boolean carry = get_bit(value, 0);
-        byte res = set_bit(rshift(value, 1), 7, carry);
+        byte res = BitUtilities.set_bit(rshift(value, 1), 7, carry);
         return new ArithmeticResult(
                 res,
                 new FlagChangesetBuilder()
@@ -115,7 +115,7 @@ public class ArithmeticUnit {
     }
 
     public ArithmeticResult rotate_right(byte value, boolean carry_in) {
-        byte res = set_bit(rshift(value, 1), 7, carry_in);
+        byte res = BitUtilities.set_bit(rshift(value, 1), 7, carry_in);
         return new ArithmeticResult(
                 res,
                 new FlagChangesetBuilder().withAll(false)
@@ -127,7 +127,7 @@ public class ArithmeticUnit {
 
     public ArithmeticResult rotate_left_circular(byte value) {
         boolean carry = get_bit(value, 7);
-        byte res = set_bit(lshift(value, 1), 0, carry);
+        byte res = BitUtilities.set_bit(lshift(value, 1), 0, carry);
         return new ArithmeticResult(
                 res,
                 new FlagChangesetBuilder()
@@ -139,7 +139,7 @@ public class ArithmeticUnit {
     }
 
     public ArithmeticResult rotate_left(byte value, boolean carry_in) {
-        byte res = set_bit(lshift(value, 1), 0, carry_in);
+        byte res = BitUtilities.set_bit(lshift(value, 1), 0, carry_in);
         return new ArithmeticResult(
                 res,
                 new FlagChangesetBuilder()
@@ -242,6 +242,16 @@ public class ArithmeticUnit {
                         .with(Z, !bitValue)
                         .with(N, false)
                         .with(H, true)
+                        .build()
+        );
+    }
+
+    public ArithmeticResult set_bit(boolean bitValue, int bitIndex, byte value) {
+        byte result = BitUtilities.set_bit(value, bitIndex, bitValue);
+        
+        return new ArithmeticResult(
+                result,
+                new FlagChangesetBuilder()
                         .build()
         );
     }

@@ -3,6 +3,7 @@ package org.gameboy.cpu.components;
 import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
+import org.gameboy.utils.BitUtilities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,6 +14,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Hashtable;
 import java.util.Map.Entry;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -498,5 +500,23 @@ class ArithmeticUnitTest {
                 .with(H, true)
                 .build();
         assertFlagsMatch(expectedFlags, result.flagChanges());
+    }
+
+    static Stream<Arguments> getSetBitValues() {
+        return IntStream.range(0, 8).boxed()
+                .flatMap(bitIndex -> Stream.of(
+                        Arguments.of(true, bitIndex),
+                        Arguments.of(false, bitIndex)
+                ));
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSetBitValues")
+    void givenBooleanAndBitIndex_whenSetBit_thenResultCorrectAndNoFlagChanges(boolean bitValue, int bitIndex) {
+        byte inputValue = bitValue ? (byte) 0b0000_0000 : (byte) 0b1111_1111;
+        ArithmeticResult result = alu.set_bit(bitValue, bitIndex, inputValue);
+
+        assertThat(BitUtilities.get_bit(result.result(), bitIndex)).isEqualTo(bitValue);
+        assertThat(result.flagChanges()).isEmpty();
     }
 }
