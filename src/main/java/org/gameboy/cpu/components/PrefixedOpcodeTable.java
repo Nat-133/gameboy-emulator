@@ -45,7 +45,7 @@ public class PrefixedOpcodeTable implements OpcodeTable {
                 case b111 -> ShiftRightLogical.srl_r8(target);
             };
             case b01 -> Bit.bit_b_r8(y, target);
-            case b10 -> UNIMPLEMENTED;
+            case b10 -> Reset.res_b_r8(y, target);
             case b11 -> UNIMPLEMENTED;
         };
     }
