@@ -22,9 +22,7 @@ import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.gameboy.cpu.instructions.Unimplemented.UNIMPLEMENTED;
 import static org.gameboy.utils.BitUtilities.uint;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class OpcodeTableTest {
     private static OpcodeJson opcodeJson;
@@ -89,22 +87,20 @@ class OpcodeTableTest {
 
     @ParameterizedTest(name="{1}")
     @MethodSource("getAllUnprefixedOpcodes")
-    public void givenNonPrefixedOpcode_whenLookup_thenCorrectInstructionGivenOrUnimplemented(byte opcode, String expectedResult) {
+    public void givenNonPrefixedOpcode_whenLookup_thenCorrectInstructionGiven(byte opcode, String expectedResult) {
         UnprefixedOpcodeTable unprefixedOpcodeTable = new UnprefixedOpcodeTable();
         Instruction decodedInstruction = unprefixedOpcodeTable.lookup(opcode);
 
-        assumeTrue(decodedInstruction != UNIMPLEMENTED);
         assertThat(decodedInstruction.representation()).isEqualTo(expectedResult);
     }
 
 
     @ParameterizedTest(name="{1}")
     @MethodSource("getAllPrefixedOpcodes")
-    public void givenPrefixedOpcode_whenLookup_thenCorrectInstructionGivenOrUnimplemented(byte opcode, String expectedResult) {
+    public void givenPrefixedOpcode_whenLookup_thenCorrectInstructionGiven(byte opcode, String expectedResult) {
         PrefixedOpcodeTable prefixedOpcodeTable = new PrefixedOpcodeTable();
         Instruction decodedInstruction = prefixedOpcodeTable.lookup(opcode);
 
-        assumeTrue(decodedInstruction != UNIMPLEMENTED);
         assertThat(decodedInstruction.representation()).isEqualTo(expectedResult);
     }
 }
