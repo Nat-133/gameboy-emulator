@@ -5,8 +5,6 @@ import org.gameboy.cpu.instructions.targets.ByteRegister;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
-import static org.gameboy.cpu.instructions.Unimplemented.UNIMPLEMENTED;
-
 public class PrefixedOpcodeTable implements OpcodeTable {
     /*
      * |-opcode--------|
@@ -46,7 +44,7 @@ public class PrefixedOpcodeTable implements OpcodeTable {
             };
             case b01 -> Bit.bit_b_r8(y, target);
             case b10 -> Reset.res_b_r8(y, target);
-            case b11 -> UNIMPLEMENTED;
+            case b11 -> Set.set_b_r8(y, target);
         };
     }
 }

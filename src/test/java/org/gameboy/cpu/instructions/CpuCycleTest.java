@@ -147,7 +147,8 @@ public class CpuCycleTest {
                 generateR8TestCases(ShiftRightLogical::srl_r8, 1, 3),
 
                 generateByteIndexTestCases(Bit::bit_b_r8, 1, 2),
-                generateByteIndexTestCases(Reset::res_b_r8, 1, 3)
+                generateByteIndexTestCases(Reset::res_b_r8, 1, 3),
+                generateByteIndexTestCases(Set::set_b_r8, 1, 3)
         ).flatMap(x -> x);
     }
 
