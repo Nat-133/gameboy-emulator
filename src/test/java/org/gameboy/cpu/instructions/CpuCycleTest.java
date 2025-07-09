@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.TestDecoderFactory.testDecoder;
 import static org.gameboy.TestUtils.getConditionFlags;
+import static org.gameboy.utils.MultiBitValue.ThreeBitValue.b000;
 
 @SuppressWarnings("SameParameterValue")
 public class CpuCycleTest {
@@ -141,7 +142,9 @@ public class CpuCycleTest {
                 generateR8TestCases(ShiftLeftArithmetic::sla_r8, 1, 3),
                 generateR8TestCases(ShiftRightArithmetic::sra_r8, 1, 3),
                 generateR8TestCases(Swap::swap_r8, 1, 3),
-                generateR8TestCases(ShiftRightLogical::srl_r8, 1, 3)
+                generateR8TestCases(ShiftRightLogical::srl_r8, 1, 3),
+
+                generateR8TestCases(r8 -> Bit.bit_b_r8(b000, r8), 1, 2)
         ).flatMap(x -> x);
     }
 
