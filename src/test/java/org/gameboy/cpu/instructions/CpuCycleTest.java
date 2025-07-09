@@ -5,12 +5,14 @@ import org.gameboy.cpu.Cpu;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.targets.*;
+import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -144,8 +146,17 @@ public class CpuCycleTest {
                 generateR8TestCases(Swap::swap_r8, 1, 3),
                 generateR8TestCases(ShiftRightLogical::srl_r8, 1, 3),
 
-                generateR8TestCases(r8 -> Bit.bit_b_r8(b000, r8), 1, 2)
+                generateByteIndexTestCases(Bit::bit_b_r8, 1, 2),
+                generateByteIndexTestCases(Reset::res_b_r8, 1, 3)
         ).flatMap(x -> x);
+    }
+
+    private static Stream<Arguments> generateByteIndexTestCases(
+            BiFunction<ThreeBitValue, ByteRegister, Instruction> constructor,
+            int expectedCyclesNoMemoryLoad,
+            int expectedCyclesWithMemoryLoad
+    ) {
+        return generateR8TestCases(r8 -> constructor.apply(b000, r8), expectedCyclesNoMemoryLoad, expectedCyclesWithMemoryLoad);
     }
 
     @ParameterizedTest
