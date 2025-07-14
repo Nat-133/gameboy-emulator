@@ -2,6 +2,7 @@ package org.gameboy.cpu.components;
 
 import org.gameboy.CpuStructureBuilder;
 import org.gameboy.common.BasicMemory;
+import org.gameboy.common.ClockWithParallelProcess;
 import org.gameboy.common.Interrupt;
 import org.gameboy.common.Memory;
 import org.gameboy.utils.BitUtilities;
@@ -11,15 +12,11 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.gameboy.GameboyAssertions.assertThatHex;
-import static org.gameboy.TestUtils.waitFor;
 import static org.gameboy.common.MemoryMapConstants.IE_ADDRESS;
 import static org.gameboy.common.MemoryMapConstants.IF_ADDRESS;
 
@@ -35,7 +32,7 @@ class InterruptBusTest {
     @Test
     void givenAllInterruptsAndNoInterruptEnabled_whenGetActiveInterrupts_thenNoInterrupts() {
         Memory memory = new BasicMemory();
-        InterruptBus interruptBus = new InterruptBus(memory);
+        InterruptBus interruptBus = new InterruptBus(memory, new ClockWithParallelProcess(() -> {}));
 
         memory.write(IE_ADDRESS, (byte) 0x00);
         memory.write(IF_ADDRESS, (byte) 0xff);
@@ -46,7 +43,7 @@ class InterruptBusTest {
     @Test
     void givenAllInterruptsAndAllInterruptsEnabled_whenGetActiveInterrupts_thenAllInterrupts() {
         Memory memory = new BasicMemory();
-        InterruptBus interruptBus = new InterruptBus(memory);
+        InterruptBus interruptBus = new InterruptBus(memory, new ClockWithParallelProcess(() -> {}));
 
         memory.write(IE_ADDRESS, (byte) 0xff);
         memory.write(IF_ADDRESS, (byte) 0xff);
@@ -80,65 +77,73 @@ class InterruptBusTest {
     }
 
     @Test
-    void givenNoInterrupt_whenWaitForInterrupt_andInterruptSent_thenWaitFinishes() throws TimeoutException {
-        CpuStructure cpuStructure = new CpuStructureBuilder()
-                .withMemory(IF_ADDRESS, 0)
-                .withMemory(IE_ADDRESS, 0xff)
-                .build();
-        InterruptBus interruptBus = cpuStructure.interruptBus();
-        Memory memory = cpuStructure.memory();
-
-        Thread waitThread = new Thread(interruptBus::waitForInterrupt);
-        Thread writeThread = new Thread(() -> memory.write(IF_ADDRESS, (byte) 0x0f));
-
-        waitThread.start();
-        waitFor(() -> waitThread.getState() == Thread.State.WAITING || waitThread.getState() == Thread.State.BLOCKED);
-
-        writeThread.start();
-        waitFor(() -> !writeThread.isAlive());
-
-        waitFor(() -> !waitThread.isAlive());
-        assertThat(waitThread.isAlive()).isFalse();
+    void givenNoInterrupt_whenWaitForInterrupt_andInterruptSent_thenWaitFinishes() {
+        Memory memory = new BasicMemory();
+        memory.write(IF_ADDRESS, (byte) 0);
+        memory.write(IE_ADDRESS, (byte) 0xff);
+        
+        AtomicInteger tickCount = new AtomicInteger(0);
+        
+        ClockWithParallelProcess clock = new ClockWithParallelProcess(() -> {
+            if (tickCount.incrementAndGet() == 10) {
+                memory.write(IF_ADDRESS, (byte) 0x0f);
+            }
+        });
+        
+        InterruptBus interruptBus = new InterruptBus(memory, clock);
+        
+        interruptBus.waitForInterrupt();
+        
+        assertThat(tickCount.get()).isEqualTo(10);
+        assertThat(interruptBus.hasInterrupts()).isTrue();
     }
 
     @Test
-    void givenInterruptsRequestedButDisabled_whenWaitForInterrupt_andInterruptsEnabled_thenWaitFinishes() throws TimeoutException {
-        CpuStructure cpuStructure = new CpuStructureBuilder()
-                .withMemory(IF_ADDRESS, 0xff)
-                .withMemory(IE_ADDRESS, 0x00)
-                .build();
-        InterruptBus interruptBus = cpuStructure.interruptBus();
-        Memory memory = cpuStructure.memory();
-
-
-        Thread waitThread = new Thread(interruptBus::waitForInterrupt);
-        Thread writeThread = new Thread(() -> memory.write(IE_ADDRESS, (byte) 0xff));
-
-        waitThread.start();
-        waitFor(() -> waitThread.getState() == Thread.State.WAITING || waitThread.getState() == Thread.State.BLOCKED);
-
-        writeThread.start();
-        waitFor(() -> !writeThread.isAlive());
-
-        waitFor(() -> !waitThread.isAlive());
-        assertThat(waitThread.isAlive()).isFalse();
+    void givenInterruptsRequestedButDisabled_whenWaitForInterrupt_andInterruptsEnabled_thenWaitFinishes() {
+        Memory memory = new BasicMemory();
+        memory.write(IF_ADDRESS, (byte) 0xff);
+        memory.write(IE_ADDRESS, (byte) 0x00);
+        
+        AtomicInteger tickCount = new AtomicInteger(0);
+        
+        ClockWithParallelProcess clock = new ClockWithParallelProcess(() -> {
+            if (tickCount.incrementAndGet() == 10) {
+                memory.write(IE_ADDRESS, (byte) 0xff);
+            }
+        });
+        
+        InterruptBus interruptBus = new InterruptBus(memory, clock);
+        
+        interruptBus.waitForInterrupt();
+        
+        assertThat(tickCount.get()).isEqualTo(10);
+        assertThat(interruptBus.hasInterrupts()).isTrue();
     }
 
     @Test
-    void givenNoInterrupt_whenWaitForInterrupt_andNoInterruptSent_thenWaitDoesNotFinish() throws ExecutionException, InterruptedException {
-        CpuStructure cpuStructure = new CpuStructureBuilder()
-                .withMemory(IF_ADDRESS, 0x00)
-                .withMemory(IE_ADDRESS, 0x00)
-                .build();
-        InterruptBus interruptBus = cpuStructure.interruptBus();
+    void givenNoInterrupt_whenWaitForInterrupt_andNoInterruptSent_thenWaitDoesNotFinish() {
+        Memory memory = new BasicMemory();
+        memory.write(IF_ADDRESS, (byte) 0x00);
+        memory.write(IE_ADDRESS, (byte) 0x00);
+        
+        AtomicInteger tickCount = new AtomicInteger(0);
+        
+        ClockWithParallelProcess clock = new ClockWithParallelProcess(() -> {
+            int count = tickCount.incrementAndGet();
 
-        CompletableFuture<Void> interruptWait = CompletableFuture.runAsync(interruptBus::waitForInterrupt);
-
+            if (count >= 100) {
+                throw new RuntimeException("Test timeout - no interrupt received after 100 ticks");
+            }
+        });
+        
+        InterruptBus interruptBus = new InterruptBus(memory, clock);
+        
         try {
-            interruptWait.get(100, TimeUnit.MILLISECONDS);
-        } catch (TimeoutException e) {
-            return;
+            interruptBus.waitForInterrupt();
+            fail("waitForInterrupt should not have completed without an interrupt");
+        } catch (RuntimeException e) {
+            assertThat(e.getMessage()).contains("Test timeout");
+            assertThat(tickCount.get()).isEqualTo(100);
         }
-        fail("waitForInterrupt returned without interrupt.");
     }
 }

@@ -62,11 +62,13 @@ public class Main {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withMemory(memory)
                 .withClock(cpuClock)
+                .withPC(0x100)
                 .build();
         Cpu cpu = new Cpu(cpuStructure);
 
         while (true) {
             cpu.cycle();
+//            Thread.sleep(10);
         }
     }
 

@@ -1,14 +1,10 @@
 package org.gameboy.cpu.components;
 
+import org.gameboy.common.Clock;
 import org.gameboy.common.Interrupt;
 import org.gameboy.common.Memory;
-import org.gameboy.common.MemoryListener;
 
-import java.util.ArrayDeque;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import static org.gameboy.common.MemoryMapConstants.IE_ADDRESS;
 import static org.gameboy.common.MemoryMapConstants.IF_ADDRESS;
@@ -24,32 +20,11 @@ public class InterruptBus {
     );
 
     private final Memory memory;
-    private final Object interruptByteLock;
-    private byte currentActiveInterruptByte;
-    private final Queue<CompletableFuture<Void>> interruptWaiters;
+    private final Clock clock;
 
-    public InterruptBus(Memory memory) {
+    public InterruptBus(Memory memory, Clock clock) {
         this.memory = memory;
-        this.currentActiveInterruptByte = calculateActiveInterruptByte();
-        this.interruptByteLock = new Object();
-        interruptWaiters = new ArrayDeque<>();
-
-        MemoryListener memoryListener = () -> {
-            synchronized (interruptByteLock) {
-                byte newInterruptByte = calculateActiveInterruptByte();
-                if (newInterruptByte != 0) {
-                    // potential race condition in between these lines.
-                    // It is an issue if memory setting is done on multiple threads
-                    currentActiveInterruptByte = newInterruptByte;
-
-                    while (!interruptWaiters.isEmpty()) {
-                        interruptWaiters.poll().complete(null);
-                    }
-                }
-            }
-        };
-        memory.registerMemoryListener(IE_ADDRESS, memoryListener);
-        memory.registerMemoryListener(IF_ADDRESS, memoryListener);
+        this.clock = clock;
     }
 
     public boolean hasInterrupts() {
@@ -73,20 +48,8 @@ public class InterruptBus {
     }
 
     public void waitForInterrupt() {
-        CompletableFuture<Void> interruptMemoryChange = new CompletableFuture<>();
-
-        synchronized (interruptByteLock) {
-            if (currentActiveInterruptByte != 0) {
-                return;
-            }
-
-            interruptWaiters.add(interruptMemoryChange);
-        }
-
-        try {
-            interruptMemoryChange.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
+        while (!hasInterrupts()) {
+            clock.tick();
         }
     }
 }
