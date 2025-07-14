@@ -230,7 +230,7 @@ public class CpuStructureBuilder {
                 new ArithmeticUnit(),
                 new IncrementDecrementUnit(),
                 clock,
-                new InterruptBus(memory),
+                new InterruptBus(memory, clock),
                 new Decoder(unprefixedTable, prefixedTable)
         );
     }
