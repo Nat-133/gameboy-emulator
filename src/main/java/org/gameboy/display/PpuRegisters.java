@@ -14,6 +14,7 @@ public class PpuRegisters {
     public PpuRegisters() {
         registerMap = new EnumMap<>(PpuRegister.class);
         registerMap.put(LY, new IntBackedRegister());
+        registerMap.put(LYC, new IntBackedRegister());
         registerMap.put(SCX, new IntBackedRegister());
         registerMap.put(SCY, new IntBackedRegister());
         registerMap.put(WX, new IntBackedRegister());
@@ -32,6 +33,7 @@ public class PpuRegisters {
 
     public enum PpuRegister {
         LY,
+        LYC,
         SCX,
         SCY,
         WX,
