@@ -8,21 +8,41 @@ import static org.gameboy.utils.BitUtilities.set_bit;
 
 public class InterruptController {
     private final Memory memory;
+    private final PpuRegisters registers;
+    private final StatParser statParser;
 
-    public InterruptController(Memory memory) {
+    public InterruptController(Memory memory, PpuRegisters registers, StatParser statParser) {
         this.memory = memory;
+        this.registers = registers;
+        this.statParser = statParser;
     }
 
     public void sendHBLANK() {
-        setInterrupt(Interrupt.VBLANK);  // todo
+        byte stat = registers.read(PpuRegisters.PpuRegister.STAT);
+        stat = StatParser.setPpuMode(StatParser.PpuMode.H_BLANK, stat);
+
+        if (StatParser.hblankInterruptEnabled(stat)) {
+            setInterrupt(Interrupt.STAT);
+        }
     }
 
-    public void sendVBLANK() {
-        setInterrupt(Interrupt.VBLANK);
+    public void sendLyCoincidence() {
+        byte stat = registers.read(PpuRegisters.PpuRegister.STAT);
+        stat = StatParser.setPpuMode(StatParser.PpuMode.H_BLANK, stat);
+
+        if (StatParser.lyCompareInterruptEnabled(stat)) {
+            setInterrupt(Interrupt.STAT);
+        }
     }
 
-    public void sendScanlineAtWindow() {
-        setInterrupt(Interrupt.STAT);
+    public void sendVblank() {
+
+        byte stat = registers.read(PpuRegisters.PpuRegister.STAT);
+        stat = StatParser.setPpuMode(StatParser.PpuMode.V_BLANK, stat);
+
+        if (StatParser.vblankInterruptEnabled(stat)) {
+            setInterrupt(Interrupt.VBLANK);
+        }
     }
 
     private void setInterrupt(Interrupt interrupt) {
