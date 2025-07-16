@@ -7,7 +7,7 @@ import static org.gameboy.utils.BitUtilities.uint;
 
 public class PictureProcessingUnit {
 
-    public static final int SCANLINE_TICK_COUNT = 200;
+    public static final int SCANLINE_TICK_COUNT = 456;
     private final ScanlineController scanlineController;
     private final PpuRegisters registers;
     private final Clock clock;
@@ -35,6 +35,7 @@ public class PictureProcessingUnit {
             case OAM_SCAN -> oamScan();
             case SCANLINE_SETUP -> setupScanline();
             case SCANLINE_DRAWING -> drawScanline();
+            case HBLANK -> hblank();
             case VBLANK -> vblank();
         };
     }
@@ -61,8 +62,19 @@ public class PictureProcessingUnit {
         scanlineController.performSingleClockCycle();
         count++;
 
-        if (count < SCANLINE_TICK_COUNT) {
+        if (!scanlineController.drawingComplete()) {
             return Step.SCANLINE_DRAWING;
+        }
+
+        return Step.HBLANK;
+    }
+
+    private Step hblank() {
+        clock.tick();
+        count++;
+
+        if (count < SCANLINE_TICK_COUNT) {
+            return Step.HBLANK;
         }
 
         registers.write(LY, (byte) (registers.read(LY) + 1));
@@ -78,9 +90,10 @@ public class PictureProcessingUnit {
     private Step vblank() {
         clock.tick();
         count++;
-        if (count < SCANLINE_TICK_COUNT * 40) {
+        if (count < SCANLINE_TICK_COUNT * 10) {
             return Step.VBLANK;
         }
+        // todo: increment LY still
 
         registers.write(LY, (byte) 0);
         return Step.OAM_SETUP;
@@ -91,6 +104,7 @@ public class PictureProcessingUnit {
         OAM_SCAN,
         SCANLINE_SETUP,
         SCANLINE_DRAWING,
+        HBLANK,
         VBLANK
     }
 }

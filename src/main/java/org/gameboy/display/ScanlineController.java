@@ -59,6 +59,10 @@ public class ScanlineController {
         };
     }
 
+    public boolean drawingComplete() {
+        return state == State.COMPLETE;
+    }
+
     private State nop() {
         ppuClock.tick();
         return State.COMPLETE;
