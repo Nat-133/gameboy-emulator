@@ -93,11 +93,6 @@ public class SpriteFetcher implements Fetcher {
     }
 
     private Step pushToFifo() {
-        if (!spriteFifo.isEmpty()) {
-            clock.tick();
-            return Step.PUSH_TO_FIFO;
-        }
-
         List<TwoBitValue> pixelData = IntStream.range(0, 8)
                 .map(i -> !currentSpriteData.xFlipFlag() ? i : 7-i)
                 .map(i -> (BitUtilities.get_bit(tileDataLow, i) ? 1 : 0)
