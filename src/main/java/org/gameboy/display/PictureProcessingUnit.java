@@ -41,6 +41,7 @@ public class PictureProcessingUnit {
     }
 
     private Step setupOamScan() {
+        interruptController.sendOamScan();
         oamScanController.setupOamScan(uint(registers.read(LY)));
         count = 0;
         return oamScan();
@@ -66,6 +67,7 @@ public class PictureProcessingUnit {
             return Step.SCANLINE_DRAWING;
         }
 
+        interruptController.sendHblank();
         return Step.HBLANK;
     }
 
@@ -77,10 +79,11 @@ public class PictureProcessingUnit {
             return Step.HBLANK;
         }
 
-        registers.write(LY, (byte) (registers.read(LY) + 1));
+        updateLY((byte) (registers.read(LY) + 1));
 
         if (uint(registers.read(LY)) >= Display.DISPLAY_HEIGHT) {
             count = 0;
+            interruptController.sendVblank();
             return Step.VBLANK;
         }
 
@@ -95,8 +98,13 @@ public class PictureProcessingUnit {
         }
         // todo: increment LY still
 
-        registers.write(LY, (byte) 0);
+        updateLY((byte) 0);
         return Step.OAM_SETUP;
+    }
+
+    private void updateLY(byte value) {
+        registers.write(LY, value);
+        interruptController.sendLyCoincidence();
     }
 
     private enum Step {

@@ -52,7 +52,7 @@ public class Main {
         var spriteFetcher = new SpriteFetcher(spriteBuffer, memory, registers, spriteFifo, ppuClock);
         var scanlineController = new ScanlineController(ppuClock, display, backgroundFifo, spriteFifo, new PixelCombinator(), registers, backgroundFetcher, spriteFetcher, spriteBuffer);
         var oamScanner = new OamScanController(oam, ppuClock, spriteBuffer, registers);
-        var ppu = new PictureProcessingUnit(scanlineController, registers, ppuClock, oamScanner, new InterruptController(memory, registers, new StatParser()));
+        var ppu = new PictureProcessingUnit(scanlineController, registers, ppuClock, oamScanner, new InterruptController(memory, registers));
 
         Clock cpuClock = new ClockWithParallelProcess(() -> {
             for (int i=0; i<4; i++) {
