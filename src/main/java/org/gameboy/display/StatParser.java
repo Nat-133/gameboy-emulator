@@ -3,6 +3,7 @@ package org.gameboy.display;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
 import static org.gameboy.utils.BitUtilities.get_bit;
+import static org.gameboy.utils.BitUtilities.set_bit;
 
 public class StatParser {
     static boolean lyCompareInterruptEnabled(byte stat) {
@@ -25,13 +26,8 @@ public class StatParser {
         return get_bit(stat, 2);
     }
 
-    static PpuMode ppuMode(byte stat) {
-        return switch(TwoBitValue.from(stat)){
-            case b00 -> PpuMode.H_BLANK;
-            case b01 -> PpuMode.V_BLANK;
-            case b10 -> PpuMode.OAM_SCANNING;
-            case b11 -> PpuMode.DRAWING;
-        };
+    static byte setCoincidenceFlag(byte stat, boolean value) {
+        return set_bit(stat, 2, value);
     }
 
     static byte setPpuMode(PpuMode mode, byte stat) {
