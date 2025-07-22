@@ -12,7 +12,7 @@ public class PictureProcessingUnit {
     private final PpuRegisters registers;
     private final Clock clock;
     private final OamScanController oamScanController;
-    private final InterruptController interruptController;
+    private final DisplayInterruptController displayInterruptController;
     private int count = 0;
     private Step step;
 
@@ -20,12 +20,12 @@ public class PictureProcessingUnit {
                                  PpuRegisters registers,
                                  Clock clock,
                                  OamScanController oamScanController,
-                                 InterruptController interruptController) {
+                                 DisplayInterruptController displayInterruptController) {
         this.scanlineController = scanlineController;
         this.registers = registers;
         this.clock = clock;
         this.oamScanController = oamScanController;
-        this.interruptController = interruptController;
+        this.displayInterruptController = displayInterruptController;
         this.step = Step.OAM_SETUP;
     }
 
@@ -41,7 +41,7 @@ public class PictureProcessingUnit {
     }
 
     private Step setupOamScan() {
-        interruptController.sendOamScan();
+        displayInterruptController.sendOamScan();
         oamScanController.setupOamScan(uint(registers.read(LY)));
         count = 0;
         return oamScan();
@@ -67,7 +67,7 @@ public class PictureProcessingUnit {
             return Step.SCANLINE_DRAWING;
         }
 
-        interruptController.sendHblank();
+        displayInterruptController.sendHblank();
         return Step.HBLANK;
     }
 
@@ -83,7 +83,7 @@ public class PictureProcessingUnit {
 
         if (uint(registers.read(LY)) >= Display.DISPLAY_HEIGHT) {
             count = 0;
-            interruptController.sendVblank();
+            displayInterruptController.sendVblank();
             return Step.VBLANK;
         }
 
@@ -104,7 +104,7 @@ public class PictureProcessingUnit {
 
     private void updateLY(byte value) {
         registers.write(LY, value);
-        interruptController.sendLyCoincidence();
+        displayInterruptController.sendLyCoincidence();
     }
 
     private enum Step {

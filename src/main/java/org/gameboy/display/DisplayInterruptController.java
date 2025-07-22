@@ -7,11 +7,11 @@ import org.gameboy.display.PpuRegisters.PpuRegister;
 
 import static org.gameboy.utils.BitUtilities.set_bit;
 
-public class InterruptController {
+public class DisplayInterruptController {
     private final Memory memory;
     private final PpuRegisters registers;
 
-    public InterruptController(Memory memory, PpuRegisters registers) {
+    public DisplayInterruptController(Memory memory, PpuRegisters registers) {
         this.memory = memory;
         this.registers = registers;
     }
