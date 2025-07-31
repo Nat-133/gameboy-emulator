@@ -1,10 +1,15 @@
 package org.gameboy.common;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import static org.gameboy.utils.BitUtilities.set_bit;
 
+@Singleton
 public class InterruptController {
     private final Memory memory;
 
+    @Inject
     public InterruptController(Memory memory) {
         this.memory = memory;
     }
