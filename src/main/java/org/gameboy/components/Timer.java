@@ -1,11 +1,18 @@
 package org.gameboy.components;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.gameboy.common.ByteRegister;
 import org.gameboy.common.Interrupt;
 import org.gameboy.common.InterruptController;
+import org.gameboy.common.annotations.Div;
+import org.gameboy.common.annotations.Tac;
+import org.gameboy.common.annotations.Tima;
+import org.gameboy.common.annotations.Tma;
 import org.gameboy.utils.BitUtilities;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
+@Singleton
 public class Timer {
     private static final int M_CYCLES_PER_DIV_INCREMENT = 64;
 
@@ -17,10 +24,11 @@ public class Timer {
 
     private int internalCounter;
 
-    public Timer(ByteRegister tima,
-                 ByteRegister div,
-                 ByteRegister tma,
-                 ByteRegister tac,
+    @Inject
+    public Timer(@Tima ByteRegister tima,
+                 @Div ByteRegister div,
+                 @Tma ByteRegister tma,
+                 @Tac ByteRegister tac,
                  InterruptController interruptController) {
         this.timerCounterRegister = tima;
         this.dividerRegister = div;

@@ -1,7 +1,8 @@
 package org.gameboy.display;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.gameboy.common.ByteRegister;
-import org.gameboy.common.IntBackedRegister;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -11,16 +12,24 @@ import static org.gameboy.display.PpuRegisters.PpuRegister.*;
 public class PpuRegisters {
     private final Map<PpuRegister, ByteRegister> registerMap;
 
-    public PpuRegisters() {
+    @Inject
+    public PpuRegisters(@Named("ly") ByteRegister ly,
+                        @Named("lyc") ByteRegister lyc,
+                        @Named("scx") ByteRegister scx,
+                        @Named("scy") ByteRegister scy,
+                        @Named("wx") ByteRegister wx,
+                        @Named("wy") ByteRegister wy,
+                        @Named("lcdc") ByteRegister lcdc,
+                        @Named("stat") ByteRegister stat) {
         registerMap = new EnumMap<>(PpuRegister.class);
-        registerMap.put(LY, new IntBackedRegister());
-        registerMap.put(LYC, new IntBackedRegister());
-        registerMap.put(SCX, new IntBackedRegister());
-        registerMap.put(SCY, new IntBackedRegister());
-        registerMap.put(WX, new IntBackedRegister());
-        registerMap.put(WY, new IntBackedRegister());
-        registerMap.put(LCDC, new IntBackedRegister());
-        registerMap.put(STAT, new IntBackedRegister());
+        registerMap.put(LY, ly);
+        registerMap.put(LYC, lyc);
+        registerMap.put(SCX, scx);
+        registerMap.put(SCY, scy);
+        registerMap.put(WX, wx);
+        registerMap.put(WY, wy);
+        registerMap.put(LCDC, lcdc);
+        registerMap.put(STAT, stat);
     }
 
     public byte read(PpuRegister register) {

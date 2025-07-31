@@ -3,10 +3,7 @@ package org.gameboy.display;
 import org.gameboy.CpuStructureBuilder;
 import org.gameboy.MemoryDump;
 import org.gameboy.TestMemory;
-import org.gameboy.common.Clock;
-import org.gameboy.common.ClockWithParallelProcess;
-import org.gameboy.common.Memory;
-import org.gameboy.common.SynchronisedClock;
+import org.gameboy.common.*;
 import org.gameboy.cpu.Cpu;
 import org.gameboy.cpu.components.CpuStructure;
 
@@ -18,7 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-public class Main {
+public class TestMain {
     public static void main(String[] args) throws IOException {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,7 +36,16 @@ public class Main {
                 .withMemoryDump(boot_rom);
         ObjectAttributeMemory oam = new ObjectAttributeMemory(memory);
 
-        PpuRegisters registers = new PpuRegisters();
+        PpuRegisters registers = new PpuRegisters(
+                new IntBackedRegister(), // ly
+                new IntBackedRegister(), // lyc
+                new IntBackedRegister(), // scx
+                new IntBackedRegister(), // scy
+                new IntBackedRegister(), // wx
+                new IntBackedRegister(), // wy
+                new IntBackedRegister(), // lcdc
+                new IntBackedRegister()  // stat
+        );
 //        registers.write(PpuRegisters.PpuRegister.SCX, (byte)(8*27));
         PixelFifo backgroundFifo = new PixelFifo();
         PixelFifo spriteFifo = new PixelFifo();

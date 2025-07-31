@@ -1,9 +1,14 @@
 plugins {
     id("java")
+    id("application")
 }
 
 group = "org.example"
 version = "1.0-SNAPSHOT"
+
+application {
+    mainClass.set("org.gameboy.Main")
+}
 
 repositories {
     mavenCentral()
@@ -25,6 +30,8 @@ val testUtilitiesImplementation by configurations.getting {
 }
 
 dependencies {
+    implementation("com.google.inject:guice:7.0.0")
+    
     testImplementation(sourceSets["testUtilities"].output)
     testUtilitiesImplementation("org.assertj:assertj-core:3.11.1")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
