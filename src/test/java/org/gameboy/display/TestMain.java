@@ -62,7 +62,7 @@ public class TestMain {
 
         Clock cpuClock = new ClockWithParallelProcess(() -> {
             for (int i=0; i<4; i++) {
-                ppu.performOneClockCycle();
+                ppu.tCycle();
             }
         });
         CpuStructure cpuStructure = new CpuStructureBuilder()

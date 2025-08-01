@@ -7,6 +7,14 @@ import static org.gameboy.utils.BitUtilities.uint;
 public class IntBackedRegister implements ByteRegister {
     private final AtomicInteger value = new AtomicInteger(0);
 
+    public IntBackedRegister(int value) {
+        this.value.set(value);
+    }
+
+    public IntBackedRegister() {
+        this(0);
+    }
+
     @Override
     public byte read() {
         return (byte) value.get();

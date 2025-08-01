@@ -29,7 +29,7 @@ public class PictureProcessingUnit {
         this.step = Step.OAM_SETUP;
     }
 
-    public void performOneClockCycle() {
+    public void tCycle() {
         step = switch(step) {
             case OAM_SETUP -> setupOamScan();
             case OAM_SCAN -> oamScan();
