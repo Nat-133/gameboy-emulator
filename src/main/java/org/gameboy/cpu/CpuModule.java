@@ -8,6 +8,7 @@ import com.google.inject.name.Named;
 import org.gameboy.common.Clock;
 import org.gameboy.common.ClockWithParallelProcess;
 import org.gameboy.common.Memory;
+import org.gameboy.components.Timer;
 import org.gameboy.cpu.annotations.Prefixed;
 import org.gameboy.cpu.annotations.Unprefixed;
 import org.gameboy.cpu.components.*;
@@ -47,11 +48,13 @@ public class CpuModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("cpuClock")
-    Clock provideCpuClock(Provider<PictureProcessingUnit> ppuProvider) {
+    Clock provideCpuClock(Provider<PictureProcessingUnit> ppuProvider, Provider<Timer> timerProvider) {
+        Timer timer = timerProvider.get();
+        PictureProcessingUnit ppu = ppuProvider.get();
         return new ClockWithParallelProcess(() -> {
-            PictureProcessingUnit ppu = ppuProvider.get();
+            timer.mCycle();
             for (int i = 0; i < 4; i++) {
-                ppu.performOneClockCycle();
+                ppu.tCycle();
             }
         });
     }
