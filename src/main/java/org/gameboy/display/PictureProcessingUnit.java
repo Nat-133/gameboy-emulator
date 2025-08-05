@@ -93,10 +93,18 @@ public class PictureProcessingUnit {
     private Step vblank() {
         clock.tick();
         count++;
+        
+        // Increment LY every scanline during VBLANK
+        if (count % SCANLINE_TICK_COUNT == 0) {
+            int currentLy = uint(registers.read(LY));
+            if (currentLy < 153) {
+                updateLY((byte) (currentLy + 1));
+            }
+        }
+        
         if (count < SCANLINE_TICK_COUNT * 10) {
             return Step.VBLANK;
         }
-        // todo: increment LY still
 
         updateLY((byte) 0);
         return Step.OAM_SETUP;

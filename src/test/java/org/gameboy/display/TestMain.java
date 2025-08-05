@@ -58,7 +58,8 @@ public class TestMain {
         var spriteFetcher = new SpriteFetcher(spriteBuffer, memory, registers, spriteFifo, ppuClock);
         var scanlineController = new ScanlineController(ppuClock, display, backgroundFifo, spriteFifo, new PixelCombinator(), registers, backgroundFetcher, spriteFetcher, spriteBuffer);
         var oamScanner = new OamScanController(oam, ppuClock, spriteBuffer, registers);
-        var ppu = new PictureProcessingUnit(scanlineController, registers, ppuClock, oamScanner, new DisplayInterruptController(memory, registers));
+        var interruptController = new InterruptController(memory);
+        var ppu = new PictureProcessingUnit(scanlineController, registers, ppuClock, oamScanner, new DisplayInterruptController(interruptController, registers));
 
         Clock cpuClock = new ClockWithParallelProcess(() -> {
             for (int i=0; i<4; i++) {

@@ -14,7 +14,7 @@ public class StatParser {
         return get_bit(stat, 5);
     }
 
-    static boolean vblankInterruptEnabled(byte stat) {
+    static boolean vblankStatInterruptEnabled(byte stat) {
         return get_bit(stat, 4);
     }
 
