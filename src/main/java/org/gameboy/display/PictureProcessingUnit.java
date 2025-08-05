@@ -54,6 +54,7 @@ public class PictureProcessingUnit {
     }
 
     private Step setupScanline() {
+        displayInterruptController.sendDrawing();
         scanlineController.setupScanline();
         count = 0;
         return drawScanline();

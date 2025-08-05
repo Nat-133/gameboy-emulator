@@ -77,6 +77,12 @@ public class DisplayInterruptController {
         checkAndTriggerStatInterrupt();
     }
 
+    public void sendDrawing() {
+        byte stat = registers.read(PpuRegister.STAT);
+        stat = StatParser.setPpuMode(StatParser.PpuMode.DRAWING, stat);
+        registers.write(PpuRegister.STAT, stat);
+    }
+
     private void checkAndTriggerStatInterrupt() {
         boolean newStatLine = activeModeLine.isPresent() || lycLine;
         
