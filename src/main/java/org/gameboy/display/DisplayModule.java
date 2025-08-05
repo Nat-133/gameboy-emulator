@@ -4,10 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import org.gameboy.common.ByteRegister;
-import org.gameboy.common.IntBackedRegister;
-import org.gameboy.common.Memory;
-import org.gameboy.common.SynchronisedClock;
+import org.gameboy.common.*;
 
 public class DisplayModule extends AbstractModule {
     @Override
@@ -22,8 +19,8 @@ public class DisplayModule extends AbstractModule {
     
     @Provides
     @Singleton
-    DisplayInterruptController provideDisplayInterruptController(Memory memory, PpuRegisters ppuRegisters) {
-        return new DisplayInterruptController(memory, ppuRegisters);
+    DisplayInterruptController provideDisplayInterruptController(InterruptController interruptController, PpuRegisters ppuRegisters) {
+        return new DisplayInterruptController(interruptController, ppuRegisters);
     }
     
     @Provides
