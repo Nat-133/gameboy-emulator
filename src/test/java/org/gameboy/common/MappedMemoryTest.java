@@ -11,6 +11,14 @@ public class MappedMemoryTest {
     private ByteRegister timaRegister;
     private ByteRegister tmaRegister;
     private ByteRegister tacRegister;
+    private ByteRegister lcdcRegister;
+    private ByteRegister statRegister;
+    private ByteRegister scyRegister;
+    private ByteRegister scxRegister;
+    private ByteRegister lyRegister;
+    private ByteRegister lycRegister;
+    private ByteRegister wyRegister;
+    private ByteRegister wxRegister;
     private MappedMemory memory;
 
     @BeforeEach
@@ -19,7 +27,17 @@ public class MappedMemoryTest {
         timaRegister = new IntBackedRegister();
         tmaRegister = new IntBackedRegister();
         tacRegister = new IntBackedRegister();
-        memory = new MappedMemory(divRegister, timaRegister, tmaRegister, tacRegister);
+        lcdcRegister = new IntBackedRegister();
+        statRegister = new IntBackedRegister();
+        scyRegister = new IntBackedRegister();
+        scxRegister = new IntBackedRegister();
+        lyRegister = new IntBackedRegister();
+        lycRegister = new IntBackedRegister();
+        wyRegister = new IntBackedRegister();
+        wxRegister = new IntBackedRegister();
+        memory = new MappedMemory(divRegister, timaRegister, tmaRegister, tacRegister,
+                                 lcdcRegister, statRegister, scyRegister, scxRegister,
+                                 lyRegister, lycRegister, wyRegister, wxRegister);
     }
 
     @Test
@@ -94,5 +112,29 @@ public class MappedMemoryTest {
         
         memory.write(unmappedAddress, (byte) 0x99);
         assertEquals((byte) 0x99, memory.read(unmappedAddress));
+    }
+    
+    @Test
+    public void givenLcdcRegisterIsWritten_whenMemoryIsRead_thenCorrectValueIsReturned() {
+        byte expectedValue = (byte) 0x91;
+        lcdcRegister.write(expectedValue);
+        
+        assertEquals(expectedValue, memory.read((short) 0xFF40));
+    }
+    
+    @Test
+    public void givenMemoryIsWrittenToWyAddress_whenRegisterIsRead_thenCorrectValueIsReturned() {
+        byte expectedValue = (byte) 0x45;
+        memory.write((short) 0xFF4A, expectedValue);
+        
+        assertEquals(expectedValue, wyRegister.read());
+    }
+    
+    @Test
+    public void givenMemoryIsWrittenToWxAddress_whenRegisterIsRead_thenCorrectValueIsReturned() {
+        byte expectedValue = (byte) 0x67;
+        memory.write((short) 0xFF4B, expectedValue);
+        
+        assertEquals(expectedValue, wxRegister.read());
     }
 }
