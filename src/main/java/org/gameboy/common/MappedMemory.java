@@ -2,6 +2,7 @@ package org.gameboy.common;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.gameboy.common.annotations.Div;
 import org.gameboy.common.annotations.Tac;
 import org.gameboy.common.annotations.Tima;
@@ -23,11 +24,28 @@ public class MappedMemory implements Memory {
     public MappedMemory(@Div ByteRegister divRegister, 
                        @Tima ByteRegister timaRegister, 
                        @Tma ByteRegister tmaRegister, 
-                       @Tac ByteRegister tacRegister) {
+                       @Tac ByteRegister tacRegister,
+                       @Named("lcdc") ByteRegister lcdcRegister,
+                       @Named("stat") ByteRegister statRegister,
+                       @Named("scy") ByteRegister scyRegister,
+                       @Named("scx") ByteRegister scxRegister,
+                       @Named("ly") ByteRegister lyRegister,
+                       @Named("lyc") ByteRegister lycRegister,
+                       @Named("wy") ByteRegister wyRegister,
+                       @Named("wx") ByteRegister wxRegister) {
         memoryMap[0xFF04] = new ByteRegisterMapping(divRegister);
         memoryMap[0xFF05] = new ByteRegisterMapping(timaRegister);
         memoryMap[0xFF06] = new ByteRegisterMapping(tmaRegister);
         memoryMap[0xFF07] = new ByteRegisterMapping(tacRegister);
+        
+        memoryMap[0xFF40] = new ByteRegisterMapping(lcdcRegister);
+        memoryMap[0xFF41] = new ByteRegisterMapping(statRegister);
+        memoryMap[0xFF42] = new ByteRegisterMapping(scyRegister);
+        memoryMap[0xFF43] = new ByteRegisterMapping(scxRegister);
+        memoryMap[0xFF44] = new ByteRegisterMapping(lyRegister);
+        memoryMap[0xFF45] = new ByteRegisterMapping(lycRegister);
+        memoryMap[0xFF4A] = new ByteRegisterMapping(wyRegister);
+        memoryMap[0xFF4B] = new ByteRegisterMapping(wxRegister);
     }
 
     @Override
