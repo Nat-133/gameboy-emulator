@@ -8,8 +8,6 @@ import org.gameboy.utils.MultiBitValue.TwoBitValue;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.gameboy.display.LcdcParser.spriteSize;
-import static org.gameboy.display.PpuRegisters.PpuRegister.LCDC;
 import static org.gameboy.display.PpuRegisters.PpuRegister.LY;
 import static org.gameboy.utils.BitUtilities.uint;
 
@@ -111,12 +109,12 @@ public class SpriteFetcher implements Fetcher {
     }
 
     private int getTileNumberAddress(int tileNumber) {
-        return 0x8000 + (tileNumber * 16);
+        return 0x8000 + ((tileNumber) * 16);
     }
 
     private int getTileRow(int tileDataAddress, int ly, int spriteY) {
-        int spriteHeight = spriteSize(registers.read(LCDC));
-        int spriteRow = spriteHeight - (spriteY - ly);
+        int spriteRow = (ly + 16) - spriteY;  // +16 due to sprite rendering offset
+
         return tileDataAddress + 2 * (spriteRow);  // todo: sprite flippin'
     }
 
