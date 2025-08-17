@@ -60,6 +60,6 @@ public class CoreModule extends AbstractModule {
     @Singleton
     @Tac
     ByteRegister provideTacRegister() {
-        return new IntBackedRegister(0b0000_0100);
+        return new IntBackedRegister(0xF8);
     }
 }
