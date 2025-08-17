@@ -6,8 +6,8 @@ import org.gameboy.utils.MultiBitValue.TwoBitValue;
 import java.util.Optional;
 
 import static org.gameboy.display.Display.DISPLAY_WIDTH;
-import static org.gameboy.display.PpuRegisters.PpuRegister.LY;
-import static org.gameboy.display.PpuRegisters.PpuRegister.SCX;
+import static org.gameboy.display.LcdcParser.windowDisplayEnabled;
+import static org.gameboy.display.PpuRegisters.PpuRegister.*;
 import static org.gameboy.utils.BitUtilities.mod;
 import static org.gameboy.utils.BitUtilities.uint;
 import static org.gameboy.utils.MultiBitValue.TwoBitValue.b00;
@@ -71,7 +71,6 @@ public class ScanlineController {
     public void setupScanline() {
         LX = 0;
         backgroundFetcher.reset();
-        backgroundFifo.clear();
         state = shouldDiscardPixel() ? State.DISCARD_PIXELS : State.PIXEL_FETCHING;
     }
 
@@ -107,9 +106,21 @@ public class ScanlineController {
             display.setPixel(LX, uint(registers.read(LY)), pixel);
 
             LX++;
+
+            if (atWindow()) {
+                backgroundFetcher.switchToWindowFetching();
+            }
+
+            // if we've reached the window, reset the fetcher and switch to window mode
         }
 
         ppuClock.tick();
+    }
+
+    private boolean atWindow() {
+        return (windowDisplayEnabled(registers.read(LCDC)))
+                && ((uint(registers.read(WY)) <= uint(registers.read(LY))))
+                && (LX >= registers.read(WX) - 7);
     }
 
     private State spriteFetch() {

@@ -26,6 +26,7 @@ public class BackgroundFetcher implements Fetcher {
 
     public List<List<TwoBitValue>> history = new ArrayList<>();
     private Step currentStep;
+    private boolean windowFetchMode;
 
     public BackgroundFetcher(Memory memory,
                              PpuRegisters registers,
@@ -35,7 +36,9 @@ public class BackgroundFetcher implements Fetcher {
         this.registers = registers;
         this.backgroundFifo = backgroundFifo;
         this.clock = clock;
+
         this.currentStep = Step.FETCH_TILE_NO;
+        this.windowFetchMode = false;
     }
 
     private int getTilemapIndex(int x, int y, int background_offset_x, int background_offset_y) {
@@ -60,8 +63,16 @@ public class BackgroundFetcher implements Fetcher {
     }
 
     public void reset() {
+        backgroundFifo.clear();
         currentStep = Step.FETCH_TILE_NO;
         X_POSITION_COUNTER = 0;
+        windowFetchMode = false;
+    }
+
+    public void switchToWindowFetching() {
+        reset();
+        windowFetchMode = true;
+        // todo: how ss in windowState and then have a full reset method on it
     }
 
     private Step runStep(Step step) {

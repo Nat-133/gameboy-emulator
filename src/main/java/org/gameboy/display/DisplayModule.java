@@ -69,14 +69,14 @@ public class DisplayModule extends AbstractModule {
     @Singleton
     @Named("lcdc")
     ByteRegister provideLcdcRegister() {
-        return new IntBackedRegister();
+        return new IntBackedRegister(0x91);
     }
     
     @Provides
     @Singleton
     @Named("stat")
     ByteRegister provideStatRegister() {
-        return new IntBackedRegister();
+        return new IntBackedRegister(0x85);
     }
     
     @Provides
