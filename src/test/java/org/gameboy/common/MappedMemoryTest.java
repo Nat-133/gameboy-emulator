@@ -2,6 +2,7 @@ package org.gameboy.common;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -19,6 +20,7 @@ public class MappedMemoryTest {
     private ByteRegister lycRegister;
     private ByteRegister wyRegister;
     private ByteRegister wxRegister;
+    private SerialController serialController;
     private MappedMemory memory;
 
     @BeforeEach
@@ -35,9 +37,11 @@ public class MappedMemoryTest {
         lycRegister = new IntBackedRegister();
         wyRegister = new IntBackedRegister();
         wxRegister = new IntBackedRegister();
+        serialController = Mockito.mock(SerialController.class);
         memory = new MappedMemory(divRegister, timaRegister, tmaRegister, tacRegister,
                                  lcdcRegister, statRegister, scyRegister, scxRegister,
-                                 lyRegister, lycRegister, wyRegister, wxRegister);
+                                 lyRegister, lycRegister, wyRegister, wxRegister,
+                                 serialController);
     }
 
     @Test
@@ -136,5 +140,29 @@ public class MappedMemoryTest {
         memory.write((short) 0xFF4B, expectedValue);
         
         assertEquals(expectedValue, wxRegister.read());
+    }
+    
+    @Test
+    public void testSerialDataMemoryMapping() {
+        byte testValue = (byte) 0xAB;
+        Mockito.when(serialController.readSerialData()).thenReturn(testValue);
+        
+        assertEquals(testValue, memory.read((short) 0xFF01));
+        
+        byte writeValue = (byte) 0xCD;
+        memory.write((short) 0xFF01, writeValue);
+        Mockito.verify(serialController).writeSerialData(writeValue);
+    }
+    
+    @Test
+    public void testSerialControlMemoryMapping() {
+        byte testValue = (byte) 0x81;
+        Mockito.when(serialController.readSerialControl()).thenReturn(testValue);
+        
+        assertEquals(testValue, memory.read((short) 0xFF02));
+        
+        byte writeValue = (byte) 0x01;
+        memory.write((short) 0xFF02, writeValue);
+        Mockito.verify(serialController).writeSerialControl(writeValue);
     }
 }

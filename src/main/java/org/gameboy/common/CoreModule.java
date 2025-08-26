@@ -31,6 +31,8 @@ public class CoreModule extends AbstractModule {
         
         bind(RomLoader.class).in(Singleton.class);
         bind(MemoryInitializer.class).in(Singleton.class);
+        bind(SerialController.class).in(Singleton.class);
+        bind(InterruptController.class).in(Singleton.class);
     }
     
     
