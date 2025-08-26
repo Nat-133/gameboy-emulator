@@ -32,7 +32,11 @@ public class MappedMemory implements Memory {
                        @Named("ly") ByteRegister lyRegister,
                        @Named("lyc") ByteRegister lycRegister,
                        @Named("wy") ByteRegister wyRegister,
-                       @Named("wx") ByteRegister wxRegister) {
+                       @Named("wx") ByteRegister wxRegister,
+                       SerialController serialController) {
+        memoryMap[0xFF01] = new SerialDataMapping(serialController);
+        memoryMap[0xFF02] = new SerialControlMapping(serialController);
+        
         memoryMap[0xFF04] = new ByteRegisterMapping(divRegister);
         memoryMap[0xFF05] = new ByteRegisterMapping(timaRegister);
         memoryMap[0xFF06] = new ByteRegisterMapping(tmaRegister);
@@ -95,6 +99,30 @@ public class MappedMemory implements Memory {
         @Override
         public void write(byte value) {
             mappedRegister.write(value);
+        }
+    }
+    
+    private record SerialDataMapping(SerialController serialController) implements MemoryLocation {
+        @Override
+        public byte read() {
+            return serialController.readSerialData();
+        }
+        
+        @Override
+        public void write(byte value) {
+            serialController.writeSerialData(value);
+        }
+    }
+    
+    private record SerialControlMapping(SerialController serialController) implements MemoryLocation {
+        @Override
+        public byte read() {
+            return serialController.readSerialControl();
+        }
+        
+        @Override
+        public void write(byte value) {
+            serialController.writeSerialControl(value);
         }
     }
 }
