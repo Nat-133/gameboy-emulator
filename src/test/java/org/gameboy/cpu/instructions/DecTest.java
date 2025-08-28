@@ -51,7 +51,8 @@ class DecTest {
                 Arguments.of((byte) 0x00, List.of(unsetFlag(Z), setFlag(N), setFlag(H))),
                 Arguments.of((byte) 0x0f, List.of(unsetFlag(Z), setFlag(N), unsetFlag(H))),
                 Arguments.of((byte) 0xff, List.of(unsetFlag(Z), setFlag(N), unsetFlag(H))),
-                Arguments.of((byte) 0xf0, List.of(unsetFlag(Z), setFlag(N), setFlag(H)))
+                Arguments.of((byte) 0xf0, List.of(unsetFlag(Z), setFlag(N), setFlag(H))),
+                Arguments.of((byte) 0x01, List.of(setFlag(Z), setFlag(N), unsetFlag(H)))
         );
     }
 
