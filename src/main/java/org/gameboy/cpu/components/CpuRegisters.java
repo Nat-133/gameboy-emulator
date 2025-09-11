@@ -127,7 +127,7 @@ public class CpuRegisters {
 
     public void setC(byte value) {
         bc = (short) (bc & 0xFF00);
-        bc = (short) (bc | value);
+        bc = (short) (bc | (value & 0xFF));
     }
 
     public void setD(byte value) {
@@ -137,7 +137,7 @@ public class CpuRegisters {
 
     public void setE(byte value) {
         de = (short) (de & 0xFF00);
-        de = (short) (de | value);
+        de = (short) (de | (value & 0xFF));
     }
 
     public void setH(byte value) {
@@ -147,7 +147,7 @@ public class CpuRegisters {
 
     public void setL(byte value) {
         hl = (short) (hl & 0xFF00);
-        hl = (short) (hl | value);
+        hl = (short) (hl | (value & 0xFF));
     }
 
     public void setIME(boolean value) {
