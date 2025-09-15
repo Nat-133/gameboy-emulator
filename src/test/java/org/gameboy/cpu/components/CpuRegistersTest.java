@@ -8,7 +8,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Hashtable;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.gameboy.GameboyAssertions.assertThatHex;
 
 class CpuRegistersTest {
     
@@ -33,9 +34,9 @@ class CpuRegistersTest {
     void testRegisterA(byte value) {
         registers.setA(value);
         
-        assertEquals(value, registers.A());
-        assertEquals(value, (byte)(registers.AF() >> 8));
-        assertEquals((byte)0, (byte)registers.AF()); // F register (flags) should remain 0
+        assertThatHex(registers.A()).isEqualTo(value);
+        assertThatHex((byte)(registers.AF() >> 8)).isEqualTo(value);
+        assertThatHex((byte)registers.AF()).isEqualTo((byte)0); // F register (flags) should remain 0
     }
     
     @ParameterizedTest
@@ -43,9 +44,9 @@ class CpuRegistersTest {
     void testRegisterB(byte value) {
         registers.setB(value);
         
-        assertEquals(value, registers.B());
-        assertEquals(value, (byte)(registers.BC() >> 8));
-        assertEquals((byte)0, registers.C()); // C register should remain 0
+        assertThatHex(registers.B()).isEqualTo(value);
+        assertThatHex((byte)(registers.BC() >> 8)).isEqualTo(value);
+        assertThatHex(registers.C()).isEqualTo((byte)0); // C register should remain 0
     }
     
     @ParameterizedTest
@@ -53,9 +54,9 @@ class CpuRegistersTest {
     void testRegisterC(byte value) {
         registers.setC(value);
         
-        assertEquals(value, registers.C());
-        assertEquals(value, (byte)registers.BC());
-        assertEquals((byte)0, registers.B()); // B register should remain 0
+        assertThatHex(registers.C()).isEqualTo(value);
+        assertThatHex((byte)registers.BC()).isEqualTo(value);
+        assertThatHex(registers.B()).isEqualTo((byte)0); // B register should remain 0
     }
     
     @ParameterizedTest
@@ -63,9 +64,9 @@ class CpuRegistersTest {
     void testRegisterD(byte value) {
         registers.setD(value);
         
-        assertEquals(value, registers.D());
-        assertEquals(value, (byte)(registers.DE() >> 8));
-        assertEquals((byte)0, registers.E()); // E register should remain 0
+        assertThatHex(registers.D()).isEqualTo(value);
+        assertThatHex((byte)(registers.DE() >> 8)).isEqualTo(value);
+        assertThatHex(registers.E()).isEqualTo((byte)0); // E register should remain 0
     }
     
     @ParameterizedTest
@@ -73,9 +74,9 @@ class CpuRegistersTest {
     void testRegisterE(byte value) {
         registers.setE(value);
         
-        assertEquals(value, registers.E());
-        assertEquals(value, (byte)registers.DE());
-        assertEquals((byte)0, registers.D()); // D register should remain 0
+        assertThatHex(registers.E()).isEqualTo(value);
+        assertThatHex((byte)registers.DE()).isEqualTo(value);
+        assertThatHex(registers.D()).isEqualTo((byte)0); // D register should remain 0
     }
     
     @ParameterizedTest
@@ -83,9 +84,9 @@ class CpuRegistersTest {
     void testRegisterH(byte value) {
         registers.setH(value);
         
-        assertEquals(value, registers.H());
-        assertEquals(value, (byte)(registers.HL() >> 8));
-        assertEquals((byte)0, registers.L()); // L register should remain 0
+        assertThatHex(registers.H()).isEqualTo(value);
+        assertThatHex((byte)(registers.HL() >> 8)).isEqualTo(value);
+        assertThatHex(registers.L()).isEqualTo((byte)0); // L register should remain 0
     }
     
     @ParameterizedTest
@@ -93,9 +94,9 @@ class CpuRegistersTest {
     void testRegisterL(byte value) {
         registers.setL(value);
         
-        assertEquals(value, registers.L());
-        assertEquals(value, (byte)registers.HL());
-        assertEquals((byte)0, registers.H()); // H register should remain 0
+        assertThatHex(registers.L()).isEqualTo(value);
+        assertThatHex((byte)registers.HL()).isEqualTo(value);
+        assertThatHex(registers.H()).isEqualTo((byte)0); // H register should remain 0
     }
     
     @ParameterizedTest
@@ -103,9 +104,9 @@ class CpuRegistersTest {
     void testRegisterBC(short value) {
         registers.setBC(value);
         
-        assertEquals(value, registers.BC());
-        assertEquals((byte)(value >> 8), registers.B());
-        assertEquals((byte)value, registers.C());
+        assertThatHex(registers.BC()).isEqualTo(value);
+        assertThatHex(registers.B()).isEqualTo((byte)(value >> 8));
+        assertThatHex(registers.C()).isEqualTo((byte)value);
     }
     
     @ParameterizedTest
@@ -113,9 +114,9 @@ class CpuRegistersTest {
     void testRegisterDE(short value) {
         registers.setDE(value);
         
-        assertEquals(value, registers.DE());
-        assertEquals((byte)(value >> 8), registers.D());
-        assertEquals((byte)value, registers.E());
+        assertThatHex(registers.DE()).isEqualTo(value);
+        assertThatHex(registers.D()).isEqualTo((byte)(value >> 8));
+        assertThatHex(registers.E()).isEqualTo((byte)value);
     }
     
     @ParameterizedTest
@@ -123,9 +124,9 @@ class CpuRegistersTest {
     void testRegisterHL(short value) {
         registers.setHL(value);
         
-        assertEquals(value, registers.HL());
-        assertEquals((byte)(value >> 8), registers.H());
-        assertEquals((byte)value, registers.L());
+        assertThatHex(registers.HL()).isEqualTo(value);
+        assertThatHex(registers.H()).isEqualTo((byte)(value >> 8));
+        assertThatHex(registers.L()).isEqualTo((byte)value);
     }
     
     @ParameterizedTest
@@ -133,8 +134,8 @@ class CpuRegistersTest {
     void testRegisterAF(short value) {
         registers.setAF(value);
         
-        assertEquals(value, registers.AF());
-        assertEquals((byte)(value >> 8), registers.A());
+        assertThatHex(registers.AF()).isEqualTo(value);
+        assertThatHex(registers.A()).isEqualTo((byte)(value >> 8));
     }
     
     @ParameterizedTest
@@ -142,7 +143,7 @@ class CpuRegistersTest {
     void testRegisterSP(short value) {
         registers.setSP(value);
         
-        assertEquals(value, registers.SP());
+        assertThatHex(registers.SP()).isEqualTo(value);
     }
     
     @ParameterizedTest
@@ -150,59 +151,86 @@ class CpuRegistersTest {
     void testRegisterPC(short value) {
         registers.setPC(value);
         
-        assertEquals(value, registers.PC());
+        assertThatHex(registers.PC()).isEqualTo(value);
     }
     
     @Test
     void testZeroFlag() {
-        assertFalse(registers.getFlag(Flag.Z));
+        assertThat(registers.getFlag(Flag.Z)).isFalse();
         
         registers.setFlag(Flag.Z, true);
-        assertTrue(registers.getFlag(Flag.Z));
-        assertEquals((short) 0x0080, registers.AF());
+        assertThat(registers.getFlag(Flag.Z)).isTrue();
+        assertThatHex(registers.AF()).isEqualTo((short) 0x0080);
         
         registers.setFlag(Flag.Z, false);
-        assertFalse(registers.getFlag(Flag.Z));
-        assertEquals((short) 0x0000, registers.AF());
+        assertThat(registers.getFlag(Flag.Z)).isFalse();
+        assertThatHex(registers.AF()).isEqualTo((short) 0x0000);
     }
     
     @Test
     void testNFlag() {
-        assertFalse(registers.getFlag(Flag.N));
+        assertThat(registers.getFlag(Flag.N)).isFalse();
         
         registers.setFlag(Flag.N, true);
-        assertTrue(registers.getFlag(Flag.N));
-        assertEquals((short) 0x0040, registers.AF());
+        assertThat(registers.getFlag(Flag.N)).isTrue();
+        assertThatHex(registers.AF()).isEqualTo((short) 0x0040);
         
         registers.setFlag(Flag.N, false);
-        assertFalse(registers.getFlag(Flag.N));
-        assertEquals((short) 0x0000, registers.AF());
+        assertThat(registers.getFlag(Flag.N)).isFalse();
+        assertThatHex(registers.AF()).isEqualTo((short) 0x0000);
     }
     
     @Test
     void testHFlag() {
-        assertFalse(registers.getFlag(Flag.H));
+        assertThat(registers.getFlag(Flag.H)).isFalse();
         
         registers.setFlag(Flag.H, true);
-        assertTrue(registers.getFlag(Flag.H));
-        assertEquals((short) 0x0020, registers.AF());
+        assertThat(registers.getFlag(Flag.H)).isTrue();
+        assertThatHex(registers.AF()).isEqualTo((short) 0x0020);
         
         registers.setFlag(Flag.H, false);
-        assertFalse(registers.getFlag(Flag.H));
-        assertEquals((short) 0x0000, registers.AF());
+        assertThat(registers.getFlag(Flag.H)).isFalse();
+        assertThatHex(registers.AF()).isEqualTo((short) 0x0000);
     }
     
     @Test
     void testCFlag() {
-        assertFalse(registers.getFlag(Flag.C));
+        assertThat(registers.getFlag(Flag.C)).isFalse();
         
         registers.setFlag(Flag.C, true);
-        assertTrue(registers.getFlag(Flag.C));
-        assertEquals((short) 0x0010, registers.AF());
+        assertThat(registers.getFlag(Flag.C)).isTrue();
+        assertThatHex(registers.AF()).isEqualTo((short) 0x0010);
         
         registers.setFlag(Flag.C, false);
-        assertFalse(registers.getFlag(Flag.C));
-        assertEquals((short) 0x0000, registers.AF());
+        assertThat(registers.getFlag(Flag.C)).isFalse();
+        assertThatHex(registers.AF()).isEqualTo((short) 0x0000);
+    }
+    
+    @Test
+    void testFRegisterLowerNibbleMasking() {
+        registers.setAF((short) 0x34df);  // A=0x34, F=0xD0 (Z=1, N=1, H=0, C=1, lower nibble=f)
+        assertThatHex(registers.AF()).isEqualTo((short) 0x34d0);
+        assertThat(registers.getFlag(Flag.Z)).isTrue();
+        assertThat(registers.getFlag(Flag.N)).isTrue();
+        assertThat(registers.getFlag(Flag.H)).isFalse();
+        assertThat(registers.getFlag(Flag.C)).isTrue();
+    }
+    
+    @Test
+    void testConstructorFRegisterMasking() {
+        // Test that constructor also masks the lower nibble of F register
+        CpuRegisters regs = new CpuRegisters(
+            (short) 0x12FF,  // AF with lower nibble set
+            (short) 0x3456,  // BC
+            (short) 0x789A,  // DE
+            (short) 0xBCDE,  // HL
+            (short) 0xFFFE,  // SP
+            (short) 0x0100,  // PC
+            (byte) 0x00,     // instructionRegister
+            false            // IME
+        );
+        
+        assertThatHex(regs.AF()).isEqualTo((short) 0x12F0);
     }
     
     @Test
@@ -210,27 +238,27 @@ class CpuRegistersTest {
         registers.setFlag(Flag.Z, true);
         registers.setFlag(Flag.C, true);
         
-        assertTrue(registers.getFlag(Flag.Z));
-        assertTrue(registers.getFlag(Flag.C));
-        assertFalse(registers.getFlag(Flag.N));
-        assertFalse(registers.getFlag(Flag.H));
+        assertThat(registers.getFlag(Flag.Z)).isTrue();
+        assertThat(registers.getFlag(Flag.C)).isTrue();
+        assertThat(registers.getFlag(Flag.N)).isFalse();
+        assertThat(registers.getFlag(Flag.H)).isFalse();
         
-        assertEquals((short) 0x0090, registers.AF());
+        assertThatHex(registers.AF()).isEqualTo((short) 0x0090);
     }
     
     @Test
     void testSetFlagsWithVarargs() {
         registers.setFlags(true, Flag.Z, Flag.H);
         
-        assertTrue(registers.getFlag(Flag.Z));
-        assertTrue(registers.getFlag(Flag.H));
-        assertFalse(registers.getFlag(Flag.N));
-        assertFalse(registers.getFlag(Flag.C));
+        assertThat(registers.getFlag(Flag.Z)).isTrue();
+        assertThat(registers.getFlag(Flag.H)).isTrue();
+        assertThat(registers.getFlag(Flag.N)).isFalse();
+        assertThat(registers.getFlag(Flag.C)).isFalse();
         
         registers.setFlags(false, Flag.Z, Flag.H);
         
-        assertFalse(registers.getFlag(Flag.Z));
-        assertFalse(registers.getFlag(Flag.H));
+        assertThat(registers.getFlag(Flag.Z)).isFalse();
+        assertThat(registers.getFlag(Flag.H)).isFalse();
     }
     
     @Test
@@ -243,12 +271,12 @@ class CpuRegistersTest {
         
         registers.setFlags(changeset);
         
-        assertTrue(registers.getFlag(Flag.Z));
-        assertFalse(registers.getFlag(Flag.N));
-        assertTrue(registers.getFlag(Flag.H));
-        assertFalse(registers.getFlag(Flag.C));
+        assertThat(registers.getFlag(Flag.Z)).isTrue();
+        assertThat(registers.getFlag(Flag.N)).isFalse();
+        assertThat(registers.getFlag(Flag.H)).isTrue();
+        assertThat(registers.getFlag(Flag.C)).isFalse();
         
-        assertEquals((short) 0x00A0, registers.AF());
+        assertThatHex(registers.AF()).isEqualTo((short) 0x00A0);
     }
     
     @Test
@@ -259,30 +287,30 @@ class CpuRegistersTest {
         registers.setFlag(Flag.H, true);
         registers.setFlag(Flag.C, true);
         
-        assertEquals((byte) 0x42, registers.A());
-        assertEquals((short) 0x42F0, registers.AF());
+        assertThatHex(registers.A()).isEqualTo((byte) 0x42);
+        assertThatHex(registers.AF()).isEqualTo((short) 0x42F0);
     }
     
     @Test
     void testIME() {
-        assertFalse(registers.IME());
+        assertThat(registers.IME()).isFalse();
         
         registers.setIME(true);
-        assertTrue(registers.IME());
+        assertThat(registers.IME()).isTrue();
         
         registers.setIME(false);
-        assertFalse(registers.IME());
+        assertThat(registers.IME()).isFalse();
     }
     
     @Test
     void testInstructionRegister() {
-        assertEquals((byte) 0x00, registers.instructionRegister());
+        assertThatHex(registers.instructionRegister()).isEqualTo((byte) 0x00);
         
         registers.setInstructionRegister((byte) 0x42);
-        assertEquals((byte) 0x42, registers.instructionRegister());
+        assertThatHex(registers.instructionRegister()).isEqualTo((byte) 0x42);
         
         registers.setInstructionRegister((byte) 0xFF);
-        assertEquals((byte) 0xFF, registers.instructionRegister());
+        assertThatHex(registers.instructionRegister()).isEqualTo((byte) 0xFF);
     }
     
     @Test
@@ -298,13 +326,13 @@ class CpuRegistersTest {
             true             // IME
         );
         
-        assertEquals((short) 0x1234, customRegisters.AF());
-        assertEquals((short) 0x5678, customRegisters.BC());
-        assertEquals((short) 0x9ABC, customRegisters.DE());
-        assertEquals((short) 0xDEF0, customRegisters.HL());
-        assertEquals((short) 0xFFFE, customRegisters.SP());
-        assertEquals((short) 0x0100, customRegisters.PC());
-        assertEquals((byte) 0xCB, customRegisters.instructionRegister());
-        assertTrue(customRegisters.IME());
+        assertThatHex(customRegisters.AF()).isEqualTo((short) 0x1230);  // af lower nibble should always be 0
+        assertThatHex(customRegisters.BC()).isEqualTo((short) 0x5678);
+        assertThatHex(customRegisters.DE()).isEqualTo((short) 0x9ABC);
+        assertThatHex(customRegisters.HL()).isEqualTo((short) 0xDEF0);
+        assertThatHex(customRegisters.SP()).isEqualTo((short) 0xFFFE);
+        assertThatHex(customRegisters.PC()).isEqualTo((short) 0x0100);
+        assertThatHex(customRegisters.instructionRegister()).isEqualTo((byte) 0xCB);
+        assertThat(customRegisters.IME()).isTrue();
     }
 }

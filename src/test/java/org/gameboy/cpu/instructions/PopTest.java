@@ -15,7 +15,7 @@ class PopTest {
     @EnumSource(WordStackRegister.class)
     void givenWord_whenPop_thenWordInRegisterAndStackCorrect(WordStackRegister destination) {
         int sp = 0x6543;
-        int expected = 0x1234;
+        int expected = 0x1230;
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withSP(sp)
                 .withStack(expected)
