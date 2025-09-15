@@ -25,6 +25,7 @@ class PushTest {
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
         accessor.setValue(destination.convert(), expected);
+        expected = accessor.getValue(destination.convert());
 
         Push.push_stk16(destination).execute(cpuStructure);
 

@@ -28,15 +28,14 @@ public class CpuRegisters {
             short pc,
             byte instructionRegister,
             boolean ime) {
-        this.af = af;
-        this.bc = bc;
-        this.de = de;
-        this.hl = hl;
-        this.sp = sp;
-        this.pc = pc;
-
-        this.instructionRegister = instructionRegister;
-        this.ime = ime;
+        setAF(af);  // Use setter to ensure F register masking
+        setBC(bc);
+        setDE(de);
+        setHL(hl);
+        setSP(sp);
+        setPC(pc);
+        setInstructionRegister(instructionRegister);
+        setIME(ime);
     }
 
     public short BC() {
@@ -104,7 +103,9 @@ public class CpuRegisters {
     }
 
     public void setAF(short value) {
-        af = value;
+        // F register only uses upper nibble (bits 7-4)
+        // Lower nibble (bits 3-0) must always be 0
+        af = (short)(value & 0xFFF0);
     }
 
     public void setSP(short value) {
