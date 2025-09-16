@@ -6,6 +6,7 @@ import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.targets.ByteRegister;
 import org.junit.jupiter.api.Named;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,6 +16,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertFlagsMatch;
+import static org.gameboy.GameboyAssertions.assertThatHex;
 
 class DecimalAdjustAcumulatorTest {
 
@@ -96,5 +98,143 @@ class DecimalAdjustAcumulatorTest {
         //noinspection UnnecessaryLocalVariable
         int bcd_result = Integer.valueOf("%d".formatted(result), 16);
         return bcd_result;
+    }
+
+    @Test
+    void givenAdditionModeAndValueGreaterThan99_whenDaa_thenSetsCarryFlag() {
+        // This test catches the bug where carry flag is incorrectly set based on ALU overflow
+        // The correct behavior is to set carry when value > 0x99 OR when C was already set
+        CpuStructure cpu = new CpuStructureBuilder()
+                .withA(0x9A)
+                .withUnsetFlags(Flag.N, Flag.C, Flag.H)  // Addition mode, no carry, no half carry
+                .build();
+        
+        DecimalAdjustAcumulator.daa().execute(cpu);
+        
+        assertThatHex(cpu.registers().A()).isEqualTo((byte)0x00);  // 0x9A + 0x60 = 0xFA -> 0x00
+        assertThat(cpu.registers().getFlag(Flag.C)).isTrue();
+        assertThat(cpu.registers().getFlag(Flag.H)).isFalse();
+    }
+    
+    @Test
+    void givenValueAt99InAdditionMode_whenDaa_thenDoesNotSetCarryFlag() {
+        // Edge case: 0x99 should NOT set carry (only > 0x99 should)
+        CpuStructure cpu = new CpuStructureBuilder()
+                .withA(0x99)
+                .withUnsetFlags(Flag.N, Flag.C, Flag.H)
+                .build();
+        
+        DecimalAdjustAcumulator.daa().execute(cpu);
+        
+        assertThatHex(cpu.registers().A()).isEqualTo((byte)0x99);  // No adjustment needed
+        assertThat(cpu.registers().getFlag(Flag.C)).isFalse();  // Should NOT set carry
+        assertThat(cpu.registers().getFlag(Flag.H)).isFalse();
+    }
+    
+    @Test  
+    void givenAdditionWithNoOverflow_whenDaa_thenCarryNotSetByAlu() {
+        // This catches the bug: value 0x80 doesn't need upper nibble adjustment
+        // but the buggy implementation might set carry based on ALU result
+        CpuStructure cpu = new CpuStructureBuilder()
+                .withA(0x80)
+                .withUnsetFlags(Flag.N, Flag.C, Flag.H)
+                .build();
+        
+        DecimalAdjustAcumulator.daa().execute(cpu);
+        
+        assertThatHex(cpu.registers().A()).isEqualTo((byte)0x80);  // No adjustment
+        assertThat(cpu.registers().getFlag(Flag.C)).isFalse();  // Should NOT set carry
+    }
+    
+    @Test
+    void givenSubtractionModeWithNoCarry_whenDaa_thenCarryRemainsUnset() {
+        // Critical test: In subtraction mode without initial carry,
+        // carry should only be set if it was already set
+        CpuStructure cpu = new CpuStructureBuilder()
+                .withA(0x50)
+                .withSetFlags(Flag.N)  // Subtraction mode
+                .withUnsetFlags(Flag.C, Flag.H)  // No carry initially
+                .build();
+        
+        DecimalAdjustAcumulator.daa().execute(cpu);
+        
+        assertThatHex(cpu.registers().A()).isEqualTo((byte)0x50);  // No adjustment needed
+        assertThat(cpu.registers().getFlag(Flag.C)).isFalse();  // Carry should remain unset
+    }
+    
+    @Test
+    void givenSubtractionModeWithZeroAndHalfCarry_whenDaaSubtracts_thenCarryRemainsUnset() {
+        CpuStructure cpu = new CpuStructureBuilder()
+                .withA(0x00)
+                .withSetFlags(Flag.N, Flag.H)  // Subtraction mode with half-carry
+                .withUnsetFlags(Flag.C, Flag.Z)  // No initial carry
+                .build();
+        
+        DecimalAdjustAcumulator.daa().execute(cpu);
+        
+        assertThatHex(cpu.registers().A()).isEqualTo((byte)0xFA);  // 0x00 - 0x06 = 0xFA
+        assertThat(cpu.registers().getFlag(Flag.C))
+            .withFailMessage("Carry flag should remain unset when DAA causes ALU borrow but C was not initially set")
+            .isFalse();
+    }
+
+    @Test
+    void givenCarryAlreadySet_whenDaa_thenCarryRemainsSet() {
+        CpuStructure cpu = new CpuStructureBuilder()
+                .withA(0x50)
+                .withSetFlags(Flag.C)
+                .withUnsetFlags(Flag.N, Flag.H)
+                .build();
+        
+        DecimalAdjustAcumulator.daa().execute(cpu);
+        
+        assertThatHex(cpu.registers().A()).isEqualTo((byte)0xB0);  // 0x50 + 0x60 = 0xB0
+        assertThat(cpu.registers().getFlag(Flag.C)).isTrue();
+    }
+
+    @Test
+    void givenSubtractionModeWithCarry_whenDaa_thenCarryRemainsSet() {
+        CpuStructure cpu = new CpuStructureBuilder()
+                .withA(0x50)
+                .withSetFlags(Flag.N, Flag.C)   // Subtraction mode, Carry set (borrow occurred)
+                .withUnsetFlags(Flag.H)
+                .build();
+        
+        DecimalAdjustAcumulator.daa().execute(cpu);
+        
+        assertThatHex(cpu.registers().A()).isEqualTo((byte)0xF0);  // 0x50 - 0x60 = 0xF0
+        assertThat(cpu.registers().getFlag(Flag.C)).isTrue();
+    }
+
+    @Test
+    void givenHalfCarrySet_whenDaa_thenClearsHalfCarryFlag() {
+        CpuStructure cpu = new CpuStructureBuilder()
+                .withA(0x0C)
+                .withSetFlags(Flag.H)
+                .withUnsetFlags(Flag.N, Flag.C)
+                .build();
+        
+        DecimalAdjustAcumulator.daa().execute(cpu);
+        
+        assertThat(cpu.registers().getFlag(Flag.H)).isFalse();
+    }
+
+    @Test
+    void givenSubtractFlagState_whenDaa_thenPreservesSubtractFlag() {
+        CpuStructure cpu1 = new CpuStructureBuilder()
+                .withA(0x50)
+                .withSetFlags(Flag.N)
+                .build();
+        
+        DecimalAdjustAcumulator.daa().execute(cpu1);
+        assertThat(cpu1.registers().getFlag(Flag.N)).isTrue();
+        
+        CpuStructure cpu2 = new CpuStructureBuilder()
+                .withA(0x50)
+                .withUnsetFlags(Flag.N)
+                .build();
+        
+        DecimalAdjustAcumulator.daa().execute(cpu2);
+        assertThat(cpu2.registers().getFlag(Flag.N)).isFalse();
     }
 }
