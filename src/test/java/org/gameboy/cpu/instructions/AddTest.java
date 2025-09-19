@@ -141,10 +141,11 @@ class AddTest {
         Add.add_hl_r16(rr).execute(cpuStructure);
 
         int carry = lower_a + lower_b > 0xff ? 1 : 0;
+
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, lower_nibble((byte) upper_b) + lower_nibble((byte) upper_a) + carry > 0xf)
                 .with(Flag.C, upper_a + upper_b + carry > 0xff)
-                .with(Flag.Z, (byte) (upper_a + upper_b + carry) == 0)
+                .with(Flag.Z, false)  // flag should be unchanged
                 .with(Flag.N, false)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
