@@ -2,6 +2,7 @@ package org.gameboy.cpu.instructions;
 
 import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.Flag;
+import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.ControlFlow;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
@@ -9,6 +10,8 @@ import org.gameboy.cpu.instructions.targets.ByteRegister;
 import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
 import org.gameboy.cpu.instructions.targets.OperationTarget;
 import org.gameboy.cpu.instructions.targets.WordGeneralRegister;
+
+import java.util.Hashtable;
 
 import static org.gameboy.utils.BitUtilities.*;
 
@@ -81,19 +84,21 @@ public class Add implements Instruction {
         byte b_lsb = lower_byte(b);
         ArithmeticResult lowerRes = cpuStructure.alu().add(a_lsb, b_lsb);
         short result = set_lower_byte(a, lowerRes.result());
-        lowerRes.flagChanges().forEach(
-                (flag, change) -> cpuStructure.registers().setFlags(change, flag)
-        );
+        
+        boolean carryFromLower = lowerRes.flagChanges().getOrDefault(Flag.C, false);
+        
         operationTargetAccessor.setValue(this.left, result);
 
         cpuStructure.clock().tick();
 
         byte a_msb = upper_byte(a);
         byte b_msb = upper_byte(b);
-        boolean carry = cpuStructure.registers().getFlag(Flag.C);
-        ArithmeticResult upperRes = cpuStructure.alu().add_carry(a_msb, b_msb, carry);
+        ArithmeticResult upperRes = cpuStructure.alu().add_carry(a_msb, b_msb, carryFromLower);
         result = set_upper_byte(result, upperRes.result());
-        cpuStructure.registers().setFlags(upperRes.flagChanges());
+        Hashtable<Flag, Boolean> flagChanges = new FlagChangesetBuilder(upperRes.flagChanges())
+                .without(Flag.Z)
+                .build();
+        cpuStructure.registers().setFlags(flagChanges);
         operationTargetAccessor.setValue(this.left, result);
     }
 
