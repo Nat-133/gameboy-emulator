@@ -103,10 +103,11 @@ class AddTest {
 
     static Stream<Arguments> getR16ValuePairs() {
         return Stream.of(
-                Arguments.of(0xffff, BC, 0x0001),
-                Arguments.of(0xff0f, DE, 0x0101),
-                Arguments.of(0x00ac, SP, 0x0062),
-                Arguments.of(0x0200, HL, 0x0200)
+                Arguments.of(0xffff, BC, 0x0001, false),
+                Arguments.of(0xff0f, DE, 0x0101, true),
+                Arguments.of(0x00ac, SP, 0x0062, false),
+                Arguments.of(0x0000, SP, 0x0000, true),
+                Arguments.of(0x0200, HL, 0x0200, false)
         );
     }
 
@@ -127,13 +128,14 @@ class AddTest {
 
     @ParameterizedTest
     @MethodSource("getR16ValuePairs")
-    void givenTwoShortsAnd16BitRegister_whenAdd_thenFlagsAreCorrect(int a, WordGeneralRegister rr, int b) {
+    void givenTwoShortsAnd16BitRegister_whenAdd_thenFlagsAreCorrect(int a, WordGeneralRegister rr, int b, boolean zFlag) {
         int upper_a = a >> 8;
         int upper_b = b >> 8;
         int lower_a = uint((byte) a);
         int lower_b = uint((byte) b);
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withHL(a)
+                .withF(zFlag ? Flag.Z.getLocationMask() : 0)
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
         accessor.setValue(rr.convert(), (short) b);
@@ -145,7 +147,7 @@ class AddTest {
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, lower_nibble((byte) upper_b) + lower_nibble((byte) upper_a) + carry > 0xf)
                 .with(Flag.C, upper_a + upper_b + carry > 0xff)
-                .with(Flag.Z, false)  // flag should be unchanged
+                .with(Flag.Z, zFlag)  // flag should be unchanged
                 .with(Flag.N, false)
                 .build();
         assertFlagsMatch(expectedFlags, cpuStructure);
