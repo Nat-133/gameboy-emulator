@@ -28,7 +28,7 @@ public class LoadSP_HL implements Load {
         CpuRegisters registers = cpuStructure.registers();
         IncrementDecrementUnit idu = cpuStructure.idu();
 
-        registers.setHL(idu.passthrough(registers.SP()));
+        registers.setSP(idu.passthrough(registers.HL()));
 
         cpuStructure.clock().tick();
     }
