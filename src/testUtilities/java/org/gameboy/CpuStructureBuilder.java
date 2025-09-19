@@ -56,7 +56,7 @@ public class CpuStructureBuilder {
     }
 
     public CpuStructureBuilder withF(int f) {
-        this.af = BitUtilities.set_upper_byte(af, (byte) f);
+        this.af = BitUtilities.set_lower_byte(af, (byte) f);
         return this;
     }
 
