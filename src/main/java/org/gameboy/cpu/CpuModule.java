@@ -29,11 +29,11 @@ public class CpuModule extends AbstractModule {
     @Provides
     CpuRegisters provideCpuRegisters() {
         return new CpuRegisters(
-            (short) 0x0000,  // af
-            (short) 0x0000,  // bc
-            (short) 0x0000,  // de
-            (short) 0x0000,  // hl
-            (short) 0x0000,  // sp
+            (short) 0x01B0,  // af - A=0x01, F=0xB0 (Z=1, N=0, H=1, C=1)
+            (short) 0x0013,  // bc - B=0x00, C=0x13
+            (short) 0x00D8,  // de - D=0x00, E=0xD8
+            (short) 0x014D,  // hl - H=0x01, L=0x4D
+            (short) 0xFFFE,  // sp - Stack pointer at 0xFFFE
             (short) 0x0100,  // pc - starts at 0x100 after boot ROM
             (byte) 0x00,     // instructionRegister
             true             // ime - interrupts enabled initially
