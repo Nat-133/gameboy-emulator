@@ -22,8 +22,10 @@ public class MemoryInitializer {
         byte[] gameRom = romLoader.loadRom(gameRomPath, 0x8000); // 32KB max for basic ROMs
         dumps.add(MemoryDump.fromZero(gameRom));
         
-        byte[] bootRom = romLoader.loadRom(bootRomPath, 0x100); // Boot ROM is 256 bytes
-        dumps.add(MemoryDump.fromZero(bootRom));
+        if (bootRomPath != null) {
+            byte[] bootRom = romLoader.loadRom(bootRomPath, 0x100); // Boot ROM is 256 bytes
+            dumps.add(MemoryDump.fromZero(bootRom));
+        }
         
         return dumps;
     }
