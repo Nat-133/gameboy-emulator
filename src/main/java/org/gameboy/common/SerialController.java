@@ -31,9 +31,18 @@ public class SerialController {
         serialControl = value;
         
         if ((value & 0x81) == 0x81) {
-            char character = (char) (serialData & 0xFF);
-            System.out.print(character);
-            outputBuffer.append(character);
+            int unsignedByte = serialData & 0xFF;
+            
+            if ((unsignedByte >= 32 && unsignedByte <= 126) ||
+                unsignedByte == '\n' || unsignedByte == '\r' || unsignedByte == '\t') {
+                char character = (char) unsignedByte;
+                System.out.print(character);
+                outputBuffer.append(character);
+            } else {
+                String hexString = String.format("[0x%02X]", unsignedByte);
+                System.out.print(hexString);
+                outputBuffer.append(hexString);
+            }
             
             serialData = (byte) 0xFF;
             serialControl = (byte) (serialControl & 0x7F);
