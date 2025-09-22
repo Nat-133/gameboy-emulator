@@ -46,7 +46,14 @@ public class ControlFlow {
         byte lsb = lower_byte(a);
 
         ArithmeticResult res = cpuStructure.alu().add(lsb, signedByte);
-        if (setFlags) res.flagChanges().forEach((f,b) -> cpuStructure.registers().setFlags(b, f));
+        if (setFlags) {
+            // For LD HL,SP+n: set Z=0, N=0, keep H and C from addition
+            Hashtable<Flag, Boolean> flagChanges = new FlagChangesetBuilder(res.flagChanges())
+                    .with(Flag.Z, false)
+                    .with(Flag.N, false)
+                    .build();
+            flagChanges.forEach((f,b) -> cpuStructure.registers().setFlags(b, f));
+        }
         lsb = res.result();
 
         boolean carry = res.flagChanges().getOrDefault(Flag.C, false);
