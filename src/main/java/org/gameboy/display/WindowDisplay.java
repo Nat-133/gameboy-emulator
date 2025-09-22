@@ -19,9 +19,11 @@ public class WindowDisplay extends JPanel implements Display {
 
     @Override
     public void setPixel(int x, int y, PixelValue value) {
-        this.pixels[x][y] = value;
-        this.repaint();
-        this.revalidate();
+        if (x < DISPLAY_WIDTH && y < DISPLAY_HEIGHT && x >= 0 && y >= 0) {
+            this.pixels[x][y] = value;
+            this.repaint();
+            this.revalidate();
+        }
     }
 
     private Color getColorForPixel(PixelValue value) {
