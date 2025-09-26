@@ -109,6 +109,8 @@ public class SpriteFetcher implements Fetcher {
     }
 
     private int getTileNumberAddress(int tileNumber) {
+        int spriteHeight = LcdcParser.spriteSize(registers.read(PpuRegisters.PpuRegister.LCDC));
+        tileNumber = spriteHeight == 16 ? tileNumber & 0xFE : tileNumber;
         return 0x8000 + ((tileNumber) * 16);
     }
 
