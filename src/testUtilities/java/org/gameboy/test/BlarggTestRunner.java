@@ -1,4 +1,4 @@
-package org.gameboy.cpu;
+package org.gameboy.test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -7,8 +7,8 @@ import org.gameboy.common.MappedMemory;
 import org.gameboy.common.Memory;
 import org.gameboy.common.MemoryDump;
 import org.gameboy.common.SerialController;
+import org.gameboy.cpu.Cpu;
 
-import java.io.IOException;
 import java.util.List;
 
 public class BlarggTestRunner {
@@ -16,7 +16,7 @@ public class BlarggTestRunner {
     private final SerialController serialController;
     private int cycleCount = 0;
 
-    public BlarggTestRunner(byte[] testRomData) throws IOException {
+    public BlarggTestRunner(byte[] testRomData) {
         Injector injector = Guice.createInjector(new EmulatorModule(false));
 
         List<MemoryDump> memoryDumps = new java.util.ArrayList<>();
