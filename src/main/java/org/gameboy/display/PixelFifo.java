@@ -34,11 +34,7 @@ public class PixelFifo {
     public Optional<TwoBitValue> read() {
         Optional<TwoBitValue> value;
         synchronized (fifo) {
-            try {
-                value = Optional.of(fifo.pop());
-            } catch (NoSuchElementException ignored) {
-                value = Optional.empty();
-            }
+            value = Optional.ofNullable(fifo.pollFirst());
         }
         readListeners.forEach(FifoReadListener::onRead);
         return value;
