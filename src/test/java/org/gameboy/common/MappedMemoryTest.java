@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class MappedMemoryTest {
 
     private ByteRegister divRegister;
@@ -158,11 +159,43 @@ public class MappedMemoryTest {
     public void testSerialControlMemoryMapping() {
         byte testValue = (byte) 0x81;
         Mockito.when(serialController.readSerialControl()).thenReturn(testValue);
-        
+
         assertEquals(testValue, memory.read((short) 0xFF02));
-        
+
         byte writeValue = (byte) 0x01;
         memory.write((short) 0xFF02, writeValue);
         Mockito.verify(serialController).writeSerialControl(writeValue);
+    }
+
+    @Test
+    public void givenScxRegisterIsWritten_whenMemoryIsRead_thenCorrectValueIsReturned() {
+        byte expectedValue = (byte) 0x42;
+        scxRegister.write(expectedValue);
+
+        assertEquals(expectedValue, memory.read((short) 0xFF43));
+    }
+
+    @Test
+    public void givenMemoryIsWrittenToScxAddress_whenRegisterIsRead_thenCorrectValueIsReturned() {
+        byte expectedValue = (byte) 0xAB;
+        memory.write((short) 0xFF43, expectedValue);
+
+        assertEquals(expectedValue, scxRegister.read());
+    }
+
+    @Test
+    public void givenScyRegisterIsWritten_whenMemoryIsRead_thenCorrectValueIsReturned() {
+        byte expectedValue = (byte) 0x89;
+        scyRegister.write(expectedValue);
+
+        assertEquals(expectedValue, memory.read((short) 0xFF42));
+    }
+
+    @Test
+    public void givenMemoryIsWrittenToScyAddress_whenRegisterIsRead_thenCorrectValueIsReturned() {
+        byte expectedValue = (byte) 0xCD;
+        memory.write((short) 0xFF42, expectedValue);
+
+        assertEquals(expectedValue, scyRegister.read());
     }
 }
