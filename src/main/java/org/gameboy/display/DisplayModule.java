@@ -153,7 +153,8 @@ public class DisplayModule extends AbstractModule {
                                                       PpuRegisters registers,
                                                       @Named("ppuClock") SynchronisedClock ppuClock,
                                                       OamScanController oamScanController,
-                                                      DisplayInterruptController displayInterruptController) {
-        return new PictureProcessingUnit(scanlineController, registers, ppuClock, oamScanController, displayInterruptController);
+                                                      DisplayInterruptController displayInterruptController,
+                                                      Display display) {
+        return new PictureProcessingUnit(scanlineController, registers, ppuClock, oamScanController, displayInterruptController, display);
     }
 }

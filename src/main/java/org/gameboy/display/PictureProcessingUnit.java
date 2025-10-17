@@ -13,6 +13,7 @@ public class PictureProcessingUnit {
     private final Clock clock;
     private final OamScanController oamScanController;
     private final DisplayInterruptController displayInterruptController;
+    private final Display display;
     private int count = 0;
     private Step step;
 
@@ -20,12 +21,14 @@ public class PictureProcessingUnit {
                                  PpuRegisters registers,
                                  Clock clock,
                                  OamScanController oamScanController,
-                                 DisplayInterruptController displayInterruptController) {
+                                 DisplayInterruptController displayInterruptController,
+                                 Display display) {
         this.scanlineController = scanlineController;
         this.registers = registers;
         this.clock = clock;
         this.oamScanController = oamScanController;
         this.displayInterruptController = displayInterruptController;
+        this.display = display;
         this.step = Step.OAM_SETUP;
     }
 
@@ -85,6 +88,7 @@ public class PictureProcessingUnit {
         if (uint(registers.read(LY)) >= Display.DISPLAY_HEIGHT) {
             count = 0;
             displayInterruptController.sendVblank();
+            display.onVBlank();
             return Step.VBLANK;
         }
 
