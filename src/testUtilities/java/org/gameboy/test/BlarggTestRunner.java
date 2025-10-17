@@ -17,7 +17,7 @@ public class BlarggTestRunner {
     private int cycleCount = 0;
 
     public BlarggTestRunner(byte[] testRomData) {
-        Injector injector = Guice.createInjector(new EmulatorModule(false));
+        Injector injector = Guice.createInjector(new EmulatorModule());
 
         List<MemoryDump> memoryDumps = new java.util.ArrayList<>();
         memoryDumps.add(MemoryDump.fromZero(testRomData));

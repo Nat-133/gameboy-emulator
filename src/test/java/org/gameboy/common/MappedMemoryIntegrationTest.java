@@ -16,7 +16,7 @@ public class MappedMemoryIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        Injector injector = Guice.createInjector(new EmulatorModule(false));
+        Injector injector = Guice.createInjector(new EmulatorModule());
         memory = injector.getInstance(Memory.class);
         ppuRegisters = injector.getInstance(PpuRegisters.class);
     }
