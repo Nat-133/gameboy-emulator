@@ -13,7 +13,7 @@ public class WindowDisplay extends JPanel implements Display {
     PixelValue[][] pixels = new PixelValue[DISPLAY_WIDTH][DISPLAY_HEIGHT];
     private final PixelValue[][] displayBuffer = new PixelValue[DISPLAY_WIDTH][DISPLAY_HEIGHT];
     private static final int PIXEL_SIZE = 2;
-    private static final boolean SAVE_SCREENSHOTS = true;
+    private static final boolean SAVE_SCREENSHOTS = false;
     private static int frameCounter = 0;
 
     public WindowDisplay() {
