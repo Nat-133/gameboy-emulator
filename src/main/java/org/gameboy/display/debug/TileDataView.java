@@ -7,8 +7,8 @@ import java.awt.*;
 
 public class TileDataView extends JPanel {
     private static final int TILE_SIZE = 8;
-    private static final int TILES_PER_ROW = 16;
-    private static final int TILE_ROWS = 24;
+    private static final int TILES_PER_ROW = 32;
+    private static final int TILE_ROWS = 12;
     private static final int PIXEL_SCALE = 2;
     private static final int TILE_SPACING = 1;
 
