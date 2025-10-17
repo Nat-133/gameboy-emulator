@@ -29,7 +29,6 @@ public class WindowDisplay extends JPanel implements Display {
     public void setPixel(int x, int y, PixelValue value) {
         if (x < DISPLAY_WIDTH && y < DISPLAY_HEIGHT && x >= 0 && y >= 0) {
             this.pixels[x][y] = value;
-            // Don't repaint here - wait for VBlank to repaint once per frame
         }
     }
 

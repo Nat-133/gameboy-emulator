@@ -115,7 +115,7 @@ public class SpriteFetcher implements Fetcher {
 
     private int getTileRow(int tileDataAddress, int ly, int spriteY) {
         int spriteHeight = LcdcParser.spriteSize(registers.read(PpuRegisters.PpuRegister.LCDC));
-        int spriteRow = (ly + 16) - spriteY;  // +16 due to sprite rendering offset
+        int spriteRow = (ly + 16) - spriteY;
 
         if (currentSpriteData.yFlipFlag()) {
             spriteRow = (spriteHeight - 1) - spriteRow;

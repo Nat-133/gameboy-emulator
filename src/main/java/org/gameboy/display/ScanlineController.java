@@ -25,6 +25,7 @@ public class ScanlineController {
     private State state;
 
     private int LX;
+    private boolean windowRenderedThisLine;
 
     public ScanlineController(Clock ppuClock,
                               Display display,
@@ -70,6 +71,7 @@ public class ScanlineController {
 
     public void setupScanline() {
         LX = 0;
+        windowRenderedThisLine = false;
         backgroundFetcher.reset();
         state = shouldDiscardPixel() ? State.DISCARD_PIXELS : State.PIXEL_FETCHING;
     }
@@ -109,9 +111,8 @@ public class ScanlineController {
 
             if (atWindow()) {
                 backgroundFetcher.switchToWindowFetching();
+                windowRenderedThisLine = true;
             }
-
-            // if we've reached the window, reset the fetcher and switch to window mode
         }
 
         ppuClock.tick();
@@ -139,6 +140,10 @@ public class ScanlineController {
             return Optional.empty();
         }
 
+        if (!LcdcParser.backgroundAndWindowEnable(registers.read(LCDC))) {
+            backgroundData = Optional.of(TwoBitValue.b00);
+        }
+
         Optional<TwoBitValue> spriteData = spriteFifo.read();
 
         if (spriteData.isEmpty()) {
@@ -152,10 +157,6 @@ public class ScanlineController {
         if (spriteValue == b00) {
             return backgroundValue;
         }
-
-//        if (bg_obj_priority_bit == true && backgroundValue != b00) {
-//            return backgroundValue;
-//        }
 
         return spriteValue;
     }
