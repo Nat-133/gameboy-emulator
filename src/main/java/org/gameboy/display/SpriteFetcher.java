@@ -19,7 +19,6 @@ public class SpriteFetcher implements Fetcher {
     private final PpuRegisters registers;
     private final PixelFifo spriteFifo;
     private int pixelXPosition;
-    //    private int WINDOW_LINE_COUNTER = 0;  // should be on fetcher, not background fetcher
     // tile coordinate, not pixel
     private byte tileDataLow;
     private byte tileDataHigh;
@@ -115,9 +114,14 @@ public class SpriteFetcher implements Fetcher {
     }
 
     private int getTileRow(int tileDataAddress, int ly, int spriteY) {
+        int spriteHeight = LcdcParser.spriteSize(registers.read(PpuRegisters.PpuRegister.LCDC));
         int spriteRow = (ly + 16) - spriteY;  // +16 due to sprite rendering offset
 
-        return tileDataAddress + 2 * (spriteRow);  // todo: sprite flippin'
+        if (currentSpriteData.yFlipFlag()) {
+            spriteRow = (spriteHeight - 1) - spriteRow;
+        }
+
+        return tileDataAddress + 2 * (spriteRow);
     }
 
     private enum Step {
