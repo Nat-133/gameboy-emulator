@@ -63,6 +63,30 @@ public class TileRenderer {
         return fullMap;
     }
 
+    public TwoBitValue[][][] renderAllTiles() {
+        int totalTiles = 384;
+        TwoBitValue[][][] allTiles = new TwoBitValue[totalTiles][TILE_HEIGHT][TILE_WIDTH];
+
+        for (int tileIdx = 0; tileIdx < totalTiles; tileIdx++) {
+            int tileDataAddress = TILE_DATA_START + (tileIdx * BYTES_PER_TILE);
+
+            for (int row = 0; row < TILE_HEIGHT; row++) {
+                int rowAddress = tileDataAddress + (row * 2);
+                byte lowByte = memory.read((short) rowAddress);
+                byte highByte = memory.read((short) (rowAddress + 1));
+
+                for (int col = 0; col < TILE_WIDTH; col++) {
+                    int bitIndex = 7 - col;
+                    int pixelValue = (BitUtilities.get_bit(lowByte, bitIndex) ? 1 : 0)
+                                   + (BitUtilities.get_bit(highByte, bitIndex) ? 2 : 0);
+                    allTiles[tileIdx][row][col] = TwoBitValue.from(pixelValue);
+                }
+            }
+        }
+
+        return allTiles;
+    }
+
     private int getUnsignedTileAddress(int tileNumber) {
         return TILE_DATA_START + (tileNumber * BYTES_PER_TILE);
     }

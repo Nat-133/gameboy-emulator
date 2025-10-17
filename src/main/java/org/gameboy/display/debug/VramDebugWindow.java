@@ -24,7 +24,9 @@ public class VramDebugWindow extends JFrame {
 
     private final TileMapView backgroundView;
     private final TileMapView windowView;
+    private final TileDataView tileDataView;
     private final JLabel registerInfoLabel;
+    private final JLabel tileDataLabel;
 
     public VramDebugWindow(Memory memory, PpuRegisters registers) {
         super("VRAM Debug Viewer");
@@ -35,9 +37,14 @@ public class VramDebugWindow extends JFrame {
 
         backgroundView = new TileMapView();
         windowView = new TileMapView();
+        tileDataView = new TileDataView();
 
         registerInfoLabel = new JLabel();
         registerInfoLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+
+        tileDataLabel = new JLabel("Tile Data (0x8000-0x97FF)");
+        tileDataLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        tileDataLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -63,6 +70,16 @@ public class VramDebugWindow extends JFrame {
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(registerInfoLabel, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(tileDataLabel, gbc);
+
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.BOTH;
+        add(tileDataView, gbc);
 
         pack();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -104,6 +121,9 @@ public class VramDebugWindow extends JFrame {
         } else {
             windowView.clearViewport();
         }
+
+        var allTiles = tileRenderer.renderAllTiles();
+        tileDataView.updateTileData(allTiles);
 
         updateRegisterInfo(scx, scy, wx, wy);
     }
