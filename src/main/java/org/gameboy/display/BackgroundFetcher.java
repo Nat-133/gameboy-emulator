@@ -99,7 +99,7 @@ public class BackgroundFetcher implements Fetcher {
 
     private Step fetchTileDataLow() {
         int tileDataAddress = getSignedTileNumberAddress(currentTileNumber);
-        int rowDataAddress = getTileRow(tileDataAddress, registers.read(LY), 0);
+        int rowDataAddress = getTileRow(tileDataAddress, uint(registers.read(LY)), uint(registers.read(SCY)));
         tileDataLow = memory.read((short) rowDataAddress);
         clock.tick();
         return Step.FETCH_TILE_DATA_LOW.next();
@@ -107,7 +107,7 @@ public class BackgroundFetcher implements Fetcher {
 
     private Step fetchTileDataHigh() {
         int tileDataAddress = getSignedTileNumberAddress(currentTileNumber);
-        int rowDataAddress = 1 + getTileRow(tileDataAddress, registers.read(LY), 0);
+        int rowDataAddress = 1 + getTileRow(tileDataAddress, uint(registers.read(LY)), uint(registers.read(SCY)));
         tileDataHigh = memory.read((short) rowDataAddress);
         clock.tick();
         return Step.FETCH_TILE_DATA_HIGH.next();
