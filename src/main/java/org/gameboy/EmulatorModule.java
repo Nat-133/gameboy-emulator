@@ -9,7 +9,7 @@ public class EmulatorModule extends AbstractModule {
     private final boolean useSimpleMemory;
     
     public EmulatorModule() {
-        this(true);
+        this(false);
     }
     
     public EmulatorModule(boolean useSimpleMemory) {
