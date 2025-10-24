@@ -50,7 +50,7 @@ public class DisplayInterruptController {
         checkAndTriggerStatInterrupt();
     }
 
-    public void sendLyCoincidence() {
+    public void checkAndSendLyCoincidence() {
         byte stat = registers.read(PpuRegister.STAT);
         boolean lyIsLyc = registers.read(PpuRegister.LY) == registers.read(PpuRegister.LYC);
 
