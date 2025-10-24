@@ -19,8 +19,11 @@ public class DisplayModule extends AbstractModule {
     
     @Provides
     @Singleton
-    DisplayInterruptController provideDisplayInterruptController(InterruptController interruptController, PpuRegisters ppuRegisters) {
-        return new DisplayInterruptController(interruptController, ppuRegisters);
+    DisplayInterruptController provideDisplayInterruptController(InterruptController interruptController, PpuRegisters ppuRegisters, Memory memory) {
+        DisplayInterruptController controller = new DisplayInterruptController(interruptController, ppuRegisters);
+        // Register listener for LYC writes (0xFF45) to handle mid-scanline LYC changes
+        memory.registerMemoryListener((short) 0xFF45, controller::checkAndSendLyCoincidence);
+        return controller;
     }
     
     @Provides
