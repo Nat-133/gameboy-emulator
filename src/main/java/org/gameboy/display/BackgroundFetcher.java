@@ -6,7 +6,6 @@ import org.gameboy.common.SynchronisedClock;
 import org.gameboy.utils.BitUtilities;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -17,14 +16,12 @@ public class BackgroundFetcher implements Fetcher {
     private final Memory memory;
     private final PpuRegisters registers;
     private final PixelFifo backgroundFifo;
-    //    private int WINDOW_LINE_COUNTER = 0;  // should be on fetcher, not background fetcher
     private int X_POSITION_COUNTER = 0;  // tile coordinate, not pixel
     private byte currentTileNumber;
     private byte tileDataLow;
     private byte tileDataHigh;
     private final SynchronisedClock clock;
 
-    public List<List<TwoBitValue>> history = new ArrayList<>();
     private Step currentStep;
     private boolean windowFetchMode;
 
@@ -43,10 +40,6 @@ public class BackgroundFetcher implements Fetcher {
 
     private int getTilemapIndex(int x, int y, int background_offset_x, int background_offset_y) {
         return ((x+((background_offset_x) / 8)) & 0x1f) + 32 * (((y + background_offset_y) & 0xff) / 8);
-    }
-
-    private int getTileNumberAddress(int tileNumber) {
-        return 0x8000 + (tileNumber * 16);
     }
 
     private int getSignedTileNumberAddress(int tileNumber) {
@@ -70,9 +63,10 @@ public class BackgroundFetcher implements Fetcher {
     }
 
     public void switchToWindowFetching() {
-        reset();
-        windowFetchMode = true;
-        // todo: how ss in windowState and then have a full reset method on it
+        if (!windowFetchMode) {
+            reset();
+            windowFetchMode = true;
+        }
     }
 
     private Step runStep(Step step) {
