@@ -117,7 +117,7 @@ public class PictureProcessingUnit {
 
     private void updateLY(byte value) {
         registers.write(LY, value);
-        displayInterruptController.sendLyCoincidence();
+        displayInterruptController.checkAndSendLyCoincidence();
     }
 
     private enum Step {
