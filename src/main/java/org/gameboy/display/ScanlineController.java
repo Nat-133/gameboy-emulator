@@ -25,7 +25,6 @@ public class ScanlineController {
     private State state;
 
     private int LX;
-    private boolean windowRenderedThisLine;
 
     public ScanlineController(Clock ppuClock,
                               Display display,
@@ -71,7 +70,6 @@ public class ScanlineController {
 
     public void setupScanline() {
         LX = 0;
-        windowRenderedThisLine = false;
         backgroundFetcher.reset();
         state = shouldDiscardPixel() ? State.DISCARD_PIXELS : State.PIXEL_FETCHING;
     }
@@ -111,7 +109,6 @@ public class ScanlineController {
 
             if (atWindow()) {
                 backgroundFetcher.switchToWindowFetching();
-                windowRenderedThisLine = true;
             }
         }
 
@@ -121,7 +118,7 @@ public class ScanlineController {
     private boolean atWindow() {
         return (windowDisplayEnabled(registers.read(LCDC)))
                 && ((uint(registers.read(WY)) <= uint(registers.read(LY))))
-                && (LX >= registers.read(WX) - 7);
+                && (LX >= uint(registers.read(WX)) - 7);
     }
 
     private State spriteFetch() {
