@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.gameboy.utils.BitUtilities.uint;
+
 public class SpriteBuffer {
     private final List<SpriteData> buffer;
 
@@ -13,7 +15,7 @@ public class SpriteBuffer {
 
     public Optional<SpriteData> getSprite(int x) {
         return buffer.stream()
-                .filter(data -> data.x() <= x)
+                .filter(data -> uint(data.x()) - 8 <= x)
                 .findFirst();
     }
 
