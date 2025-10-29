@@ -12,4 +12,6 @@ public class MemoryMapConstants {
 
     public static final int TILE_MAP_A_ADDRESS = 0x9800;
     public static final int TILE_MAP_B_ADDRESS = 0x9C00;
+
+    public static final int TILE_DATA_ADDRESS = 0x8000;
 }
