@@ -55,7 +55,7 @@ public class OamScanController {
         if (LY + 16 >= uint(currentSpriteY)
                 && LY + 16 < uint(currentSpriteY) + spriteHeight
                 && uint(currentSpriteX) > 0
-                && spriteBuffer.spriteCount() <= 10) {
+                && spriteBuffer.spriteCount() < 10) {
             byte tileNumber = BitUtilities.lower_byte(spriteData);
             byte flags = BitUtilities.upper_byte(spriteData);
 
