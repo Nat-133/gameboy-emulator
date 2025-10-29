@@ -43,7 +43,22 @@ public class BackgroundFetcher implements Fetcher {
     }
 
     private int getSignedTileNumberAddress(int tileNumber) {
-        return 0x9000 + (((byte)tileNumber) * 16);
+        return MemoryMapConstants.TILE_DATA_ADDRESS + 0x1000 + (((byte)tileNumber) * 16);
+    }
+
+    private int getUnsignedTileNumberAddress(int tileNumber) {
+        return MemoryMapConstants.TILE_DATA_ADDRESS + (tileNumber * 16);
+    }
+
+    private int getTileDataAddress(int tileNumber) {
+        byte lcdc = registers.read(LCDC);
+        boolean unsignedMode = LcdcParser.useUnsignedTileDataSelect(lcdc);
+
+        if (unsignedMode) {
+            return getUnsignedTileNumberAddress(tileNumber);
+        } else {
+            return getSignedTileNumberAddress(tileNumber);
+        }
     }
 
     private int getTileRow(int tileDataAddress, int ly, int scy) {
@@ -92,7 +107,7 @@ public class BackgroundFetcher implements Fetcher {
     }
 
     private Step fetchTileDataLow() {
-        int tileDataAddress = getSignedTileNumberAddress(currentTileNumber);
+        int tileDataAddress = getTileDataAddress(uint(currentTileNumber));
         int rowDataAddress = getTileRow(tileDataAddress, uint(registers.read(LY)), uint(registers.read(SCY)));
         tileDataLow = memory.read((short) rowDataAddress);
         clock.tick();
@@ -100,7 +115,7 @@ public class BackgroundFetcher implements Fetcher {
     }
 
     private Step fetchTileDataHigh() {
-        int tileDataAddress = getSignedTileNumberAddress(currentTileNumber);
+        int tileDataAddress = getTileDataAddress(uint(currentTileNumber));
         int rowDataAddress = 1 + getTileRow(tileDataAddress, uint(registers.read(LY)), uint(registers.read(SCY)));
         tileDataHigh = memory.read((short) rowDataAddress);
         clock.tick();
