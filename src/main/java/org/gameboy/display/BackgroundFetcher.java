@@ -98,7 +98,12 @@ public class BackgroundFetcher implements Fetcher {
 
     private Step fetchTileNo() {
         int tileIndex = getTilemapIndex(X_POSITION_COUNTER, uint(registers.read(LY)), uint(registers.read(SCX)), uint(registers.read(SCY)));
-        short tileNumberAddress = (short) (MemoryMapConstants.TILE_MAP_A_ADDRESS + tileIndex);
+        byte lcdc = registers.read(LCDC);
+        int tilemapAddress = windowFetchMode
+            ? LcdcParser.windowTileMap(lcdc)
+            : LcdcParser.backgroundTileMap(lcdc);
+
+        short tileNumberAddress = (short) (tilemapAddress + tileIndex);
 
         currentTileNumber = memory.read(tileNumberAddress);
 
