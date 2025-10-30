@@ -15,7 +15,7 @@ import static org.gameboy.utils.BitUtilities.uint;
 public class BackgroundFetcher implements Fetcher {
     private final Memory memory;
     private final PpuRegisters registers;
-    private final PixelFifo backgroundFifo;
+    private final Fifo<TwoBitValue> backgroundFifo;
     private int X_POSITION_COUNTER = 0;  // tile coordinate, not pixel
     private byte currentTileNumber;
     private byte tileDataLow;
@@ -27,7 +27,7 @@ public class BackgroundFetcher implements Fetcher {
 
     public BackgroundFetcher(Memory memory,
                              PpuRegisters registers,
-                             PixelFifo backgroundFifo,
+                             Fifo<TwoBitValue> backgroundFifo,
                              SynchronisedClock clock) {
         this.memory = memory;
         this.registers = registers;

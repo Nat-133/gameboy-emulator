@@ -17,7 +17,7 @@ public class SpriteFetcher implements Fetcher {
     private final SpriteBuffer spriteBuffer;
     private final Memory memory;
     private final PpuRegisters registers;
-    private final PixelFifo spriteFifo;
+    private final Fifo<TwoBitValue> spriteFifo;
     private int pixelXPosition;
     // tile coordinate, not pixel
     private byte tileDataLow;
@@ -30,7 +30,7 @@ public class SpriteFetcher implements Fetcher {
     public SpriteFetcher(SpriteBuffer spriteBuffer,
                          Memory memory,
                          PpuRegisters registers,
-                         PixelFifo spriteFifo,
+                         Fifo<TwoBitValue> spriteFifo,
                          SynchronisedClock clock) {
         this.spriteBuffer = spriteBuffer;
         this.memory = memory;
