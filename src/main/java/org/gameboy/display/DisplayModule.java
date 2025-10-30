@@ -5,6 +5,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.gameboy.common.*;
+import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
 public class DisplayModule extends AbstractModule {
     @Override
@@ -98,15 +99,15 @@ public class DisplayModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("backgroundFifo")
-    PixelFifo provideBackgroundFifo() {
-        return new PixelFifo();
+    Fifo<TwoBitValue> provideBackgroundFifo() {
+        return new Fifo<>();
     }
     
     @Provides
     @Singleton
     @Named("spriteFifo")
-    PixelFifo provideSpriteFifo() {
-        return new PixelFifo();
+    Fifo<TwoBitValue>provideSpriteFifo() {
+        return new Fifo<>();
     }
     
     @Provides
@@ -118,7 +119,7 @@ public class DisplayModule extends AbstractModule {
     @Provides
     @Singleton
     BackgroundFetcher provideBackgroundFetcher(Memory memory, PpuRegisters registers, 
-                                               @Named("backgroundFifo") PixelFifo backgroundFifo, 
+                                               @Named("backgroundFifo") Fifo<TwoBitValue>backgroundFifo,
                                                @Named("ppuClock") SynchronisedClock ppuClock) {
         return new BackgroundFetcher(memory, registers, backgroundFifo, ppuClock);
     }
@@ -126,7 +127,7 @@ public class DisplayModule extends AbstractModule {
     @Provides
     @Singleton
     SpriteFetcher provideSpriteFetcher(SpriteBuffer spriteBuffer, Memory memory, 
-                                       PpuRegisters registers, @Named("spriteFifo") PixelFifo spriteFifo, 
+                                       PpuRegisters registers, @Named("spriteFifo") Fifo<TwoBitValue>spriteFifo,
                                        @Named("ppuClock") SynchronisedClock ppuClock) {
         return new SpriteFetcher(spriteBuffer, memory, registers, spriteFifo, ppuClock);
     }
@@ -134,8 +135,8 @@ public class DisplayModule extends AbstractModule {
     @Provides
     @Singleton
     ScanlineController provideScanlineController(@Named("ppuClock") SynchronisedClock ppuClock, Display display,
-                                                @Named("backgroundFifo") PixelFifo backgroundFifo,
-                                                @Named("spriteFifo") PixelFifo spriteFifo,
+                                                @Named("backgroundFifo") Fifo<TwoBitValue>backgroundFifo,
+                                                @Named("spriteFifo") Fifo<TwoBitValue>spriteFifo,
                                                 PixelCombinator pixelCombinator, PpuRegisters registers,
                                                 BackgroundFetcher backgroundFetcher, SpriteFetcher spriteFetcher,
                                                 SpriteBuffer spriteBuffer) {

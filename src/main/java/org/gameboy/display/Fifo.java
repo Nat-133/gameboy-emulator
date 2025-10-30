@@ -1,22 +1,19 @@
 package org.gameboy.display;
 
-
-import org.gameboy.utils.MultiBitValue.TwoBitValue;
-
 import java.util.*;
 
-public class PixelFifo {
-    private final Deque<TwoBitValue> fifo = new ArrayDeque<>(8);
+public class Fifo<T> {
+    private final Deque<T> fifo = new ArrayDeque<>(8);
     private final List<FifoReadListener> readListeners = new ArrayList<>();
 
-    public void write(List<TwoBitValue> values) {
+    public void write(List<T> values) {
         values.stream()
                 .skip(fifo.size())
                 .forEach(fifo::add);
     }
 
-    public Optional<TwoBitValue> read() {
-        Optional<TwoBitValue> value;
+    public Optional<T> read() {
+        Optional<T> value;
         value = Optional.ofNullable(fifo.pollFirst());
         readListeners.forEach(FifoReadListener::onRead);
         return value;

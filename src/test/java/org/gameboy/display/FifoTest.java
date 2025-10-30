@@ -10,10 +10,10 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-class PixelFifoTest {
+class FifoTest {
     @Test
     void givenEmptyFifo_whenAddEightElements_thenElementsCanBePoppedInOrder() {
-        PixelFifo fifo = new PixelFifo();
+        Fifo<TwoBitValue> fifo = new Fifo<>();
 
         List<TwoBitValue> expectedElements = IntStream.range(0, 8).mapToObj(TwoBitValue::from).toList();
         fifo.write(expectedElements);
@@ -28,7 +28,7 @@ class PixelFifoTest {
 
     @Test
     void givenFifoWithTwoElements_whenAddEightElements_thenFirstTwoAddedElementsDiscarded() {
-        PixelFifo fifo = new PixelFifo();
+        Fifo<TwoBitValue> fifo = new Fifo<>();
         fifo.write(List.of(TwoBitValue.b11, TwoBitValue.b10));
 
         List<TwoBitValue> expectedElements = IntStream.range(0, 8).mapToObj(TwoBitValue::from).toList();
@@ -46,7 +46,7 @@ class PixelFifoTest {
 
     @Test
     void givenFifoWithElements_whenRead_thenListenerNotified() {
-        PixelFifo fifo = new PixelFifo();
+        Fifo<TwoBitValue> fifo = new Fifo<>();
         fifo.write(List.of(TwoBitValue.b11, TwoBitValue.b10));
         AtomicInteger readCount = new AtomicInteger(0);
         fifo.registerReadListener(readCount::incrementAndGet);

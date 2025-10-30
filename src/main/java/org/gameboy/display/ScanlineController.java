@@ -15,8 +15,8 @@ import static org.gameboy.utils.MultiBitValue.TwoBitValue.b00;
 public class ScanlineController {
     private final Clock ppuClock;
     private final Display display;
-    private final PixelFifo backgroundFifo;
-    private final PixelFifo spriteFifo;
+    private final Fifo<TwoBitValue> backgroundFifo;
+    private final Fifo<TwoBitValue> spriteFifo;
     private final PixelCombinator pixelCombinator;
     private final PpuRegisters registers;
     private final BackgroundFetcher backgroundFetcher;
@@ -28,8 +28,8 @@ public class ScanlineController {
 
     public ScanlineController(Clock ppuClock,
                               Display display,
-                              PixelFifo backgroundFifo,
-                              PixelFifo spriteFifo,
+                              Fifo<TwoBitValue> backgroundFifo,
+                              Fifo<TwoBitValue> spriteFifo,
                               PixelCombinator pixelCombinator,
                               PpuRegisters registers,
                               BackgroundFetcher backgroundFetcher,
