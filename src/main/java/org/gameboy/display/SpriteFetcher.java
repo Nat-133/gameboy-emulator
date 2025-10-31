@@ -95,7 +95,7 @@ public class SpriteFetcher implements Fetcher {
         boolean bgPriority = currentSpriteData.drawSpriteOverBackgroundFlag();
 
         List<SpritePixel> pixelData = IntStream.range(0, 8)
-                .map(i -> !currentSpriteData.xFlipFlag() ? i : 7-i)
+                .map(i -> currentSpriteData.xFlipFlag() ? i : 7-i)
                 .map(i -> (BitUtilities.get_bit(tileDataLow, i) ? 1 : 0)
                         + (BitUtilities.get_bit(tileDataHigh, i) ? 2 : 0))
                 .mapToObj(TwoBitValue::from)
