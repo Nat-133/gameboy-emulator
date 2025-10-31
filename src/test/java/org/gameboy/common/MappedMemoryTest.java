@@ -21,6 +21,9 @@ public class MappedMemoryTest {
     private ByteRegister lycRegister;
     private ByteRegister wyRegister;
     private ByteRegister wxRegister;
+    private ByteRegister bgpRegister;
+    private ByteRegister obp0Register;
+    private ByteRegister obp1Register;
     private SerialController serialController;
     private MappedMemory memory;
 
@@ -38,10 +41,14 @@ public class MappedMemoryTest {
         lycRegister = new IntBackedRegister();
         wyRegister = new IntBackedRegister();
         wxRegister = new IntBackedRegister();
+        bgpRegister = new IntBackedRegister();
+        obp0Register = new IntBackedRegister();
+        obp1Register = new IntBackedRegister();
         serialController = Mockito.mock(SerialController.class);
         memory = new MappedMemory(divRegister, timaRegister, tmaRegister, tacRegister,
                                  lcdcRegister, statRegister, scyRegister, scxRegister,
                                  lyRegister, lycRegister, wyRegister, wxRegister,
+                                 bgpRegister, obp0Register, obp1Register,
                                  serialController);
     }
 
@@ -197,5 +204,72 @@ public class MappedMemoryTest {
         memory.write((short) 0xFF42, expectedValue);
 
         assertEquals(expectedValue, scyRegister.read());
+    }
+
+    // Palette Register Tests
+
+    @Test
+    public void givenBgpRegisterIsWritten_whenMemoryIsRead_thenCorrectValueIsReturned() {
+        byte expectedValue = (byte) 0xE4;  // Common BGP value
+        bgpRegister.write(expectedValue);
+
+        assertEquals(expectedValue, memory.read((short) 0xFF47));
+    }
+
+    @Test
+    public void givenMemoryIsWrittenToBgpAddress_whenRegisterIsRead_thenCorrectValueIsReturned() {
+        byte expectedValue = (byte) 0x1B;
+        memory.write((short) 0xFF47, expectedValue);
+
+        assertEquals(expectedValue, bgpRegister.read());
+    }
+
+    @Test
+    public void givenObp0RegisterIsWritten_whenMemoryIsRead_thenCorrectValueIsReturned() {
+        byte expectedValue = (byte) 0xD2;
+        obp0Register.write(expectedValue);
+
+        assertEquals(expectedValue, memory.read((short) 0xFF48));
+    }
+
+    @Test
+    public void givenMemoryIsWrittenToObp0Address_whenRegisterIsRead_thenCorrectValueIsReturned() {
+        byte expectedValue = (byte) 0x3F;
+        memory.write((short) 0xFF48, expectedValue);
+
+        assertEquals(expectedValue, obp0Register.read());
+    }
+
+    @Test
+    public void givenObp1RegisterIsWritten_whenMemoryIsRead_thenCorrectValueIsReturned() {
+        byte expectedValue = (byte) 0x90;
+        obp1Register.write(expectedValue);
+
+        assertEquals(expectedValue, memory.read((short) 0xFF49));
+    }
+
+    @Test
+    public void givenMemoryIsWrittenToObp1Address_whenRegisterIsRead_thenCorrectValueIsReturned() {
+        byte expectedValue = (byte) 0x6C;
+        memory.write((short) 0xFF49, expectedValue);
+
+        assertEquals(expectedValue, obp1Register.read());
+    }
+
+    @Test
+    public void testPaletteRegistersDefaultValues() {
+        // BGP typically defaults to 0xFC
+        // OBP0 and OBP1 typically default to 0xFF
+        // But let's test that they're properly mapped regardless of initial value
+
+        // Write and read back to verify mappings work
+        memory.write((short) 0xFF47, (byte) 0xFC);
+        assertEquals((byte) 0xFC, memory.read((short) 0xFF47));
+
+        memory.write((short) 0xFF48, (byte) 0xFF);
+        assertEquals((byte) 0xFF, memory.read((short) 0xFF48));
+
+        memory.write((short) 0xFF49, (byte) 0xFF);
+        assertEquals((byte) 0xFF, memory.read((short) 0xFF49));
     }
 }

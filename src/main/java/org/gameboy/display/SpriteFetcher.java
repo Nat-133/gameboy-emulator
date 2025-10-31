@@ -17,7 +17,7 @@ public class SpriteFetcher implements Fetcher {
     private final SpriteBuffer spriteBuffer;
     private final Memory memory;
     private final PpuRegisters registers;
-    private final Fifo<TwoBitValue> spriteFifo;
+    private final Fifo<SpritePixel> spriteFifo;
     private int pixelXPosition;
     // tile coordinate, not pixel
     private byte tileDataLow;
@@ -30,7 +30,7 @@ public class SpriteFetcher implements Fetcher {
     public SpriteFetcher(SpriteBuffer spriteBuffer,
                          Memory memory,
                          PpuRegisters registers,
-                         Fifo<TwoBitValue> spriteFifo,
+                         Fifo<SpritePixel> spriteFifo,
                          SynchronisedClock clock) {
         this.spriteBuffer = spriteBuffer;
         this.memory = memory;
@@ -90,11 +90,16 @@ public class SpriteFetcher implements Fetcher {
     }
 
     private Step pushToFifo() {
-        List<TwoBitValue> pixelData = IntStream.range(0, 8)
+        // Get sprite metadata flags
+        boolean useOBP1 = currentSpriteData.paletteFlag();
+        boolean bgPriority = currentSpriteData.drawSpriteOverBackgroundFlag();
+
+        List<SpritePixel> pixelData = IntStream.range(0, 8)
                 .map(i -> !currentSpriteData.xFlipFlag() ? i : 7-i)
                 .map(i -> (BitUtilities.get_bit(tileDataLow, i) ? 1 : 0)
                         + (BitUtilities.get_bit(tileDataHigh, i) ? 2 : 0))
                 .mapToObj(TwoBitValue::from)
+                .map(colorIndex -> new SpritePixel(colorIndex, useOBP1, bgPriority))
                 .toList();
         spriteFifo.write(pixelData);
         clock.tick();
