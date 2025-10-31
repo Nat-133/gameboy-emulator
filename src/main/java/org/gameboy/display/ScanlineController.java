@@ -129,7 +129,7 @@ public class ScanlineController {
     }
 
     private boolean shouldPerformSpriteFetch(int x) {
-        return spriteBuffer.getSprite(x).isPresent();
+        return LcdcParser.objectEnable(registers.read(LCDC)) && spriteBuffer.getSprite(x).isPresent();
     }
 
     private Optional<CombinedPixel> getPixelDataWithSprite() {

@@ -30,6 +30,10 @@ public class LcdcParser {
         return get_bit(lcdc, 2) ? 16 : 8;
     }
 
+    public static boolean objectEnable(byte lcdc) {
+        return get_bit(lcdc, 1);
+    }
+
     public static boolean backgroundAndWindowEnable(byte lcdc) {
         return get_bit(lcdc, 0);
     }
