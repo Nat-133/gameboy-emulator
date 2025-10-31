@@ -10,13 +10,12 @@ import static org.gameboy.display.LcdcParser.windowDisplayEnabled;
 import static org.gameboy.display.PpuRegisters.PpuRegister.*;
 import static org.gameboy.utils.BitUtilities.mod;
 import static org.gameboy.utils.BitUtilities.uint;
-import static org.gameboy.utils.MultiBitValue.TwoBitValue.b00;
 
 public class ScanlineController {
     private final Clock ppuClock;
     private final Display display;
     private final Fifo<TwoBitValue> backgroundFifo;
-    private final Fifo<TwoBitValue> spriteFifo;
+    private final Fifo<SpritePixel> spriteFifo;
     private final PixelCombinator pixelCombinator;
     private final PpuRegisters registers;
     private final BackgroundFetcher backgroundFetcher;
@@ -29,7 +28,7 @@ public class ScanlineController {
     public ScanlineController(Clock ppuClock,
                               Display display,
                               Fifo<TwoBitValue> backgroundFifo,
-                              Fifo<TwoBitValue> spriteFifo,
+                              Fifo<SpritePixel> spriteFifo,
                               PixelCombinator pixelCombinator,
                               PpuRegisters registers,
                               BackgroundFetcher backgroundFetcher,
@@ -99,10 +98,13 @@ public class ScanlineController {
 
     private void pushPixel() {
         backgroundFetcher.runSingleTickCycle();
-        Optional<TwoBitValue> pixelData = getPixelData();
+        Optional<CombinedPixel> pixelData = getPixelDataWithSprite();
 
         if (pixelData.isPresent()) {
-            PixelValue pixel = pixelCombinator.combinePixels(pixelData.get());
+            CombinedPixel combined = pixelData.get();
+            PixelValue pixel = combined.spritePixel() != null
+                    ? pixelCombinator.combinePixels(combined.backgroundValue(), combined.spritePixel())
+                    : pixelCombinator.combinePixels(combined.backgroundValue());
             display.setPixel(LX, uint(registers.read(LY)), pixel);
 
             LX++;
@@ -130,32 +132,21 @@ public class ScanlineController {
         return spriteBuffer.getSprite(x).isPresent();
     }
 
-    private Optional<TwoBitValue> getPixelData() {
+    private Optional<CombinedPixel> getPixelDataWithSprite() {
         Optional<TwoBitValue> backgroundData = backgroundFifo.read();
 
         if (backgroundData.isEmpty()) {
             return Optional.empty();
         }
 
+        TwoBitValue bgValue = backgroundData.get();
         if (!LcdcParser.backgroundAndWindowEnable(registers.read(LCDC))) {
-            backgroundData = Optional.of(TwoBitValue.b00);
+            bgValue = TwoBitValue.b00;
         }
 
-        Optional<TwoBitValue> spriteData = spriteFifo.read();
+        Optional<SpritePixel> spriteData = spriteFifo.read();
 
-        if (spriteData.isEmpty()) {
-            return backgroundData;
-        }
-
-        return backgroundData.map(background -> combinePixels(background, spriteData.get()));
-    }
-
-    private TwoBitValue combinePixels(TwoBitValue backgroundValue, TwoBitValue spriteValue) {
-        if (spriteValue == b00) {
-            return backgroundValue;
-        }
-
-        return spriteValue;
+        return Optional.of(new CombinedPixel(bgValue, spriteData.orElse(null)));
     }
 
     private boolean shouldDiscardPixel() {
@@ -169,5 +160,11 @@ public class ScanlineController {
         PIXEL_FETCHING,
         SPRITE_FETCHING,
         COMPLETE
+    }
+
+    public record CombinedPixel(
+            TwoBitValue backgroundValue,
+            SpritePixel spritePixel  // may be null if no sprite at this position
+    ) {
     }
 }

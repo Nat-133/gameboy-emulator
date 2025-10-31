@@ -10,14 +10,18 @@ import org.gameboy.utils.MultiBitValue.TwoBitValue;
 public class DisplayModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(PixelCombinator.class).in(Singleton.class);
-        
         bind(Display.class).to(WindowDisplay.class).in(Singleton.class);
-        
+
         bind(PpuRegisters.class).in(Singleton.class);
-        
+
     }
-    
+
+    @Provides
+    @Singleton
+    PixelCombinator providePixelCombinator(PpuRegisters registers) {
+        return new PixelCombinator(registers);
+    }
+
     @Provides
     @Singleton
     DisplayInterruptController provideDisplayInterruptController(InterruptController interruptController, PpuRegisters ppuRegisters, Memory memory) {
@@ -82,7 +86,28 @@ public class DisplayModule extends AbstractModule {
     ByteRegister provideStatRegister() {
         return new IntBackedRegister(0x85);
     }
-    
+
+    @Provides
+    @Singleton
+    @Named("bgp")
+    ByteRegister provideBgpRegister() {
+        return new IntBackedRegister(0xFC);  // Default palette value
+    }
+
+    @Provides
+    @Singleton
+    @Named("obp0")
+    ByteRegister provideObp0Register() {
+        return new IntBackedRegister(0xFF);  // Default palette value
+    }
+
+    @Provides
+    @Singleton
+    @Named("obp1")
+    ByteRegister provideObp1Register() {
+        return new IntBackedRegister(0xFF);  // Default palette value
+    }
+
     @Provides
     @Singleton
     ObjectAttributeMemory provideObjectAttributeMemory(Memory memory) {
@@ -102,11 +127,11 @@ public class DisplayModule extends AbstractModule {
     Fifo<TwoBitValue> provideBackgroundFifo() {
         return new Fifo<>();
     }
-    
+
     @Provides
     @Singleton
     @Named("spriteFifo")
-    Fifo<TwoBitValue>provideSpriteFifo() {
+    Fifo<SpritePixel> provideSpriteFifo() {
         return new Fifo<>();
     }
     
@@ -118,29 +143,29 @@ public class DisplayModule extends AbstractModule {
     
     @Provides
     @Singleton
-    BackgroundFetcher provideBackgroundFetcher(Memory memory, PpuRegisters registers, 
-                                               @Named("backgroundFifo") Fifo<TwoBitValue>backgroundFifo,
+    BackgroundFetcher provideBackgroundFetcher(Memory memory, PpuRegisters registers,
+                                               @Named("backgroundFifo") Fifo<TwoBitValue> backgroundFifo,
                                                @Named("ppuClock") SynchronisedClock ppuClock) {
         return new BackgroundFetcher(memory, registers, backgroundFifo, ppuClock);
     }
-    
+
     @Provides
     @Singleton
-    SpriteFetcher provideSpriteFetcher(SpriteBuffer spriteBuffer, Memory memory, 
-                                       PpuRegisters registers, @Named("spriteFifo") Fifo<TwoBitValue>spriteFifo,
+    SpriteFetcher provideSpriteFetcher(SpriteBuffer spriteBuffer, Memory memory,
+                                       PpuRegisters registers, @Named("spriteFifo") Fifo<SpritePixel> spriteFifo,
                                        @Named("ppuClock") SynchronisedClock ppuClock) {
         return new SpriteFetcher(spriteBuffer, memory, registers, spriteFifo, ppuClock);
     }
-    
+
     @Provides
     @Singleton
     ScanlineController provideScanlineController(@Named("ppuClock") SynchronisedClock ppuClock, Display display,
-                                                @Named("backgroundFifo") Fifo<TwoBitValue>backgroundFifo,
-                                                @Named("spriteFifo") Fifo<TwoBitValue>spriteFifo,
+                                                @Named("backgroundFifo") Fifo<TwoBitValue> backgroundFifo,
+                                                @Named("spriteFifo") Fifo<SpritePixel> spriteFifo,
                                                 PixelCombinator pixelCombinator, PpuRegisters registers,
                                                 BackgroundFetcher backgroundFetcher, SpriteFetcher spriteFetcher,
                                                 SpriteBuffer spriteBuffer) {
-        return new ScanlineController(ppuClock, display, backgroundFifo, spriteFifo, 
+        return new ScanlineController(ppuClock, display, backgroundFifo, spriteFifo,
                                     pixelCombinator, registers, backgroundFetcher, spriteFetcher, spriteBuffer);
     }
     

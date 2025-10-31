@@ -21,9 +21,9 @@ public class MappedMemory implements Memory {
     private final ConcurrentMap<Short, MemoryListener> memoryListeners = new ConcurrentHashMap<>();
 
     @Inject
-    public MappedMemory(@Div ByteRegister divRegister, 
-                       @Tima ByteRegister timaRegister, 
-                       @Tma ByteRegister tmaRegister, 
+    public MappedMemory(@Div ByteRegister divRegister,
+                       @Tima ByteRegister timaRegister,
+                       @Tma ByteRegister tmaRegister,
                        @Tac ByteRegister tacRegister,
                        @Named("lcdc") ByteRegister lcdcRegister,
                        @Named("stat") ByteRegister statRegister,
@@ -33,6 +33,9 @@ public class MappedMemory implements Memory {
                        @Named("lyc") ByteRegister lycRegister,
                        @Named("wy") ByteRegister wyRegister,
                        @Named("wx") ByteRegister wxRegister,
+                       @Named("bgp") ByteRegister bgpRegister,
+                       @Named("obp0") ByteRegister obp0Register,
+                       @Named("obp1") ByteRegister obp1Register,
                        SerialController serialController) {
         memoryMap[0xFF01] = new SerialDataMapping(serialController);
         memoryMap[0xFF02] = new SerialControlMapping(serialController);
@@ -48,6 +51,9 @@ public class MappedMemory implements Memory {
         memoryMap[0xFF43] = new ByteRegisterMapping(scxRegister);
         memoryMap[0xFF44] = new ByteRegisterMapping(lyRegister);
         memoryMap[0xFF45] = new ByteRegisterMapping(lycRegister);
+        memoryMap[0xFF47] = new ByteRegisterMapping(bgpRegister);
+        memoryMap[0xFF48] = new ByteRegisterMapping(obp0Register);
+        memoryMap[0xFF49] = new ByteRegisterMapping(obp1Register);
         memoryMap[0xFF4A] = new ByteRegisterMapping(wyRegister);
         memoryMap[0xFF4B] = new ByteRegisterMapping(wxRegister);
     }
