@@ -16,7 +16,7 @@ public class BackgroundFetcher implements Fetcher {
     private final Memory memory;
     private final PpuRegisters registers;
     private final Fifo<TwoBitValue> backgroundFifo;
-    private int X_POSITION_COUNTER = 0;  // tile coordinate, not pixel
+    private int xPositionCounter = 0;
     private byte currentTileNumber;
     private byte tileDataLow;
     private byte tileDataHigh;
@@ -24,6 +24,7 @@ public class BackgroundFetcher implements Fetcher {
 
     private Step currentStep;
     private boolean windowFetchMode;
+    private int windowLineCounter = 0;
 
     public BackgroundFetcher(Memory memory,
                              PpuRegisters registers,
@@ -62,6 +63,9 @@ public class BackgroundFetcher implements Fetcher {
     }
 
     private int getTileRow(int tileDataAddress, int ly, int scy) {
+        if (windowFetchMode) {
+            return tileDataAddress + 2 * (windowLineCounter % 8);
+        }
         return tileDataAddress + 2 * ((ly + scy) % 8);
     }
 
@@ -71,10 +75,17 @@ public class BackgroundFetcher implements Fetcher {
     }
 
     public void reset() {
+        if (windowFetchMode) {
+            windowLineCounter++;
+        }
         backgroundFifo.clear();
         currentStep = Step.FETCH_TILE_NO;
-        X_POSITION_COUNTER = 0;
+        xPositionCounter = 0;
         windowFetchMode = false;
+    }
+
+    public void resetForNewFrame() {
+        windowLineCounter = 0;
     }
 
     public void switchToWindowFetching() {
@@ -97,7 +108,13 @@ public class BackgroundFetcher implements Fetcher {
     }
 
     private Step fetchTileNo() {
-        int tileIndex = getTilemapIndex(X_POSITION_COUNTER, uint(registers.read(LY)), uint(registers.read(SCX)), uint(registers.read(SCY)));
+        int tileIndex;
+        if (windowFetchMode) {
+            tileIndex = getTilemapIndex(xPositionCounter, windowLineCounter, 0, 0);
+        } else {
+            tileIndex = getTilemapIndex(xPositionCounter, uint(registers.read(LY)), uint(registers.read(SCX)), uint(registers.read(SCY)));
+        }
+
         byte lcdc = registers.read(LCDC);
         int tilemapAddress = windowFetchMode
             ? LcdcParser.windowTileMap(lcdc)
@@ -140,7 +157,7 @@ public class BackgroundFetcher implements Fetcher {
                 .toList();
         backgroundFifo.write(pixelData);
         clock.tick();
-        X_POSITION_COUNTER++;
+        xPositionCounter++;
 
         return Step.FETCH_TILE_NO;
     }
