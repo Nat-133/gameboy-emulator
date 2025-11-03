@@ -112,6 +112,7 @@ public class PictureProcessingUnit {
         }
 
         updateLY((byte) 0);
+        scanlineController.resetForNewFrame();
         return Step.OAM_SETUP;
     }
 

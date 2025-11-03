@@ -73,6 +73,10 @@ public class ScanlineController {
         state = shouldDiscardPixel() ? State.DISCARD_PIXELS : State.PIXEL_FETCHING;
     }
 
+    public void resetForNewFrame() {
+        backgroundFetcher.resetForNewFrame();
+    }
+
     private State discardPixel() {
         backgroundFetcher.runSingleTickCycle();
         backgroundFifo.read();
