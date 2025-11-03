@@ -1,7 +1,5 @@
 package org.gameboy.display;
 
-import org.gameboy.utils.MultiBitValue;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -10,35 +8,26 @@ import java.io.File;
 import java.io.IOException;
 
 public class WindowDisplay extends JPanel implements Display {
-    PixelValue[][] pixels = new PixelValue[DISPLAY_WIDTH][DISPLAY_HEIGHT];
-    private final PixelValue[][] displayBuffer = new PixelValue[DISPLAY_WIDTH][DISPLAY_HEIGHT];
+    private final PixelBuffer pixelBuffer;
+    private final Color[] colors;
     private static final int PIXEL_SIZE = 2;
     private static final boolean SAVE_SCREENSHOTS = false;
     private static int frameCounter = 0;
 
-    public WindowDisplay() {
-        for (int i = 0; i < pixels.length; i++) {
-            for (int j = 0; j < pixels[i].length; j++) {
-                pixels[i][j] = new PixelValue((i+j)%2);
-                displayBuffer[i][j] = new PixelValue((i+j)%2);
-            }
-        }
+    public WindowDisplay(Color color0, Color color1, Color color2, Color color3) {
+        this.pixelBuffer = new PixelBuffer();
+        this.colors = new Color[]{color0, color1, color2, color3};
     }
 
     @Override
     public void setPixel(int x, int y, PixelValue value) {
-        if (x < DISPLAY_WIDTH && y < DISPLAY_HEIGHT && x >= 0 && y >= 0) {
-            this.pixels[x][y] = value;
-        }
+        pixelBuffer.setPixel(x, y, value);
     }
 
     @Override
     public void onVBlank() {
         frameCounter++;
-
-        for (int x = 0; x < DISPLAY_WIDTH; x++) {
-            System.arraycopy(pixels[x], 0, displayBuffer[x], 0, DISPLAY_HEIGHT);
-        }
+        pixelBuffer.swapBuffers();
 
         if (SAVE_SCREENSHOTS && frameCounter >= 60 && frameCounter < 70) {
             saveScreenshot();
@@ -52,7 +41,7 @@ public class WindowDisplay extends JPanel implements Display {
 
         for (int x = 0; x < DISPLAY_WIDTH; x++) {
             for (int y = 0; y < DISPLAY_HEIGHT; y++) {
-                Color color = getColorForPixel(displayBuffer[x][y]);
+                Color color = getColorForPixel(pixelBuffer.getDisplayPixel(x, y));
                 image.setRGB(x, y, color.getRGB());
             }
         }
@@ -67,12 +56,7 @@ public class WindowDisplay extends JPanel implements Display {
     }
 
     private Color getColorForPixel(PixelValue value) {
-        return switch(MultiBitValue.TwoBitValue.from(value.value())) {
-            case b00 -> new Color(224, 248, 208);
-            case b01 -> new Color(136, 192, 70);
-            case b10 -> new Color(52, 104, 50);
-            case b11 -> new Color(8, 24, 32);
-        };
+        return colors[value.value() & 0x3];
     }
 
     @Override
@@ -81,9 +65,9 @@ public class WindowDisplay extends JPanel implements Display {
         Graphics2D g2d = (Graphics2D) g;
         g2d.fillRect(0,100,50,50);
 
-        for (int x = 0; x < displayBuffer.length; x++){
-            for (int y = 0; y < displayBuffer[x].length; y++) {
-                g2d.setColor(getColorForPixel(displayBuffer[x][y]));
+        for (int x = 0; x < DISPLAY_WIDTH; x++){
+            for (int y = 0; y < DISPLAY_HEIGHT; y++) {
+                g2d.setColor(getColorForPixel(pixelBuffer.getDisplayPixel(x, y)));
                 g2d.fillRect(x*PIXEL_SIZE, y*PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
             }
         }
