@@ -1,8 +1,7 @@
-package org.gameboy.test;
+package org.gameboy;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.gameboy.EmulatorModule;
 import org.gameboy.common.MappedMemory;
 import org.gameboy.common.Memory;
 import org.gameboy.common.MemoryDump;
