@@ -1,6 +1,6 @@
 package org.gameboy.cpu;
 
-import org.gameboy.test.BlarggTestRunner;
+import org.gameboy.BlarggTestRunner;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
