@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class Main {
     private static final String DEFAULT_BOOT_ROM = "dmg_boot.bin";
-    private static final String DEFAULT_GAME_ROM = "dmg-acid2.gb";
+    private static final String DEFAULT_GAME_ROM = "src/test/resources/dmg-acid2.gb";
     
     public static void main(String[] args) {
         try {
