@@ -1,9 +1,6 @@
 package org.gameboy;
 
-import org.gameboy.common.BasicMemory;
-import org.gameboy.common.Clock;
-import org.gameboy.common.Memory;
-import org.gameboy.common.MemoryMapConstants;
+import org.gameboy.common.*;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.components.*;
 import org.gameboy.utils.BitUtilities;
@@ -224,13 +221,16 @@ public class CpuStructureBuilder {
     }
 
     public CpuStructure build() {
+        ByteRegister interruptFlagsRegister = new MemoryBackedRegister(memory, MemoryMapConstants.IF_ADDRESS);
+        ByteRegister interruptEnableRegister = new MemoryBackedRegister(memory, MemoryMapConstants.IE_ADDRESS);
+
         return new CpuStructure(
                 new CpuRegisters(af, bc, de, hl, sp, pc, instructionRegister, ime),
                 memory,
                 new ArithmeticUnit(),
                 new IncrementDecrementUnit(),
                 clock,
-                new InterruptBus(memory, clock),
+                new InterruptBus(clock, interruptFlagsRegister, interruptEnableRegister),
                 new Decoder(unprefixedTable, prefixedTable)
         );
     }

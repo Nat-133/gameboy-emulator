@@ -14,4 +14,11 @@ public class MemoryMapConstants {
     public static final int TILE_MAP_B_ADDRESS = 0x9C00;
 
     public static final int TILE_DATA_ADDRESS = 0x8000;
+
+    public static final short OAM_START_ADDRESS = (short) 0xFE00;
+    public static final int OAM_SIZE = 160;
+    public static final short DMA_REGISTER_ADDRESS = (short) 0xFF46;
+
+    public static final short HRAM_START_ADDRESS = (short) 0xFF80;
+    public static final int HRAM_SIZE = 127;
 }

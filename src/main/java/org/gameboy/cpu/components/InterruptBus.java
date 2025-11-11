@@ -1,13 +1,11 @@
 package org.gameboy.cpu.components;
 
+import org.gameboy.common.ByteRegister;
 import org.gameboy.common.Clock;
 import org.gameboy.common.Interrupt;
-import org.gameboy.common.Memory;
 
 import java.util.List;
 
-import static org.gameboy.common.MemoryMapConstants.IE_ADDRESS;
-import static org.gameboy.common.MemoryMapConstants.IF_ADDRESS;
 import static org.gameboy.utils.BitUtilities.*;
 
 public class InterruptBus {
@@ -19,12 +17,14 @@ public class InterruptBus {
             Interrupt.VBLANK
     );
 
-    private final Memory memory;
     private final Clock clock;
+    private final ByteRegister interruptFlagsRegister;
+    private final ByteRegister interruptEnableRegister;
 
-    public InterruptBus(Memory memory, Clock clock) {
-        this.memory = memory;
+    public InterruptBus(Clock clock, ByteRegister interruptFlagsRegister, ByteRegister interruptEnableRegister) {
         this.clock = clock;
+        this.interruptFlagsRegister = interruptFlagsRegister;
+        this.interruptEnableRegister = interruptEnableRegister;
     }
 
     public boolean hasInterrupts() {
@@ -32,7 +32,7 @@ public class InterruptBus {
     }
 
     private byte calculateActiveInterruptByte() {
-        return and(memory.read(IF_ADDRESS), memory.read(IE_ADDRESS));
+        return and(interruptFlagsRegister.read(), interruptEnableRegister.read());
     }
 
     public List<Interrupt> activeInterrupts() {
@@ -43,8 +43,8 @@ public class InterruptBus {
     }
 
     public void deactivateInterrupt(Interrupt interrupt) {
-        byte newInterruptFlag = set_bit(memory.read(IF_ADDRESS), interrupt.index(), false);
-        memory.write(IF_ADDRESS, newInterruptFlag);
+        byte newInterruptFlag = set_bit(interruptFlagsRegister.read(), interrupt.index(), false);
+        interruptFlagsRegister.write(newInterruptFlag);
     }
 
     public void waitForInterrupt() {

@@ -1,10 +1,10 @@
 package org.gameboy.cpu.components;
 
 import org.gameboy.CpuStructureBuilder;
-import org.gameboy.common.BasicMemory;
+import org.gameboy.common.ByteRegister;
 import org.gameboy.common.ClockWithParallelProcess;
+import org.gameboy.common.IntBackedRegister;
 import org.gameboy.common.Interrupt;
-import org.gameboy.common.Memory;
 import org.gameboy.utils.BitUtilities;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,22 +31,24 @@ class InterruptBusTest {
 
     @Test
     void givenAllInterruptsAndNoInterruptEnabled_whenGetActiveInterrupts_thenNoInterrupts() {
-        Memory memory = new BasicMemory();
-        InterruptBus interruptBus = new InterruptBus(memory, new ClockWithParallelProcess(() -> {}));
+        ByteRegister ifRegister = new IntBackedRegister();
+        ByteRegister ieRegister = new IntBackedRegister();
+        InterruptBus interruptBus = new InterruptBus(new ClockWithParallelProcess(() -> {}), ifRegister, ieRegister);
 
-        memory.write(IE_ADDRESS, (byte) 0x00);
-        memory.write(IF_ADDRESS, (byte) 0xff);
+        ieRegister.write((byte) 0x00);
+        ifRegister.write((byte) 0xff);
 
         assertThat(interruptBus.activeInterrupts()).isEmpty();
     }
 
     @Test
     void givenAllInterruptsAndAllInterruptsEnabled_whenGetActiveInterrupts_thenAllInterrupts() {
-        Memory memory = new BasicMemory();
-        InterruptBus interruptBus = new InterruptBus(memory, new ClockWithParallelProcess(() -> {}));
+        ByteRegister ifRegister = new IntBackedRegister();
+        ByteRegister ieRegister = new IntBackedRegister();
+        InterruptBus interruptBus = new InterruptBus(new ClockWithParallelProcess(() -> {}), ifRegister, ieRegister);
 
-        memory.write(IE_ADDRESS, (byte) 0xff);
-        memory.write(IF_ADDRESS, (byte) 0xff);
+        ieRegister.write((byte) 0xff);
+        ifRegister.write((byte) 0xff);
 
         assertThat(interruptBus.activeInterrupts()).containsExactlyElementsOf(INTERRUPT_PRIORITY);
     }
@@ -78,56 +80,62 @@ class InterruptBusTest {
 
     @Test
     void givenNoInterrupt_whenWaitForInterrupt_andInterruptSent_thenWaitFinishes() {
-        Memory memory = new BasicMemory();
-        memory.write(IF_ADDRESS, (byte) 0);
-        memory.write(IE_ADDRESS, (byte) 0xff);
-        
+        ByteRegister ifRegister = new IntBackedRegister();
+        ByteRegister ieRegister = new IntBackedRegister();
+
+        ifRegister.write((byte) 0);
+        ieRegister.write((byte) 0xff);
+
         AtomicInteger tickCount = new AtomicInteger(0);
-        
+
         ClockWithParallelProcess clock = new ClockWithParallelProcess(() -> {
             if (tickCount.incrementAndGet() == 10) {
-                memory.write(IF_ADDRESS, (byte) 0x0f);
+                ifRegister.write((byte) 0x0f);
             }
         });
-        
-        InterruptBus interruptBus = new InterruptBus(memory, clock);
-        
+
+        InterruptBus interruptBus = new InterruptBus(clock, ifRegister, ieRegister);
+
         interruptBus.waitForInterrupt();
-        
+
         assertThat(tickCount.get()).isEqualTo(10);
         assertThat(interruptBus.hasInterrupts()).isTrue();
     }
 
     @Test
     void givenInterruptsRequestedButDisabled_whenWaitForInterrupt_andInterruptsEnabled_thenWaitFinishes() {
-        Memory memory = new BasicMemory();
-        memory.write(IF_ADDRESS, (byte) 0xff);
-        memory.write(IE_ADDRESS, (byte) 0x00);
-        
+        ByteRegister ifRegister = new IntBackedRegister();
+        ByteRegister ieRegister = new IntBackedRegister();
+
+        ifRegister.write((byte) 0xff);
+        ieRegister.write((byte) 0x00);
+
         AtomicInteger tickCount = new AtomicInteger(0);
-        
+
         ClockWithParallelProcess clock = new ClockWithParallelProcess(() -> {
             if (tickCount.incrementAndGet() == 10) {
-                memory.write(IE_ADDRESS, (byte) 0xff);
+                ieRegister.write((byte) 0xff);
             }
         });
-        
-        InterruptBus interruptBus = new InterruptBus(memory, clock);
-        
+
+        InterruptBus interruptBus = new InterruptBus(clock, ifRegister, ieRegister);
+
         interruptBus.waitForInterrupt();
-        
+
         assertThat(tickCount.get()).isEqualTo(10);
         assertThat(interruptBus.hasInterrupts()).isTrue();
     }
 
     @Test
     void givenNoInterrupt_whenWaitForInterrupt_andNoInterruptSent_thenWaitDoesNotFinish() {
-        Memory memory = new BasicMemory();
-        memory.write(IF_ADDRESS, (byte) 0x00);
-        memory.write(IE_ADDRESS, (byte) 0x00);
-        
+        ByteRegister ifRegister = new IntBackedRegister();
+        ByteRegister ieRegister = new IntBackedRegister();
+
+        ifRegister.write((byte) 0x00);
+        ieRegister.write((byte) 0x00);
+
         AtomicInteger tickCount = new AtomicInteger(0);
-        
+
         ClockWithParallelProcess clock = new ClockWithParallelProcess(() -> {
             int count = tickCount.incrementAndGet();
 
@@ -135,9 +143,9 @@ class InterruptBusTest {
                 throw new RuntimeException("Test timeout - no interrupt received after 100 ticks");
             }
         });
-        
-        InterruptBus interruptBus = new InterruptBus(memory, clock);
-        
+
+        InterruptBus interruptBus = new InterruptBus(clock, ifRegister, ieRegister);
+
         try {
             interruptBus.waitForInterrupt();
             fail("waitForInterrupt should not have completed without an interrupt");

@@ -13,6 +13,9 @@ public class MappedMemoryTest {
     private ByteRegister timaRegister;
     private ByteRegister tmaRegister;
     private ByteRegister tacRegister;
+    private ByteRegister dmaRegister;
+    private ByteRegister interruptFlagsRegister;
+    private ByteRegister interruptEnableRegister;
     private ByteRegister lcdcRegister;
     private ByteRegister statRegister;
     private ByteRegister scyRegister;
@@ -33,6 +36,9 @@ public class MappedMemoryTest {
         timaRegister = new IntBackedRegister();
         tmaRegister = new IntBackedRegister();
         tacRegister = new IntBackedRegister();
+        dmaRegister = new IntBackedRegister();
+        interruptFlagsRegister = new IntBackedRegister();
+        interruptEnableRegister = new IntBackedRegister();
         lcdcRegister = new IntBackedRegister();
         statRegister = new IntBackedRegister();
         scyRegister = new IntBackedRegister();
@@ -45,7 +51,8 @@ public class MappedMemoryTest {
         obp0Register = new IntBackedRegister();
         obp1Register = new IntBackedRegister();
         serialController = Mockito.mock(SerialController.class);
-        memory = new MappedMemory(divRegister, timaRegister, tmaRegister, tacRegister,
+        memory = new MappedMemory(divRegister, timaRegister, tmaRegister, tacRegister, dmaRegister,
+                                 interruptFlagsRegister, interruptEnableRegister,
                                  lcdcRegister, statRegister, scyRegister, scxRegister,
                                  lyRegister, lycRegister, wyRegister, wxRegister,
                                  bgpRegister, obp0Register, obp1Register,
