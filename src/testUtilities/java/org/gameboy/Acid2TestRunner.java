@@ -3,6 +3,8 @@ package org.gameboy;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import com.google.inject.util.Modules;
 import org.gameboy.common.MappedMemory;
 import org.gameboy.common.Memory;
@@ -38,8 +40,8 @@ public class Acid2TestRunner {
         List<MemoryDump> memoryDumps = new java.util.ArrayList<>();
         memoryDumps.add(MemoryDump.fromZero(romData));
 
-        Memory memory = injector.getInstance(Memory.class);
-        if (memory instanceof MappedMemory mappedMemory) {
+        Memory underlyingMemory = injector.getInstance(Key.get(Memory.class, Names.named("underlying")));
+        if (underlyingMemory instanceof MappedMemory mappedMemory) {
             mappedMemory.loadMemoryDumps(memoryDumps);
         }
 

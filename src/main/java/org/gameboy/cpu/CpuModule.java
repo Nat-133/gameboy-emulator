@@ -5,9 +5,9 @@ import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import org.gameboy.common.Clock;
-import org.gameboy.common.ClockWithParallelProcess;
-import org.gameboy.common.Memory;
+import org.gameboy.common.*;
+import org.gameboy.common.annotations.InterruptEnable;
+import org.gameboy.common.annotations.InterruptFlags;
 import org.gameboy.components.Timer;
 import org.gameboy.cpu.annotations.Prefixed;
 import org.gameboy.cpu.annotations.Unprefixed;
@@ -48,11 +48,16 @@ public class CpuModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("cpuClock")
-    Clock provideCpuClock(Provider<PictureProcessingUnit> ppuProvider, Provider<Timer> timerProvider) {
+    Clock provideCpuClock(Provider<PictureProcessingUnit> ppuProvider,
+                          Provider<Timer> timerProvider,
+                          Provider<DmaController> dmaControllerProvider) {
         Timer timer = timerProvider.get();
         PictureProcessingUnit ppu = ppuProvider.get();
+        DmaController dmaController = dmaControllerProvider.get();
+
         return new ClockWithParallelProcess(() -> {
             timer.mCycle();
+            dmaController.mCycle();
             for (int i = 0; i < 4; i++) {
                 ppu.tCycle();
             }
@@ -60,11 +65,13 @@ public class CpuModule extends AbstractModule {
     }
     
     @Provides
+    @Singleton
     CpuStructure provideCpuStructure(CpuRegisters registers, Memory memory, ArithmeticUnit alu,
                                      IncrementDecrementUnit idu, @Named("cpuClock") Clock clock,
-                                     Decoder decoder) {
-        // Create InterruptBus with the same clock as CPU (matching test setup)
-        InterruptBus interruptBus = new InterruptBus(memory, clock);
+                                     Decoder decoder,
+                                     @InterruptFlags ByteRegister interruptFlagsRegister,
+                                     @InterruptEnable ByteRegister interruptEnableRegister) {
+        InterruptBus interruptBus = new InterruptBus(clock, interruptFlagsRegister, interruptEnableRegister);
         return new CpuStructure(registers, memory, alu, idu, clock, interruptBus, decoder);
     }
     

@@ -18,7 +18,8 @@ import java.io.IOException;
 
 public class Main {
     private static final String DEFAULT_BOOT_ROM = "dmg_boot.bin";
-    private static final String DEFAULT_GAME_ROM = "src/test/resources/dmg-acid2.gb";
+    private static final String ACID_2_ROM = "src/test/resources/dmg-acid2.gb";
+    private static final String DEFAULT_GAME_ROM = "roms/Tetris (Japan) (En).gb";
     
     public static void main(String[] args) {
         try {

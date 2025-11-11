@@ -126,7 +126,7 @@ public class DisplayModule extends AbstractModule {
 
     @Provides
     @Singleton
-    ObjectAttributeMemory provideObjectAttributeMemory(Memory memory) {
+    ObjectAttributeMemory provideObjectAttributeMemory(@Named("underlying") Memory memory) {
         return new ObjectAttributeMemory(memory);
     }
     
@@ -159,7 +159,7 @@ public class DisplayModule extends AbstractModule {
     
     @Provides
     @Singleton
-    BackgroundFetcher provideBackgroundFetcher(Memory memory, PpuRegisters registers,
+    BackgroundFetcher provideBackgroundFetcher(@Named("underlying") Memory memory, PpuRegisters registers,
                                                @Named("backgroundFifo") Fifo<TwoBitValue> backgroundFifo,
                                                @Named("ppuClock") SynchronisedClock ppuClock) {
         return new BackgroundFetcher(memory, registers, backgroundFifo, ppuClock);
@@ -167,7 +167,7 @@ public class DisplayModule extends AbstractModule {
 
     @Provides
     @Singleton
-    SpriteFetcher provideSpriteFetcher(SpriteBuffer spriteBuffer, Memory memory,
+    SpriteFetcher provideSpriteFetcher(SpriteBuffer spriteBuffer, @Named("underlying") Memory memory,
                                        PpuRegisters registers, @Named("spriteFifo") Fifo<SpritePixel> spriteFifo,
                                        @Named("ppuClock") SynchronisedClock ppuClock) {
         return new SpriteFetcher(spriteBuffer, memory, registers, spriteFifo, ppuClock);

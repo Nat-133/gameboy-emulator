@@ -3,15 +3,13 @@ package org.gameboy.common;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import org.gameboy.common.annotations.Div;
-import org.gameboy.common.annotations.Tac;
-import org.gameboy.common.annotations.Tima;
-import org.gameboy.common.annotations.Tma;
+import org.gameboy.common.annotations.*;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static org.gameboy.common.MemoryMapConstants.DMA_REGISTER_ADDRESS;
 import static org.gameboy.utils.BitUtilities.uint;
 
 @Singleton
@@ -25,6 +23,9 @@ public class MappedMemory implements Memory {
                        @Tima ByteRegister timaRegister,
                        @Tma ByteRegister tmaRegister,
                        @Tac ByteRegister tacRegister,
+                       @Dma ByteRegister dmaRegister,
+                       @InterruptFlags ByteRegister interruptFlagsRegister,
+                       @InterruptEnable ByteRegister interruptEnableRegister,
                        @Named("lcdc") ByteRegister lcdcRegister,
                        @Named("stat") ByteRegister statRegister,
                        @Named("scy") ByteRegister scyRegister,
@@ -37,6 +38,7 @@ public class MappedMemory implements Memory {
                        @Named("obp0") ByteRegister obp0Register,
                        @Named("obp1") ByteRegister obp1Register,
                        SerialController serialController) {
+
         memoryMap[0xFF01] = new SerialDataMapping(serialController);
         memoryMap[0xFF02] = new SerialControlMapping(serialController);
         
@@ -44,7 +46,10 @@ public class MappedMemory implements Memory {
         memoryMap[0xFF05] = new ByteRegisterMapping(timaRegister);
         memoryMap[0xFF06] = new ByteRegisterMapping(tmaRegister);
         memoryMap[0xFF07] = new ByteRegisterMapping(tacRegister);
-        
+        memoryMap[0xFF0F] = new ByteRegisterMapping(interruptFlagsRegister);
+
+        memoryMap[DMA_REGISTER_ADDRESS & 0xFFFF] = new ByteRegisterMapping(dmaRegister);
+
         memoryMap[0xFF40] = new ByteRegisterMapping(lcdcRegister);
         memoryMap[0xFF41] = new ByteRegisterMapping(statRegister);
         memoryMap[0xFF42] = new ByteRegisterMapping(scyRegister);
@@ -56,6 +61,7 @@ public class MappedMemory implements Memory {
         memoryMap[0xFF49] = new ByteRegisterMapping(obp1Register);
         memoryMap[0xFF4A] = new ByteRegisterMapping(wyRegister);
         memoryMap[0xFF4B] = new ByteRegisterMapping(wxRegister);
+        memoryMap[0xFFFF] = new ByteRegisterMapping(interruptEnableRegister);
     }
 
     @Override
