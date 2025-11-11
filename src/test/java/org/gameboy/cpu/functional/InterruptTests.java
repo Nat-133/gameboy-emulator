@@ -4,17 +4,16 @@ import org.gameboy.CpuStructureBuilder;
 import org.gameboy.common.Interrupt;
 import org.gameboy.cpu.Cpu;
 import org.gameboy.cpu.components.CpuStructure;
-import org.gameboy.utils.BitUtilities;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertThatHex;
-import static org.gameboy.common.MemoryMapConstants.*;
+import static org.gameboy.common.MemoryMapConstants.IE_ADDRESS;
+import static org.gameboy.common.MemoryMapConstants.JOYPAD_HANDLER_ADDRESS;
 
 public class InterruptTests {
 
     public static final int RETI_OPCODE = 0xd9;
-    public static final byte JOYPAD_INTERRUPT_SET = BitUtilities.set_bit((byte) 0, Interrupt.JOYPAD.index(), true);
 
     @Test
     void givenInterruptHandlerIsOnlyRETI_whenInterruptReturns_thenCpuReturnsToPreInterruptState() {
@@ -30,7 +29,7 @@ public class InterruptTests {
         long initialTime = cpuStructure.clock().getTime();
 
         cpu.cycle();  // NOP ==> pc_1 <- pc_0 + 1
-        cpuStructure.memory().write(IF_ADDRESS, JOYPAD_INTERRUPT_SET);  // Request Interrupt
+        cpuStructure.interruptBus().requestInterrupt(Interrupt.JOYPAD);  // Request Interrupt
         cpu.cycle();  // NOP, followed by interrupt handler routine ==> pc_2 <- HANDLER_ADDRESS
         cpu.cycle();  // RETI ==> pc_3 <- pc_1, + 1
         cpu.cycle();  // NOP ==> pc_4 <- pc_3 + 1 === pc_1 + 2 === pc_0 + 3

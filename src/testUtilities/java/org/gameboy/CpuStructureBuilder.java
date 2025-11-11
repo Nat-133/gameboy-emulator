@@ -221,8 +221,8 @@ public class CpuStructureBuilder {
     }
 
     public CpuStructure build() {
-        ByteRegister interruptFlagsRegister = new MemoryBackedRegister(memory, MemoryMapConstants.IF_ADDRESS);
-        ByteRegister interruptEnableRegister = new MemoryBackedRegister(memory, MemoryMapConstants.IE_ADDRESS);
+        ByteRegister interruptFlagsRegister = new IntBackedRegister(BitUtilities.uint(memory.read(MemoryMapConstants.IF_ADDRESS)));
+        ByteRegister interruptEnableRegister = new IntBackedRegister(BitUtilities.uint(memory.read(MemoryMapConstants.IE_ADDRESS)));
 
         return new CpuStructure(
                 new CpuRegisters(af, bc, de, hl, sp, pc, instructionRegister, ime),

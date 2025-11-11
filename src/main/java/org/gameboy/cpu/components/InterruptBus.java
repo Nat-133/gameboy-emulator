@@ -47,9 +47,18 @@ public class InterruptBus {
         interruptFlagsRegister.write(newInterruptFlag);
     }
 
+    public void requestInterrupt(Interrupt interrupt) {
+        byte newInterruptFlag = set_bit(interruptFlagsRegister.read(), interrupt.index(), true);
+        interruptFlagsRegister.write(newInterruptFlag);
+    }
+
     public void waitForInterrupt() {
         while (!hasInterrupts()) {
             clock.tick();
         }
+    }
+
+    public ByteRegister getInterruptFlagsRegister() {
+        return interruptFlagsRegister;
     }
 }

@@ -46,7 +46,7 @@ class HardwareInterruptTest {
 
         HardwareInterrupt.callInterruptHandler(cpuStructure, interrupt);
 
-        assertThatHex(cpuStructure.memory().read(IF_ADDRESS)).isEqualTo((byte) 0);
+        assertThatHex(cpuStructure.interruptBus().getInterruptFlagsRegister().read()).isEqualTo((byte) 0);
     }
 
     @ParameterizedTest
