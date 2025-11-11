@@ -63,7 +63,7 @@ class InterruptBusTest {
         cpuStructure.interruptBus().deactivateInterrupt(interrupt);
 
         byte expectedValue = BitUtilities.set_bit((byte) 0xff, interrupt.index(), false);
-        assertThatHex(cpuStructure.memory().read(IF_ADDRESS)).isEqualTo(expectedValue);
+        assertThatHex(cpuStructure.interruptBus().getInterruptFlagsRegister().read()).isEqualTo(expectedValue);
     }
 
     @ParameterizedTest
