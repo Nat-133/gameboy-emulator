@@ -15,12 +15,8 @@ public class ReturnFromInterruptHandler implements Instruction {
     public void execute(CpuStructure cpuStructure) {
         short value = ControlFlow.popFromStack(cpuStructure);
         cpuStructure.registers().setPC(value);
-        cpuStructure.clock().tick();
-    }
-
-    @Override
-    public void postFetch(CpuStructure cpuStructure) {
         cpuStructure.registers().setIME(true);
+        cpuStructure.clock().tick();
     }
 
     @Override

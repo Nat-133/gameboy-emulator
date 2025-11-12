@@ -23,10 +23,11 @@ public class Cpu {
     private void fetch_cycle(Instruction instruction) {
         if (!instruction.handlesFetch()) {
             fetch();
-            instruction.postFetch(cpuStructure);
             cpuStructure.clock().tick();
 
             handlePotentialInterrupt();
+
+            instruction.postFetch(cpuStructure);
         }
     }
 
