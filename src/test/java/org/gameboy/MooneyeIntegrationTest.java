@@ -10,10 +10,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -47,7 +44,6 @@ public class MooneyeIntegrationTest {
         "halt_ime1_timing2-GS",
         "hblank_ly_scx_timing-GS",
         "ie_push",
-        "if_ie_registers",
         "intr_1_2_timing-GS",
         "intr_2_0_timing",
         "intr_2_mode0_timing",
@@ -135,27 +131,38 @@ public class MooneyeIntegrationTest {
 
     private static Stream<Arguments> discoverTests(java.util.function.Predicate<String> testFilter) {
         try {
-            URI uri = MooneyeIntegrationTest.class.getResource(ROM_BASE_PATH).toURI();
+            URI uri = Objects.requireNonNull(MooneyeIntegrationTest.class.getResource(ROM_BASE_PATH)).toURI();
             Path rootPath;
+            FileSystem fileSystem = null;
 
             if (uri.getScheme().equals("jar")) {
-                FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+                fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
                 rootPath = fileSystem.getPath(ROM_BASE_PATH);
             } else {
                 rootPath = Paths.get(uri);
             }
 
-            return Files.walk(rootPath)
-                .filter(path -> path.toString().endsWith(".gb"))
-                .map(path -> new PathWithName(path, path.getFileName().toString()))
-                .filter(MooneyeIntegrationTest::isDmgCompatible)
-                .map(pwn -> {
-                    String resourcePath = ROM_BASE_PATH + "/" + rootPath.relativize(pwn.path).toString().replace('\\', '/');
-                    String testName = pwn.fileName.substring(0, pwn.fileName.lastIndexOf('.'));
-                    return Arguments.of(resourcePath, testName);
-                })
-                .filter(args -> testFilter.test((String) args.get()[1]))
-                .sorted(Comparator.comparing(a -> ((String) a.get()[1])));
+            List<Arguments> tests;
+            try (Stream<Path> paths = Files.walk(rootPath)) {
+                tests = paths
+                    .filter(path -> path.toString().endsWith(".gb"))
+                    .map(path -> new PathWithName(path, path.getFileName().toString()))
+                    .filter(MooneyeIntegrationTest::isDmgCompatible)
+                    .map(pwn -> {
+                        String resourcePath = ROM_BASE_PATH + "/" + rootPath.relativize(pwn.path).toString().replace('\\', '/');
+                        String testName = pwn.fileName.substring(0, pwn.fileName.lastIndexOf('.'));
+                        return Arguments.of(resourcePath, testName);
+                    })
+                    .filter(args -> testFilter.test((String) args.get()[1]))
+                    .sorted(Comparator.comparing(a -> ((String) a.get()[1])))
+                    .toList();
+            } finally {
+                if (fileSystem != null) {
+                    fileSystem.close();
+                }
+            }
+
+            return tests.stream();
 
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException("Failed to discover Mooneye test ROMs", e);
