@@ -83,7 +83,7 @@ public class CoreModule extends AbstractModule {
     @Singleton
     @InterruptFlags
     ByteRegister provideInterruptFlagsRegister() {
-        return new IntBackedRegister();
+        return new InterruptFlagsRegister();
     }
 
     @Provides
