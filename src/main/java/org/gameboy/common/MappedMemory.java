@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.gameboy.common.annotations.*;
+import org.gameboy.components.TacRegister;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,7 +23,7 @@ public class MappedMemory implements Memory {
     public MappedMemory(@Div ByteRegister divRegister,
                        @Tima ByteRegister timaRegister,
                        @Tma ByteRegister tmaRegister,
-                       @Tac ByteRegister tacRegister,
+                       @Tac TacRegister tacRegister,
                        @Dma ByteRegister dmaRegister,
                        @InterruptFlags ByteRegister interruptFlagsRegister,
                        @InterruptEnable ByteRegister interruptEnableRegister,

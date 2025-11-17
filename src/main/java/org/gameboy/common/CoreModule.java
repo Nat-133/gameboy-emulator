@@ -6,6 +6,10 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import org.gameboy.common.annotations.*;
+import org.gameboy.components.DividerRegister;
+import org.gameboy.components.InternalTimerCounter;
+import org.gameboy.components.TacRegister;
+import org.gameboy.components.Timer;
 
 public class CoreModule extends AbstractModule {
 
@@ -46,9 +50,15 @@ public class CoreModule extends AbstractModule {
     
     @Provides
     @Singleton
+    InternalTimerCounter provideInternalTimerCounter() {
+        return new InternalTimerCounter();
+    }
+
+    @Provides
+    @Singleton
     @Div
-    ByteRegister provideDivRegister() {
-        return new IntBackedRegister();
+    ByteRegister provideDivRegister(InternalTimerCounter internalCounter) {
+        return new DividerRegister(internalCounter);
     }
     
     @Provides
@@ -68,8 +78,8 @@ public class CoreModule extends AbstractModule {
     @Provides
     @Singleton
     @Tac
-    ByteRegister provideTacRegister() {
-        return new IntBackedRegister(0xF8);
+    TacRegister provideTacRegister() {
+        return new TacRegister();
     }
 
     @Provides
@@ -91,6 +101,16 @@ public class CoreModule extends AbstractModule {
     @InterruptEnable
     ByteRegister provideInterruptEnableRegister() {
         return new IntBackedRegister();
+    }
+
+    @Provides
+    @Singleton
+    Timer provideTimer(InternalTimerCounter internalCounter,
+                       @Tima ByteRegister tima,
+                       @Tma ByteRegister tma,
+                       @Tac TacRegister tac,
+                       InterruptController interruptController) {
+        return new Timer(internalCounter, tima, tma, tac, interruptController);
     }
 
 }

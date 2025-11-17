@@ -37,7 +37,6 @@ public class MooneyeIntegrationTest {
         "call_timing2",
         "di_timing-GS",
         "div_timing",
-        "div_write",
         "halt_ime0_nointr_timing",
         "halt_ime1_timing2-GS",
         "hblank_ly_scx_timing-GS",
@@ -108,7 +107,7 @@ public class MooneyeIntegrationTest {
         }
 
         if (result.isExpectedFailure()) {
-            fail("Test ROM reported failure (registers all contain 0x42)");
+            fail("Test ROM reported failure (registers all contain 0x42) for test: " + romPath);
         }
 
         fail(String.format(

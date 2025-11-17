@@ -1,5 +1,6 @@
 package org.gameboy.common;
 
+import org.gameboy.components.TacRegister;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -12,7 +13,7 @@ public class MappedMemoryTest {
     private ByteRegister divRegister;
     private ByteRegister timaRegister;
     private ByteRegister tmaRegister;
-    private ByteRegister tacRegister;
+    private TacRegister tacRegister;
     private ByteRegister dmaRegister;
     private ByteRegister interruptFlagsRegister;
     private ByteRegister interruptEnableRegister;
@@ -35,7 +36,7 @@ public class MappedMemoryTest {
         divRegister = new IntBackedRegister();
         timaRegister = new IntBackedRegister();
         tmaRegister = new IntBackedRegister();
-        tacRegister = new IntBackedRegister();
+        tacRegister = new TacRegister();
         dmaRegister = new IntBackedRegister();
         interruptFlagsRegister = new IntBackedRegister();
         interruptEnableRegister = new IntBackedRegister();
@@ -109,18 +110,18 @@ public class MappedMemoryTest {
 
     @Test
     public void givenTacRegisterIsWritten_whenMemoryIsRead_thenCorrectValueIsReturned() {
-        byte expectedValue = (byte) 0x77;
-        tacRegister.write(expectedValue);
-        
-        assertEquals(expectedValue, memory.read((short) 0xFF07));
+        byte writeValue = (byte) 0x07;
+        tacRegister.write(writeValue);
+
+        assertEquals((byte) 0xFF, memory.read((short) 0xFF07));
     }
 
     @Test
     public void givenMemoryIsWrittenToTacAddress_whenRegisterIsRead_thenCorrectValueIsReturned() {
-        byte expectedValue = (byte) 0x88;
-        memory.write((short) 0xFF07, expectedValue);
-        
-        assertEquals(expectedValue, tacRegister.read());
+        byte writeValue = (byte) 0x05;
+        memory.write((short) 0xFF07, writeValue);
+
+        assertEquals((byte) 0xFD, tacRegister.read());
     }
     
     @Test
@@ -213,8 +214,6 @@ public class MappedMemoryTest {
         assertEquals(expectedValue, scyRegister.read());
     }
 
-    // Palette Register Tests
-
     @Test
     public void givenBgpRegisterIsWritten_whenMemoryIsRead_thenCorrectValueIsReturned() {
         byte expectedValue = (byte) 0xE4;  // Common BGP value
@@ -265,11 +264,6 @@ public class MappedMemoryTest {
 
     @Test
     public void testPaletteRegistersDefaultValues() {
-        // BGP typically defaults to 0xFC
-        // OBP0 and OBP1 typically default to 0xFF
-        // But let's test that they're properly mapped regardless of initial value
-
-        // Write and read back to verify mappings work
         memory.write((short) 0xFF47, (byte) 0xFC);
         assertEquals((byte) 0xFC, memory.read((short) 0xFF47));
 
