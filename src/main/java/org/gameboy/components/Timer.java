@@ -1,54 +1,73 @@
 package org.gameboy.components;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import org.gameboy.common.ByteRegister;
 import org.gameboy.common.Interrupt;
 import org.gameboy.common.InterruptController;
-import org.gameboy.common.annotations.Div;
-import org.gameboy.common.annotations.Tac;
-import org.gameboy.common.annotations.Tima;
-import org.gameboy.common.annotations.Tma;
-import org.gameboy.utils.BitUtilities;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
-@Singleton
+import static org.gameboy.utils.BitUtilities.get_bit;
+
 public class Timer {
-    private static final int M_CYCLES_PER_DIV_INCREMENT = 64;
-
-    private final ByteRegister dividerRegister;  // DIV
-    private final ByteRegister timerCounterRegister;  // TIMA
-    private final ByteRegister timerModulo;  // TMA
-    private final ByteRegister timerControl;  // TAC
+    private final InternalTimerCounter internalCounter;
+    private final ByteRegister timerCounterRegister;
+    private final ByteRegister timerModulo;
+    private final ByteRegister timerControl;
     private final InterruptController interruptController;
+    private boolean previousAndResult = false;
 
-    private int internalCounter;
-
-    @Inject
-    public Timer(@Tima ByteRegister tima,
-                 @Div ByteRegister div,
-                 @Tma ByteRegister tma,
-                 @Tac ByteRegister tac,
+    public Timer(InternalTimerCounter internalCounter,
+                 ByteRegister tima,
+                 ByteRegister tma,
+                 TacRegister tac,
                  InterruptController interruptController) {
+        this.internalCounter = internalCounter;
         this.timerCounterRegister = tima;
-        this.dividerRegister = div;
         this.timerModulo = tma;
         this.timerControl = tac;
         this.interruptController = interruptController;
 
-        this.internalCounter = 0;
+        internalCounter.setResetListener(this::checkForFallingEdge);
+        tac.setWriteListener(this::onTacWrite);
     }
 
     public void mCycle() {
-        internalCounter = (internalCounter + 1) % 256;
-        
-        if (internalCounter % M_CYCLES_PER_DIV_INCREMENT == 0) {
-            dividerRegister.write((byte) (dividerRegister.read() + 1));
+        for (int i = 0; i < 4; i++) {
+            internalCounter.tCycle();
+            checkForFallingEdge();
         }
-        
-        if (timerEnabled() && internalCounter % mCyclesPerTimerIncrement() == 0) {
+    }
+
+    public void onTacWrite() {
+        checkForFallingEdge();
+    }
+
+    private void checkForFallingEdge() {
+        boolean currentAndResult = getAndResult();
+
+        if (previousAndResult && !currentAndResult) {
             handleTimerIncrement();
         }
+
+        previousAndResult = currentAndResult;
+    }
+
+    private boolean getAndResult() {
+        if (!timerEnabled()) {
+            return false;
+        }
+
+        int monitoredBit = getMonitoredBit();
+        int counterValue = internalCounter.getValue();
+        return ((counterValue >> monitoredBit) & 1) == 1;
+    }
+
+    private int getMonitoredBit() {
+        return switch(TwoBitValue.from(timerControl.read())) {
+            case b00 -> 9;
+            case b01 -> 3;
+            case b10 -> 5;
+            case b11 -> 7;
+        };
     }
 
     private void handleTimerIncrement() {
@@ -60,16 +79,7 @@ public class Timer {
         }
     }
 
-    private int mCyclesPerTimerIncrement() {
-        return switch(TwoBitValue.from(timerControl.read())) {
-            case b00 -> 256;
-            case b01 -> 4;
-            case b10 -> 16;
-            case b11 -> 64;
-        };
-    }
-
     private boolean timerEnabled() {
-        return BitUtilities.get_bit(timerControl.read(), 2);
+        return get_bit(timerControl.read(), 2);
     }
 }
