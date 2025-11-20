@@ -30,7 +30,6 @@ public class MooneyeIntegrationTest {
         "boot_hwio-dmg0",
         "boot_hwio-dmgABCmgb",
         "boot_regs-dmg0",
-        "boot_sclk_align-dmgABCmgb",
         "call_cc_timing",
         "call_cc_timing2",
         "call_timing",
@@ -39,7 +38,6 @@ public class MooneyeIntegrationTest {
         "halt_ime0_nointr_timing",
         "halt_ime1_timing2-GS",
         "hblank_ly_scx_timing-GS",
-        "ie_push",
         "intr_1_2_timing-GS",
         "intr_2_0_timing",
         "intr_2_mode0_timing",
@@ -54,7 +52,6 @@ public class MooneyeIntegrationTest {
         "oam_dma_start",
         "oam_dma_timing",
         "push_timing",
-        "rapid_toggle",
         "ret_cc_timing",
         "ret_timing",
         "reti_intr_timing",
@@ -63,10 +60,13 @@ public class MooneyeIntegrationTest {
         "sources-GS",
         "stat_irq_blocking",
         "stat_lyc_onoff",
-        "tima_write_reloading",
-        "tma_write_reloading",
         "unused_hwio-GS",
-        "vblank_stat_intr-GS"
+        "vblank_stat_intr-GS",
+
+        // Tests below require T-cycle accuracy (beyond emulator's accuracy goals)
+        "ie_push",              // Requires cycle-accurate interrupt dispatch with IE sampling between push operations
+        "rapid_toggle",         // Timer glitchy increments work but timing is off (40 vs 38 iterations) - needs instruction-level cycle accuracy
+        "tma_write_reloading"   // Requires T-cycle precision for TMA sampling during TIMA reload phase
     );
 
     @ParameterizedTest(name = "{1}")

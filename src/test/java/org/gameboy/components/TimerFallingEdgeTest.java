@@ -22,7 +22,7 @@ class TimerFallingEdgeTest {
 
     @BeforeEach
     void setUp() {
-        InternalTimerCounter internalCounter = new InternalTimerCounter();
+        InternalTimerCounter internalCounter = new InternalTimerCounter(0);
         divRegister = new DividerRegister(internalCounter);
         ByteRegister unwrappedTima = new IntBackedRegister();
         tmaRegister = new IntBackedRegister();

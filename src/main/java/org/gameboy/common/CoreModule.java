@@ -51,7 +51,8 @@ public class CoreModule extends AbstractModule {
     @Provides
     @Singleton
     InternalTimerCounter provideInternalTimerCounter() {
-        return new InternalTimerCounter();
+        // Post-boot state for DMG/MGB (DIV = $AB, aligned for boot_sclk_align test)
+        return new InternalTimerCounter(0xAAC8);
     }
 
     @Provides
