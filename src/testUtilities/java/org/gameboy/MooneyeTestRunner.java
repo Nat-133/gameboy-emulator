@@ -33,7 +33,7 @@ public class MooneyeTestRunner {
         }
 
         cpu = injector.getInstance(Cpu.class);
-        cpuStructure = injector.getInstance(CpuStructure.class);  // Now a singleton - same instance as Cpu uses
+        cpuStructure = injector.getInstance(CpuStructure.class);
     }
 
     public RegisterState runUntilCompletion(int maxCycles) {

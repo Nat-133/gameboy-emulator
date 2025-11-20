@@ -36,7 +36,7 @@ public class CpuModule extends AbstractModule {
             (short) 0xFFFE,  // sp - Stack pointer at 0xFFFE
             (short) 0x0100,  // pc - starts at 0x100 after boot ROM
             (byte) 0x00,     // instructionRegister
-            true             // ime - interrupts enabled initially
+            false            // ime - disabled after boot ROM
         );
     }
     
@@ -50,13 +50,16 @@ public class CpuModule extends AbstractModule {
     @Named("cpuClock")
     Clock provideCpuClock(Provider<PictureProcessingUnit> ppuProvider,
                           Provider<Timer> timerProvider,
-                          Provider<DmaController> dmaControllerProvider) {
+                          Provider<DmaController> dmaControllerProvider,
+                          Provider<SerialController> serialControllerProvider) {
         Timer timer = timerProvider.get();
         PictureProcessingUnit ppu = ppuProvider.get();
         DmaController dmaController = dmaControllerProvider.get();
+        SerialController serialController = serialControllerProvider.get();
 
         return new ClockWithParallelProcess(() -> {
             timer.mCycle();
+            serialController.mCycle();
             dmaController.mCycle();
             for (int i = 0; i < 4; i++) {
                 ppu.tCycle();
