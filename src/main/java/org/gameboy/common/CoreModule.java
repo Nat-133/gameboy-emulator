@@ -63,18 +63,11 @@ public class CoreModule extends AbstractModule {
     
     @Provides
     @Singleton
-    @Tima
-    ByteRegister provideTimaRegister() {
-        return new IntBackedRegister();
-    }
-    
-    @Provides
-    @Singleton
     @Tma
     ByteRegister provideTmaRegister() {
         return new IntBackedRegister();
     }
-    
+
     @Provides
     @Singleton
     @Tac
@@ -106,11 +99,18 @@ public class CoreModule extends AbstractModule {
     @Provides
     @Singleton
     Timer provideTimer(InternalTimerCounter internalCounter,
-                       @Tima ByteRegister tima,
                        @Tma ByteRegister tma,
                        @Tac TacRegister tac,
                        InterruptController interruptController) {
-        return new Timer(internalCounter, tima, tma, tac, interruptController);
+        ByteRegister unwrappedTima = new IntBackedRegister();
+        return new Timer(internalCounter, unwrappedTima, tma, tac, interruptController);
+    }
+
+    @Provides
+    @Singleton
+    @Tima
+    ByteRegister provideTimaRegister(Timer timer) {
+        return timer.getTimaRegister();
     }
 
 }

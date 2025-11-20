@@ -63,7 +63,6 @@ public class MooneyeIntegrationTest {
         "sources-GS",
         "stat_irq_blocking",
         "stat_lyc_onoff",
-        "tima_reload",
         "tima_write_reloading",
         "tma_write_reloading",
         "unused_hwio-GS",
