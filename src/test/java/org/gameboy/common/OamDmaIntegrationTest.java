@@ -27,7 +27,7 @@ class OamDmaIntegrationTest {
 
         memory.write((short) 0xFF46, (byte) 0xC0);
 
-        for (int i = 0; i < 161; i++) {
+        for (int i = 0; i < 162; i++) {
             dmaController.mCycle();
         }
 
@@ -40,6 +40,10 @@ class OamDmaIntegrationTest {
     @Test
     void shouldBlockNonHramAccessDuringDma() {
         memory.write((short) 0xFF46, (byte) 0xC0);
+
+        dmaController.mCycle(); // REQUESTED
+        dmaController.mCycle(); // PENDING
+        dmaController.mCycle(); // TRANSFERRING
 
         byte result = memory.read((short) 0xC000);
         assertThat(result).isEqualTo((byte) 0xFF);
@@ -54,7 +58,8 @@ class OamDmaIntegrationTest {
         memory.write((short) 0xC000, (byte) 0x42);
 
         memory.write((short) 0xFF46, (byte) 0xD0);
-        for (int i = 0; i < 161; i++) {
+
+        for (int i = 0; i < 162; i++) {
             dmaController.mCycle();
         }
 

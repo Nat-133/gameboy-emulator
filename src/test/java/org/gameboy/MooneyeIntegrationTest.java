@@ -21,10 +21,6 @@ public class MooneyeIntegrationTest {
     private static final int MAX_CYCLES = 10_000_000; // 10 million cycles timeout
 
     private static final List<String> DISABLED_TESTS = Arrays.asList(
-        "oam_dma_timing",
-        "oam_dma_start",
-        "oam_dma_restart",
-
         "stat_irq_blocking",
         "stat_lyc_onoff",
         "vblank_stat_intr-GS",
