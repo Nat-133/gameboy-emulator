@@ -21,8 +21,12 @@ public class MooneyeIntegrationTest {
     private static final int MAX_CYCLES = 10_000_000; // 10 million cycles timeout
 
     private static final List<String> DISABLED_TESTS = Arrays.asList(
-        "stat_irq_blocking",
+        // Requires precise PPU timing for LCD enable/disable transitions
+        // The coincidence flag needs to be tracked across LCD state changes
         "stat_lyc_onoff",
+
+        // Requires cycle-accurate timing for OAM interrupt at line 144
+        // OAM interrupt and VBLANK must fire at exactly the same cycle
         "vblank_stat_intr-GS",
 
         "intr_2_0_timing",

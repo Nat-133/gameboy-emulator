@@ -2,6 +2,7 @@ package org.gameboy.display;
 
 import org.gameboy.common.Clock;
 
+import static org.gameboy.display.PpuRegisters.PpuRegister.LCDC;
 import static org.gameboy.display.PpuRegisters.PpuRegister.LY;
 import static org.gameboy.utils.BitUtilities.uint;
 
@@ -16,6 +17,7 @@ public class PictureProcessingUnit {
     private final Display display;
     private int count = 0;
     private Step step;
+    private boolean wasLcdEnabled = true;
 
     public PictureProcessingUnit(ScanlineController scanlineController,
                                  PpuRegisters registers,
@@ -33,6 +35,30 @@ public class PictureProcessingUnit {
     }
 
     public void tCycle() {
+        boolean lcdEnabled = LcdcParser.lcdEnabled(registers.read(LCDC));
+
+        // Handle LCD disabled state
+        if (!lcdEnabled) {
+            if (wasLcdEnabled) {
+                // Just got disabled - set mode to HBlank but don't reset LY
+                // The coincidence flag is retained
+                registers.setStatMode(StatParser.PpuMode.H_BLANK);
+                wasLcdEnabled = false;
+            }
+            return;  // PPU does not run when LCD is disabled
+        }
+
+        // LCD just got enabled - reset PPU state
+        if (!wasLcdEnabled) {
+            wasLcdEnabled = true;
+            registers.write(LY, (byte) 0);
+            count = 0;
+            step = Step.OAM_SETUP;
+            // When LCD is enabled, check LY/LYC coincidence immediately
+            displayInterruptController.checkAndSendLyCoincidence();
+            return;  // Start fresh on next tCycle
+        }
+
         step = switch(step) {
             case OAM_SETUP -> setupOamScan();
             case OAM_SCAN -> oamScan();

@@ -11,6 +11,7 @@ import static org.gameboy.display.PpuRegisters.PpuRegister.*;
 
 public class PpuRegisters {
     private final Map<PpuRegister, ByteRegister> registerMap;
+    private final StatRegister statRegister;
 
     @Inject
     public PpuRegisters(@Named("ly") ByteRegister ly,
@@ -36,6 +37,9 @@ public class PpuRegisters {
         registerMap.put(BGP, bgp);
         registerMap.put(OBP0, obp0);
         registerMap.put(OBP1, obp1);
+
+        // Keep reference to StatRegister for PPU internal writes
+        this.statRegister = (stat instanceof StatRegister) ? (StatRegister) stat : null;
     }
 
     public byte read(PpuRegister register) {
@@ -44,6 +48,24 @@ public class PpuRegisters {
 
     public void write(PpuRegister register, byte value) {
         registerMap.get(register).write(value);
+    }
+
+    /**
+     * Set PPU mode bits (0-1) in STAT register. For internal PPU use only.
+     */
+    public void setStatMode(StatParser.PpuMode mode) {
+        if (statRegister != null) {
+            statRegister.setMode(mode);
+        }
+    }
+
+    /**
+     * Set coincidence flag (bit 2) in STAT register. For internal PPU use only.
+     */
+    public void setStatCoincidenceFlag(boolean flag) {
+        if (statRegister != null) {
+            statRegister.setCoincidenceFlag(flag);
+        }
     }
 
     public enum PpuRegister {
