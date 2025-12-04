@@ -44,6 +44,8 @@ public class DisplayModule extends AbstractModule {
         DisplayInterruptController controller = new DisplayInterruptController(interruptController, ppuRegisters);
         // Register listener for LYC writes (0xFF45) to handle mid-scanline LYC changes
         memory.registerMemoryListener((short) 0xFF45, controller::checkAndSendLyCoincidence);
+        // Register listener for STAT writes (0xFF41) to re-evaluate STAT interrupt condition
+        memory.registerMemoryListener((short) 0xFF41, controller::checkStatCondition);
         return controller;
     }
     
@@ -100,7 +102,8 @@ public class DisplayModule extends AbstractModule {
     @Singleton
     @Named("stat")
     ByteRegister provideStatRegister() {
-        return new IntBackedRegister(0x85);
+        // STAT register has read-only bits (0-2 for mode and coincidence flag)
+        return new StatRegister(0x85);
     }
 
     @Provides
