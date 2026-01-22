@@ -85,7 +85,8 @@ public class PictureProcessingUnit {
     private Step setupScanline() {
         displayInterruptController.sendDrawing();
         scanlineController.setupScanline();
-        count = 0;
+        // Note: count is NOT reset here - it continues from OAM scan (80 T-cycles)
+        // to maintain correct scanline timing of 456 T-cycles total
         return drawScanline();
     }
 
