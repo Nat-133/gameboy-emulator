@@ -2,10 +2,11 @@ package org.gameboy;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import org.gameboy.common.MappedMemory;
 import org.gameboy.common.Memory;
 import org.gameboy.common.MemoryInitializer;
-import org.gameboy.common.SimpleMemory;
 import org.gameboy.cpu.Cpu;
 import org.gameboy.display.Display;
 import org.gameboy.display.PpuRegisters;
@@ -14,7 +15,9 @@ import org.gameboy.display.debug.VramDebugWindow;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 
 public class Main {
     private static final String DEFAULT_BOOT_ROM = "dmg_boot.bin";
@@ -31,18 +34,16 @@ public class Main {
             MemoryInitializer memoryInitializer = injector.getInstance(MemoryInitializer.class);
             var memoryDumps = memoryInitializer.createMemoryDumps(bootRomPath, gameRomPath);
             
-            Memory memory = injector.getInstance(Memory.class);
-            if (memory instanceof MappedMemory mappedMemory) {
+            Memory underlyingMemory = injector.getInstance(Key.get(Memory.class, Names.named("underlying")));
+            if (underlyingMemory instanceof MappedMemory mappedMemory) {
                 mappedMemory.loadMemoryDumps(memoryDumps);
-            } else if (memory instanceof SimpleMemory simpleMemory) {
-                simpleMemory.loadMemoryDumps(memoryDumps);
             }
             
             Display display = injector.getInstance(Display.class);
             Cpu cpu = injector.getInstance(Cpu.class);
             PpuRegisters ppuRegisters = injector.getInstance(PpuRegisters.class);
 
-            VramDebugWindow debugWindow = new VramDebugWindow(memory, ppuRegisters);
+            VramDebugWindow debugWindow = new VramDebugWindow(underlyingMemory, ppuRegisters);
 
             SwingUtilities.invokeLater(() -> {
                 JFrame frame = new JFrame("Game Boy Emulator");
