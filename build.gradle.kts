@@ -36,6 +36,7 @@ dependencies {
     testUtilitiesImplementation("org.assertj:assertj-core:3.11.1")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.assertj:assertj-core:3.11.1")
     testImplementation("com.google.code.gson:gson:2.11.0")
     testImplementation("org.mockito:mockito-core:5.16.0")
@@ -56,4 +57,7 @@ tasks.test {
             jvmArgs = (jvmArgs ?: emptyList()) + "-javaagent:${agentJar.absolutePath}"
         }
     }
+
+    // Enable ByteBuddy experimental support for Java 25+
+    systemProperty("net.bytebuddy.experimental", "true")
 }
