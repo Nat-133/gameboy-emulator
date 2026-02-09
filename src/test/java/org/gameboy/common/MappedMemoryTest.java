@@ -1,6 +1,7 @@
 package org.gameboy.common;
 
 import org.gameboy.components.TacRegister;
+import org.gameboy.components.joypad.JoypadController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -29,6 +30,7 @@ public class MappedMemoryTest {
     private ByteRegister obp0Register;
     private ByteRegister obp1Register;
     private SerialController serialController;
+    private JoypadController joypadController;
     private MappedMemory memory;
 
     @BeforeEach
@@ -52,12 +54,13 @@ public class MappedMemoryTest {
         obp0Register = new IntBackedRegister();
         obp1Register = new IntBackedRegister();
         serialController = Mockito.mock(SerialController.class);
+        joypadController = Mockito.mock(JoypadController.class);
         memory = new MappedMemory(divRegister, timaRegister, tmaRegister, tacRegister, dmaRegister,
                                  interruptFlagsRegister, interruptEnableRegister,
                                  lcdcRegister, statRegister, scyRegister, scxRegister,
                                  lyRegister, lycRegister, wyRegister, wxRegister,
                                  bgpRegister, obp0Register, obp1Register,
-                                 serialController);
+                                 serialController, joypadController);
     }
 
     @Test
@@ -180,6 +183,18 @@ public class MappedMemoryTest {
         byte writeValue = (byte) 0x01;
         memory.write((short) 0xFF02, writeValue);
         Mockito.verify(serialController).writeSerialControl(writeValue);
+    }
+
+    @Test
+    public void testJoypadMemoryMapping() {
+        byte testValue = (byte) 0xCF;
+        Mockito.when(joypadController.read()).thenReturn(testValue);
+
+        assertEquals(testValue, memory.read((short) 0xFF00));
+
+        byte writeValue = (byte) 0x20;
+        memory.write((short) 0xFF00, writeValue);
+        Mockito.verify(joypadController).write(writeValue);
     }
 
     @Test
