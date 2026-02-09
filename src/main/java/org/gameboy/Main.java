@@ -64,6 +64,9 @@ public class Main {
             System.out.println("Boot ROM: " + (bootRomPath != null ? bootRomPath : "skipped"));
             System.out.println("Game ROM: " + gameRomPath);
 
+            // Redirect stdout to file for CPU logging
+            System.setOut(new PrintStream(new FileOutputStream("cpu_log.txt")));
+
             int frameCounter = 0;
             while (true) {
                 cpu.cycle();
