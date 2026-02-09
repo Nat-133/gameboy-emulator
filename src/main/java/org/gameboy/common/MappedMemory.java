@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.gameboy.common.annotations.*;
 import org.gameboy.components.TacRegister;
+import org.gameboy.components.joypad.JoypadController;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,8 +39,10 @@ public class MappedMemory implements Memory {
                        @Named("bgp") ByteRegister bgpRegister,
                        @Named("obp0") ByteRegister obp0Register,
                        @Named("obp1") ByteRegister obp1Register,
-                       SerialController serialController) {
+                       SerialController serialController,
+                       JoypadController joypadController) {
 
+        memoryMap[0xFF00] = new JoypadMapping(joypadController);
         memoryMap[0xFF01] = new SerialDataMapping(serialController);
         memoryMap[0xFF02] = new SerialControlMapping(serialController);
         
@@ -132,10 +135,22 @@ public class MappedMemory implements Memory {
         public byte read() {
             return serialController.readSerialControl();
         }
-        
+
         @Override
         public void write(byte value) {
             serialController.writeSerialControl(value);
+        }
+    }
+
+    private record JoypadMapping(JoypadController joypadController) implements MemoryLocation {
+        @Override
+        public byte read() {
+            return joypadController.read();
+        }
+
+        @Override
+        public void write(byte value) {
+            joypadController.write(value);
         }
     }
 }
