@@ -64,7 +64,7 @@ public class CpuModule extends AbstractModule {
             for (int i = 0; i < 4; i++) {
                 ppu.tCycle();
             }
-        });
+        }, new RealTimeFramePacer());
     }
     
     @Provides
