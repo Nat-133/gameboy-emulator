@@ -12,12 +12,11 @@ import org.gameboy.display.Display;
 import org.gameboy.display.PpuRegisters;
 import org.gameboy.display.WindowDisplay;
 import org.gameboy.display.debug.VramDebugWindow;
+import org.gameboy.input.KeyboardInputHandler;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 
 public class Main {
     private static final String DEFAULT_BOOT_ROM = "dmg_boot.bin";
@@ -42,6 +41,7 @@ public class Main {
             Display display = injector.getInstance(Display.class);
             Cpu cpu = injector.getInstance(Cpu.class);
             PpuRegisters ppuRegisters = injector.getInstance(PpuRegisters.class);
+            KeyboardInputHandler inputHandler = injector.getInstance(KeyboardInputHandler.class);
 
             VramDebugWindow debugWindow = new VramDebugWindow(underlyingMemory, ppuRegisters);
 
@@ -52,9 +52,14 @@ public class Main {
 
                 if (display instanceof WindowDisplay windowDisplay) {
                     frame.add(windowDisplay, BorderLayout.CENTER);
-                }
+                    windowDisplay.addKeyListener(inputHandler);
+                    windowDisplay.setFocusable(true);
 
-                frame.setVisible(true);
+                    frame.setVisible(true);
+                    windowDisplay.requestFocusInWindow();
+                } else {
+                    frame.setVisible(true);
+                }
 
                 debugWindow.setLocation(frame.getX() + frame.getWidth() + 10, frame.getY());
                 debugWindow.showWindow();
@@ -64,14 +69,11 @@ public class Main {
             System.out.println("Boot ROM: " + (bootRomPath != null ? bootRomPath : "skipped"));
             System.out.println("Game ROM: " + gameRomPath);
 
-            // Redirect stdout to file for CPU logging
-            System.setOut(new PrintStream(new FileOutputStream("cpu_log.txt")));
-
             int frameCounter = 0;
             while (true) {
                 cpu.cycle();
 
-                if (++frameCounter % 60 == 0) {
+                if (++frameCounter % 70224 == 0) {
                     SwingUtilities.invokeLater(debugWindow::refresh);
                 }
             }
