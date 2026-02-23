@@ -1,4 +1,4 @@
-package org.gameboy.input;
+package org.gameboy.io;
 
 import com.google.inject.Inject;
 import org.gameboy.components.joypad.Button;
