@@ -5,7 +5,7 @@ import org.gameboy.common.CoreModule;
 import org.gameboy.components.joypad.JoypadModule;
 import org.gameboy.cpu.CpuModule;
 import org.gameboy.display.DisplayModule;
-import org.gameboy.input.InputModule;
+import org.gameboy.io.IoModule;
 
 public class EmulatorModule extends AbstractModule {
 
@@ -18,6 +18,6 @@ public class EmulatorModule extends AbstractModule {
         install(new CpuModule());
         install(new DisplayModule());
         install(new JoypadModule());
-        install(new InputModule());
+        install(new IoModule());
     }
 }

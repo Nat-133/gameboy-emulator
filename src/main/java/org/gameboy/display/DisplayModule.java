@@ -7,29 +7,10 @@ import com.google.inject.name.Named;
 import org.gameboy.common.*;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
-import java.awt.*;
-
 public class DisplayModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(PpuRegisters.class).in(Singleton.class);
-    }
-
-    @Provides
-    @Singleton
-    WindowDisplay provideWindowDisplay() {
-        return new WindowDisplay(
-            new Color(224, 248, 208),
-            new Color(136, 192, 70),
-            new Color(52, 104, 50),
-            new Color(8, 24, 32)
-        );
-    }
-
-    @Provides
-    @Singleton
-    Display provideDisplay(WindowDisplay windowDisplay) {
-        return windowDisplay;
     }
 
     @Provides

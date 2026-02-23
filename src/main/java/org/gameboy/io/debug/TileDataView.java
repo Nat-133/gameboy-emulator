@@ -1,4 +1,4 @@
-package org.gameboy.display.debug;
+package org.gameboy.io.debug;
 
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 

@@ -1,4 +1,8 @@
-package org.gameboy.display;
+package org.gameboy.io;
+
+import org.gameboy.display.Display;
+import org.gameboy.display.PixelBuffer;
+import org.gameboy.display.PixelValue;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
