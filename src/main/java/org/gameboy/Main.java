@@ -4,14 +4,14 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.gameboy.common.Cartridge;
 import org.gameboy.common.RomLoader;
-import org.gameboy.cartridge.RomOnlyCartridge;
+import org.gameboy.cartridge.CartridgeFactory;
 import org.gameboy.cpu.Cpu;
 import org.gameboy.io.EmulatorWindow;
 
 import java.io.IOException;
 
 public class Main {
-    private static final String DEFAULT_GAME_ROM = "roms/Tetris (Japan) (En).gb";
+    private static final String DEFAULT_GAME_ROM = "roms/pokemon_blue.gb";
 
     public static void main(String[] args) {
         try {
@@ -19,7 +19,7 @@ public class Main {
 
             RomLoader romLoader = new RomLoader();
             byte[] gameRom = romLoader.loadRom(gameRomPath);
-            Cartridge cartridge = new RomOnlyCartridge(gameRom);
+            Cartridge cartridge = CartridgeFactory.fromRom(gameRom);
 
             Injector injector = Guice.createInjector(new EmulatorModule(cartridge));
 
