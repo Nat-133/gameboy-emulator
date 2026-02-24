@@ -26,19 +26,9 @@ public class Main {
             Cpu cpu = injector.getInstance(Cpu.class);
             EmulatorWindow emulatorWindow = injector.getInstance(EmulatorWindow.class);
 
-            emulatorWindow.show();
-
-            System.out.println("Starting emulation...");
             System.out.println("Game ROM: " + gameRomPath);
 
-            int frameCounter = 0;
-            while (true) {
-                cpu.cycle();
-
-                if (++frameCounter % 70224 == 0) {
-                    emulatorWindow.refreshDebug();
-                }
-            }
+            emulatorWindow.run(cpu);
 
         } catch (IOException e) {
             System.err.println("Error loading ROM files: " + e.getMessage());

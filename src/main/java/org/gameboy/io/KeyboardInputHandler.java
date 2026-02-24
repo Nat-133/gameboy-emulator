@@ -4,11 +4,11 @@ import com.google.inject.Inject;
 import org.gameboy.components.joypad.Button;
 import org.gameboy.components.joypad.annotations.*;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Map;
 
-public class KeyboardInputHandler implements KeyListener {
+import static org.lwjgl.glfw.GLFW.*;
+
+public class KeyboardInputHandler {
     private final Map<Integer, Button> keyToButton;
 
     @Inject
@@ -22,34 +22,29 @@ public class KeyboardInputHandler implements KeyListener {
             @ButtonStart Button start,
             @ButtonSelect Button select) {
         this.keyToButton = Map.of(
-            KeyEvent.VK_W, up,
-            KeyEvent.VK_S, down,
-            KeyEvent.VK_A, left,
-            KeyEvent.VK_D, right,
-            KeyEvent.VK_K, a,
-            KeyEvent.VK_J, b,
-            KeyEvent.VK_ENTER, start,
-            KeyEvent.VK_SHIFT, select
+            GLFW_KEY_W, up,
+            GLFW_KEY_S, down,
+            GLFW_KEY_A, left,
+            GLFW_KEY_D, right,
+            GLFW_KEY_K, a,
+            GLFW_KEY_J, b,
+            GLFW_KEY_ENTER, start,
+            GLFW_KEY_LEFT_SHIFT, select
         );
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        Button button = keyToButton.get(e.getKeyCode());
-        if (button != null) {
-            button.press();
-        }
+    public void registerCallbacks(long window) {
+        glfwSetKeyCallback(window, this::handleKey);
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-        Button button = keyToButton.get(e.getKeyCode());
+    private void handleKey(long window, int key, int scancode, int action, int mods) {
+        Button button = keyToButton.get(key);
         if (button != null) {
-            button.release();
+            if (action == GLFW_PRESS) {
+                button.press();
+            } else if (action == GLFW_RELEASE) {
+                button.release();
+            }
         }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
     }
 }

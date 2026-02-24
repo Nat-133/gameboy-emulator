@@ -8,11 +8,22 @@ version = "1.0-SNAPSHOT"
 
 application {
     mainClass.set("org.gameboy.Main")
+    applicationDefaultJvmArgs = listOf("-XstartOnFirstThread")
 }
 
 repositories {
     mavenCentral()
     mavenLocal()
+}
+
+val lwjglVersion = "3.3.6"
+
+val lwjglNatives = when {
+    org.gradle.internal.os.OperatingSystem.current().isMacOsX -> {
+        if (System.getProperty("os.arch") == "aarch64") "natives-macos-arm64" else "natives-macos"
+    }
+    org.gradle.internal.os.OperatingSystem.current().isLinux -> "natives-linux"
+    else -> "natives-windows"
 }
 
 sourceSets {
@@ -31,7 +42,15 @@ val testUtilitiesImplementation by configurations.getting {
 
 dependencies {
     implementation("com.google.inject:guice:7.0.0")
-    
+
+    implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
+    implementation("org.lwjgl:lwjgl")
+    implementation("org.lwjgl:lwjgl-glfw")
+    implementation("org.lwjgl:lwjgl-opengl")
+    runtimeOnly("org.lwjgl:lwjgl::$lwjglNatives")
+    runtimeOnly("org.lwjgl:lwjgl-glfw::$lwjglNatives")
+    runtimeOnly("org.lwjgl:lwjgl-opengl::$lwjglNatives")
+
     testImplementation(sourceSets["testUtilities"].output)
     testUtilitiesImplementation("org.assertj:assertj-core:3.11.1")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
