@@ -3,31 +3,30 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.ControlFlow;
 import org.gameboy.cpu.instructions.targets.Condition;
-import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
-import org.gameboy.cpu.instructions.targets.OperationTarget;
+import org.gameboy.cpu.instructions.targets.Target;
 import org.gameboy.utils.BitUtilities;
 
 import static org.gameboy.cpu.instructions.common.ControlFlow.evaluateCondition;
 
 public class Jump implements Instruction{
     private final Condition cc;
-    private final GenericOperationTarget target;
+    private final Target target;
 
-    private Jump(Condition cc, GenericOperationTarget target) {
+    private Jump(Condition cc, Target target) {
         this.cc = cc;
         this.target = target;
     }
 
     public static Jump jp_nn() {
-        return new Jump(null, OperationTarget.IMM_16.direct());
+        return new Jump(null, Target.imm_16);
     }
 
     public static Jump jp_HL() {
-        return new Jump(null, OperationTarget.HL.direct());
+        return new Jump(null, Target.hl);
     }
 
     public static Jump jp_cc_nn(Condition cc) {
-        return new Jump(cc, OperationTarget.IMM_16.direct());
+        return new Jump(cc, Target.imm_16);
     }
 
     @Override
@@ -44,7 +43,7 @@ public class Jump implements Instruction{
 
     @Override
     public void execute(CpuStructure cpuStructure) {
-        if (this.target.equals(OperationTarget.HL.direct())) {
+        if (this.target == Target.hl) {
             executeJpHL(cpuStructure);
         }
         else {

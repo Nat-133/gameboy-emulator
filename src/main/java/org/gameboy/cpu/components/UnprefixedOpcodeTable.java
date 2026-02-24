@@ -1,7 +1,7 @@
 package org.gameboy.cpu.components;
 
 import org.gameboy.cpu.instructions.*;
-import org.gameboy.cpu.instructions.targets.*;
+import org.gameboy.cpu.instructions.targets.Condition;
 import org.gameboy.cpu.instructions.targets.Target;
 import org.gameboy.utils.MultiBitValue.OneBitValue;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
@@ -119,7 +119,7 @@ public class UnprefixedOpcodeTable implements OpcodeTable {
                 case b111 -> Load.ld_HL_SP_OFFSET();
             };
             case b001 -> switch(q) {
-                case b0 -> Pop.pop_stk16(WordStackRegister.lookup(TwoBitValue.from(y, 1)));
+                case b0 -> Pop.pop_stk16(Target.Stk16.lookup(TwoBitValue.from(y, 1)));
                 case b1 -> switch(TwoBitValue.from(y, 1)) {
                     case b00 -> Return.ret();
                     case b01 -> ReturnFromInterruptHandler.reti();
@@ -152,7 +152,7 @@ public class UnprefixedOpcodeTable implements OpcodeTable {
                 case b111 -> Illegal.illegal(y, z);
             };
             case b101 -> switch(q) {
-                case b0 -> Push.push_stk16(WordStackRegister.lookup(TwoBitValue.from(y, 1)));
+                case b0 -> Push.push_stk16(Target.Stk16.lookup(TwoBitValue.from(y, 1)));
                 case b1 -> switch(TwoBitValue.from(y, 1)) {
                     case b00 -> Call.call();
                     case b01 -> Illegal.illegal(y, z);

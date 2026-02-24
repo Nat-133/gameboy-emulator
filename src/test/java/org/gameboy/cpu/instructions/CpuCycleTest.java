@@ -4,7 +4,9 @@ import org.gameboy.CpuStructureBuilder;
 import org.gameboy.cpu.Cpu;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.components.CpuStructure;
-import org.gameboy.cpu.instructions.targets.*;
+import org.gameboy.cpu.instructions.targets.ByteRegister;
+import org.gameboy.cpu.instructions.targets.Condition;
+import org.gameboy.cpu.instructions.targets.Target;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -45,7 +47,7 @@ public class CpuCycleTest {
     );
 
     private static final List<Target.Mem16> WORD_MEM16_TARGETS = List.of(Target.Mem16.LOOKUP_TABLE);
-    private static final List<WordStackRegister> WORD_STACK_REGISTERS = List.of(WordStackRegister.values());
+    private static final List<Target.Stk16> WORD_STK16_TARGETS = List.of(Target.Stk16.LOOKUP_TABLE);
     private static final List<Condition> CONDITIONS = List.of(Condition.values());
 
     static Stream<Arguments> getInstructionExpectations() {
@@ -123,9 +125,9 @@ public class CpuCycleTest {
 
                 generateTestCase(ComplimentCarryFlag::ccf, 1),
 
-                generateTestCases(Pop::pop_stk16, WORD_STACK_REGISTERS, 3),
+                generateTestCases(Pop::pop_stk16, WORD_STK16_TARGETS, 3),
 
-                generateTestCases(Push::push_stk16, WORD_STACK_REGISTERS, 4),
+                generateTestCases(Push::push_stk16, WORD_STK16_TARGETS, 4),
 
                 generateTestCase(Return::ret, 4),
                 generateConditionalTestCases(ConditionalReturn::ret_cc, 5, 2),

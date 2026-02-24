@@ -2,20 +2,19 @@ package org.gameboy.cpu.instructions;
 
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
-import org.gameboy.cpu.instructions.targets.WordStackRegister;
+import org.gameboy.cpu.instructions.targets.Target;
 
 import static org.gameboy.cpu.instructions.common.ControlFlow.popFromStack;
 
 public class Pop implements Instruction {
-    private final GenericOperationTarget target;
+    private final Target.Stk16 target;
 
-    private Pop(GenericOperationTarget target) {
+    private Pop(Target.Stk16 target) {
         this.target = target;
     }
 
-    public static Pop pop_stk16(WordStackRegister stk16) {
-        return new Pop(stk16.convert());
+    public static Pop pop_stk16(Target.Stk16 stk16) {
+        return new Pop(stk16);
     }
 
     @Override
