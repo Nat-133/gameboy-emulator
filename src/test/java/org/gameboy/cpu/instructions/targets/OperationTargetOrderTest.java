@@ -15,17 +15,10 @@ class OperationTargetOrderTest {
     Stream<TwoBitValue> twoBitValues = IntStream.range(0, 4).mapToObj(TwoBitValue::from);
 
     @Test
-    void givenByteRegister_thenOrderCorrect() {
-        List<ByteRegister> byteRegisterOrder = threeBitValues.map(ByteRegister::lookup).toList();
-        assertThat(byteRegisterOrder).containsExactly(
-                ByteRegister.B,
-                ByteRegister.C,
-                ByteRegister.D,
-                ByteRegister.E,
-                ByteRegister.H,
-                ByteRegister.L,
-                ByteRegister.INDIRECT_HL,
-                ByteRegister.A
+    void givenR8_thenOrderCorrect() {
+        List<Target.R8> r8Order = threeBitValues.map(Target.R8::lookup).toList();
+        assertThat(r8Order).containsExactly(
+                Target.b, Target.c, Target.d, Target.e, Target.h, Target.l, Target.indirect_hl, Target.a
         );
     }
 
@@ -41,35 +34,22 @@ class OperationTargetOrderTest {
     }
 
     @Test
-    void givenWordGeneralRegister_thenOrderCorrect() {
-        List<WordGeneralRegister> wordGeneralRegisterOrder = twoBitValues.map(WordGeneralRegister::lookup).toList();
-        assertThat(wordGeneralRegisterOrder).containsExactly(
-                WordGeneralRegister.BC,
-                WordGeneralRegister.DE,
-                WordGeneralRegister.HL,
-                WordGeneralRegister.SP
+    void givenR16_thenOrderCorrect() {
+        List<Target.R16> r16Order = twoBitValues.map(Target.R16::lookup).toList();
+        assertThat(r16Order).containsExactly(Target.bc, Target.de, Target.hl, Target.sp);
+    }
+
+    @Test
+    void givenMem16_thenOrderCorrect() {
+        List<Target.Mem16> mem16Order = twoBitValues.map(Target.Mem16::lookup).toList();
+        assertThat(mem16Order).containsExactly(
+                Target.indirect_bc, Target.indirect_de, Target.indirect_hl_inc, Target.indirect_hl_dec
         );
     }
 
     @Test
-    void givenWordMemoryRegister_thenOrderCorrect() {
-        List<WordMemoryRegister> wordMemoryRegisterOrder = twoBitValues.map(WordMemoryRegister::lookup).toList();
-        assertThat(wordMemoryRegisterOrder).containsExactly(
-                WordMemoryRegister.BC,
-                WordMemoryRegister.DE,
-                WordMemoryRegister.HL_INC,
-                WordMemoryRegister.HL_DEC
-        );
-    }
-
-    @Test
-    void givenWordStackRegister_thenOrderCorrect() {
-        List<WordStackRegister> wordStackRegisterOrder = twoBitValues.map(WordStackRegister::lookup).toList();
-        assertThat(wordStackRegisterOrder).containsExactly(
-                WordStackRegister.BC,
-                WordStackRegister.DE,
-                WordStackRegister.HL,
-                WordStackRegister.AF
-        );
+    void givenStk16_thenOrderCorrect() {
+        List<Target.Stk16> stk16Order = twoBitValues.map(Target.Stk16::lookup).toList();
+        assertThat(stk16Order).containsExactly(Target.bc, Target.de, Target.hl, Target.af);
     }
 }

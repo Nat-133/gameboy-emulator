@@ -4,7 +4,6 @@ import org.gameboy.CpuStructureBuilder;
 import org.gameboy.cpu.Cpu;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.components.CpuStructure;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
 import org.gameboy.cpu.instructions.targets.Condition;
 import org.gameboy.cpu.instructions.targets.Target;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
@@ -27,16 +26,6 @@ import static org.gameboy.utils.MultiBitValue.ThreeBitValue.b000;
 
 @SuppressWarnings("SameParameterValue")
 public class CpuCycleTest {
-    private static final List<ByteRegister> DIRECT_BYTE_REGISTERS = List.of(
-            ByteRegister.B,
-            ByteRegister.C,
-            ByteRegister.D,
-            ByteRegister.E,
-            ByteRegister.H,
-            ByteRegister.L,
-            ByteRegister.A
-    );
-
     private static final List<Target.R8> DIRECT_R8_TARGETS = List.of(
             Target.b, Target.c, Target.d, Target.e,
             Target.h, Target.l, Target.a
@@ -224,17 +213,6 @@ public class CpuCycleTest {
                 Arguments.of(constructor.apply(condition), expectedCyclesWithCondition, getConditionFlags(condition, true)),
                 Arguments.of(constructor.apply(condition), expectedCyclesWithoutCondition, getConditionFlags(condition, false))
         );
-    }
-
-    static Stream<Arguments> generateR8TestCases(Function<ByteRegister, Instruction> constructor, int expectedCyclesNoMemoryLoad) {
-        return generateR8TestCases(constructor, expectedCyclesNoMemoryLoad, expectedCyclesNoMemoryLoad + 1);
-    }
-
-    static Stream<Arguments> generateR8TestCases(Function<ByteRegister, Instruction> constructor, int expectedCyclesNoMemoryLoad, int expectedCyclesWithMemoryLoad) {
-        return Stream.of(
-                generateTestCases(constructor, CpuCycleTest.DIRECT_BYTE_REGISTERS, expectedCyclesNoMemoryLoad),
-                generateTestCase(constructor, ByteRegister.INDIRECT_HL, expectedCyclesWithMemoryLoad)
-        ).flatMap(x -> x);
     }
 
     static Stream<Arguments> generateR8TargetTestCases(Function<Target.R8, Instruction> constructor, int expectedCyclesNoMemoryLoad, int expectedCyclesWithMemoryLoad) {
