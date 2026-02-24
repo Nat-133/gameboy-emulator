@@ -35,6 +35,11 @@ public class CpuCycleTest {
             ByteRegister.A
     );
 
+    private static final List<Target.R8> DIRECT_R8_TARGETS = List.of(
+            Target.b, Target.c, Target.d, Target.e,
+            Target.h, Target.l, Target.a
+    );
+
     private static final List<WordGeneralRegister> WORD_GENERAL_REGISTERS = List.of(WordGeneralRegister.values());
     private static final List<WordMemoryRegister> WORD_MEMORY_REGISTERS = List.of(WordMemoryRegister.values());
     private static final List<WordStackRegister> WORD_STACK_REGISTERS = List.of(WordStackRegister.values());
@@ -137,27 +142,27 @@ public class CpuCycleTest {
 
                 generateTestCase(Prefix::prefix, 1),
 
-                generateR8TestCases(RotateLeftCircular::rlc_r8, 1, 3),
-                generateR8TestCases(RotateRightCircular::rrc_r8, 1, 3),
-                generateR8TestCases(RotateLeft::rl_r8, 1, 3),
-                generateR8TestCases(RotateRight::rr_r8, 1, 3),
-                generateR8TestCases(ShiftLeftArithmetic::sla_r8, 1, 3),
-                generateR8TestCases(ShiftRightArithmetic::sra_r8, 1, 3),
-                generateR8TestCases(Swap::swap_r8, 1, 3),
-                generateR8TestCases(ShiftRightLogical::srl_r8, 1, 3),
+                generateR8TargetTestCases(RotateLeftCircular::rlc_r8, 1, 3),
+                generateR8TargetTestCases(RotateRightCircular::rrc_r8, 1, 3),
+                generateR8TargetTestCases(RotateLeft::rl_r8, 1, 3),
+                generateR8TargetTestCases(RotateRight::rr_r8, 1, 3),
+                generateR8TargetTestCases(ShiftLeftArithmetic::sla_r8, 1, 3),
+                generateR8TargetTestCases(ShiftRightArithmetic::sra_r8, 1, 3),
+                generateR8TargetTestCases(Swap::swap_r8, 1, 3),
+                generateR8TargetTestCases(ShiftRightLogical::srl_r8, 1, 3),
 
-                generateByteIndexTestCases(Bit::bit_b_r8, 1, 2),
-                generateByteIndexTestCases(Reset::res_b_r8, 1, 3),
-                generateByteIndexTestCases(Set::set_b_r8, 1, 3)
+                generateR8TargetByteIndexTestCases(Bit::bit_b_r8, 1, 2),
+                generateR8TargetByteIndexTestCases(Reset::res_b_r8, 1, 3),
+                generateR8TargetByteIndexTestCases(Set::set_b_r8, 1, 3)
         ).flatMap(x -> x);
     }
 
-    private static Stream<Arguments> generateByteIndexTestCases(
-            BiFunction<ThreeBitValue, ByteRegister, Instruction> constructor,
+    private static Stream<Arguments> generateR8TargetByteIndexTestCases(
+            BiFunction<ThreeBitValue, Target.R8, Instruction> constructor,
             int expectedCyclesNoMemoryLoad,
             int expectedCyclesWithMemoryLoad
     ) {
-        return generateR8TestCases(r8 -> constructor.apply(b000, r8), expectedCyclesNoMemoryLoad, expectedCyclesWithMemoryLoad);
+        return generateR8TargetTestCases(r8 -> constructor.apply(b000, r8), expectedCyclesNoMemoryLoad, expectedCyclesWithMemoryLoad);
     }
 
     @ParameterizedTest
@@ -224,6 +229,13 @@ public class CpuCycleTest {
         return Stream.of(
                 generateTestCases(constructor, CpuCycleTest.DIRECT_BYTE_REGISTERS, expectedCyclesNoMemoryLoad),
                 generateTestCase(constructor, ByteRegister.INDIRECT_HL, expectedCyclesWithMemoryLoad)
+        ).flatMap(x -> x);
+    }
+
+    static Stream<Arguments> generateR8TargetTestCases(Function<Target.R8, Instruction> constructor, int expectedCyclesNoMemoryLoad, int expectedCyclesWithMemoryLoad) {
+        return Stream.of(
+                generateTestCases(constructor, CpuCycleTest.DIRECT_R8_TARGETS, expectedCyclesNoMemoryLoad),
+                generateTestCase(constructor, Target.indirect_hl, expectedCyclesWithMemoryLoad)
         ).flatMap(x -> x);
     }
 

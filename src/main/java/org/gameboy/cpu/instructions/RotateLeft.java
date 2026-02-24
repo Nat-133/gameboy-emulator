@@ -5,33 +5,33 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import org.gameboy.cpu.instructions.targets.Target;
 
 public class RotateLeft implements Instruction{
-    private final ByteRegister target;
+    private final Target.R8 target;
     private final boolean isPrefixInstruction;
 
-    private RotateLeft(ByteRegister target, boolean isPrefixInstruction) {
+    private RotateLeft(Target.R8 target, boolean isPrefixInstruction) {
         this.target = target;
         this.isPrefixInstruction = isPrefixInstruction;
     }
 
     public static RotateLeft rla() {
-        return new RotateLeft(ByteRegister.A, false);
+        return new RotateLeft(Target.a, false);
     }
 
-    public static RotateLeft rl_r8(ByteRegister target) {
+    public static RotateLeft rl_r8(Target.R8 target) {
         return new RotateLeft(target, true);
     }
 
     @Override
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        byte value = (byte) accessor.getValue(target.convert());
+        byte value = (byte) accessor.getValue(target);
         boolean carryIn = cpuStructure.registers().getFlag(Flag.C);
         ArithmeticResult result = cpuStructure.alu().rotate_left(value, carryIn);
 
-        accessor.setValue(target.convert(), result.result());
+        accessor.setValue(target, result.result());
         
         FlagChangesetBuilder flagBuilder = new FlagChangesetBuilder(result.flagChanges());
 
@@ -43,7 +43,7 @@ public class RotateLeft implements Instruction{
 
     @Override
     public String representation() {
-        return "RL" + (isPrefixInstruction ? " " : "") + this.target.convert().representation();
+        return "RL" + (isPrefixInstruction ? " " : "") + this.target.representation();
     }
 
     @Override

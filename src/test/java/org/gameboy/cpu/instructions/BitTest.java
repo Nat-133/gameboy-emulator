@@ -5,13 +5,13 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import org.gameboy.cpu.instructions.targets.Target;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.stream.Stream;
 
@@ -19,9 +19,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 
 class BitTest {
+    static Stream<Target.R8> r8Values() {
+        return Arrays.stream(Target.R8.LOOKUP_TABLE);
+    }
+
     @ParameterizedTest
-    @EnumSource(ByteRegister.class)
-    void givenByteRegisterWithBitSet_whenBitTestBit0_thenZeroFlagUnset(ByteRegister r8) {
+    @MethodSource("r8Values")
+    void givenByteRegisterWithBitSet_whenBitTestBit0_thenZeroFlagUnset(Target.R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.Z, Flag.N)
                 .withExclusivelyUnsetFlags(Flag.H, Flag.C)
@@ -29,11 +33,11 @@ class BitTest {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
         byte initialValue = (byte) 0b0000_0001;
-        accessor.setValue(r8.convert(), initialValue);
+        accessor.setValue(r8, initialValue);
 
         Bit.bit_b_r8(ThreeBitValue.b000, r8).execute(cpuStructure);
 
-        byte actualValue = (byte) accessor.getValue(r8.convert());
+        byte actualValue = (byte) accessor.getValue(r8);
         assertThat(actualValue).isEqualTo(initialValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
@@ -45,8 +49,8 @@ class BitTest {
     }
 
     @ParameterizedTest
-    @EnumSource(ByteRegister.class)
-    void givenByteRegisterWithBitUnset_whenBitTestBit0_thenZeroFlagSet(ByteRegister r8) {
+    @MethodSource("r8Values")
+    void givenByteRegisterWithBitUnset_whenBitTestBit0_thenZeroFlagSet(Target.R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelyUnsetFlags(Flag.Z, Flag.N, Flag.H)
                 .withExclusivelySetFlags(Flag.C)
@@ -54,11 +58,11 @@ class BitTest {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
         byte initialValue = (byte) 0b1111_1110;
-        accessor.setValue(r8.convert(), initialValue);
+        accessor.setValue(r8, initialValue);
 
         Bit.bit_b_r8(ThreeBitValue.b000, r8).execute(cpuStructure);
 
-        byte actualValue = (byte) accessor.getValue(r8.convert());
+        byte actualValue = (byte) accessor.getValue(r8);
         assertThat(actualValue).isEqualTo(initialValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
@@ -70,8 +74,8 @@ class BitTest {
     }
 
     @ParameterizedTest
-    @EnumSource(ByteRegister.class)
-    void givenByteRegisterWithBitSet_whenBitTestBit7_thenZeroFlagUnset(ByteRegister r8) {
+    @MethodSource("r8Values")
+    void givenByteRegisterWithBitSet_whenBitTestBit7_thenZeroFlagUnset(Target.R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.Z, Flag.N)
                 .withExclusivelyUnsetFlags(Flag.H, Flag.C)
@@ -79,11 +83,11 @@ class BitTest {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
         byte initialValue = (byte) 0b1000_0000;
-        accessor.setValue(r8.convert(), initialValue);
+        accessor.setValue(r8, initialValue);
 
         Bit.bit_b_r8(ThreeBitValue.b111, r8).execute(cpuStructure);
 
-        byte actualValue = (byte) accessor.getValue(r8.convert());
+        byte actualValue = (byte) accessor.getValue(r8);
         assertThat(actualValue).isEqualTo(initialValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
@@ -95,8 +99,8 @@ class BitTest {
     }
 
     @ParameterizedTest
-    @EnumSource(ByteRegister.class)
-    void givenByteRegisterWithBitUnset_whenBitTestBit7_thenZeroFlagSet(ByteRegister r8) {
+    @MethodSource("r8Values")
+    void givenByteRegisterWithBitUnset_whenBitTestBit7_thenZeroFlagSet(Target.R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelyUnsetFlags(Flag.Z, Flag.N, Flag.H)
                 .withExclusivelySetFlags(Flag.C)
@@ -104,11 +108,11 @@ class BitTest {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
         byte initialValue = (byte) 0b0111_1111;
-        accessor.setValue(r8.convert(), initialValue);
+        accessor.setValue(r8, initialValue);
 
         Bit.bit_b_r8(ThreeBitValue.b111, r8).execute(cpuStructure);
 
-        byte actualValue = (byte) accessor.getValue(r8.convert());
+        byte actualValue = (byte) accessor.getValue(r8);
         assertThat(actualValue).isEqualTo(initialValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
@@ -149,7 +153,7 @@ class BitTest {
                 .withA(value)
                 .build();
 
-        Bit.bit_b_r8(bitIndex, ByteRegister.A).execute(cpuStructure);
+        Bit.bit_b_r8(bitIndex, Target.a).execute(cpuStructure);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.Z, expectedZeroFlag)
@@ -160,14 +164,14 @@ class BitTest {
     }
 
     @ParameterizedTest
-    @EnumSource(ByteRegister.class)
-    void givenByteRegister_whenBitTest_thenCarryFlagUnchanged(ByteRegister r8) {
+    @MethodSource("r8Values")
+    void givenByteRegister_whenBitTest_thenCarryFlagUnchanged(Target.R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.C)
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
-        accessor.setValue(r8.convert(), (byte) 0b1010_1010);
+        accessor.setValue(r8, (byte) 0b1010_1010);
 
         Bit.bit_b_r8(ThreeBitValue.b000, r8).execute(cpuStructure);
 

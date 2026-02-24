@@ -4,26 +4,26 @@ import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import org.gameboy.cpu.instructions.targets.Target;
 
 public class ShiftRightLogical implements Instruction{
-    private final ByteRegister target;
+    private final Target.R8 target;
 
-    private ShiftRightLogical(ByteRegister target) {
+    private ShiftRightLogical(Target.R8 target) {
         this.target = target;
     }
 
-    public static ShiftRightLogical srl_r8(ByteRegister target) {
+    public static ShiftRightLogical srl_r8(Target.R8 target) {
         return new ShiftRightLogical(target);
     }
 
     @Override
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        byte value = (byte) accessor.getValue(target.convert());
+        byte value = (byte) accessor.getValue(target);
         ArithmeticResult result = cpuStructure.alu().logical_shift_right(value);
 
-        accessor.setValue(target.convert(), result.result());
+        accessor.setValue(target, result.result());
         
         FlagChangesetBuilder flagBuilder = new FlagChangesetBuilder(result.flagChanges());
 
@@ -32,7 +32,7 @@ public class ShiftRightLogical implements Instruction{
 
     @Override
     public String representation() {
-        return "SRL " + this.target.convert().representation();
+        return "SRL " + this.target.representation();
     }
 
     @Override

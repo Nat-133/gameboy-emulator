@@ -5,32 +5,32 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import org.gameboy.cpu.instructions.targets.Target;
 
 public class RotateRightCircular implements Instruction{
-    private final ByteRegister target;
+    private final Target.R8 target;
     private final boolean isPrefixInstruction;
 
-    private RotateRightCircular(ByteRegister target, boolean isPrefixInstruction) {
+    private RotateRightCircular(Target.R8 target, boolean isPrefixInstruction) {
         this.target = target;
         this.isPrefixInstruction = isPrefixInstruction;
     }
 
     public static RotateRightCircular rrca() {
-        return new RotateRightCircular(ByteRegister.A, false);
+        return new RotateRightCircular(Target.a, false);
     }
 
-    public static RotateRightCircular rrc_r8(ByteRegister target) {
+    public static RotateRightCircular rrc_r8(Target.R8 target) {
         return new RotateRightCircular(target, true);
     }
 
     @Override
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        byte value = (byte) accessor.getValue(target.convert());
+        byte value = (byte) accessor.getValue(target);
         ArithmeticResult result = cpuStructure.alu().rotate_right_circular(value);
 
-        accessor.setValue(target.convert(), result.result());
+        accessor.setValue(target, result.result());
         
         FlagChangesetBuilder flagBuilder = new FlagChangesetBuilder(result.flagChanges());
 
@@ -42,7 +42,7 @@ public class RotateRightCircular implements Instruction{
 
     @Override
     public String representation() {
-        return "RRC" + (isPrefixInstruction ? " " : "") + this.target.convert().representation();
+        return "RRC" + (isPrefixInstruction ? " " : "") + this.target.representation();
     }
 
     @Override
