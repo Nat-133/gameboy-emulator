@@ -44,8 +44,7 @@ public class CpuCycleTest {
             Target.bc, Target.de, Target.hl, Target.sp
     );
 
-    private static final List<WordGeneralRegister> WORD_GENERAL_REGISTERS = List.of(WordGeneralRegister.values());
-    private static final List<WordMemoryRegister> WORD_MEMORY_REGISTERS = List.of(WordMemoryRegister.values());
+    private static final List<Target.Mem16> WORD_MEM16_TARGETS = List.of(Target.Mem16.LOOKUP_TABLE);
     private static final List<WordStackRegister> WORD_STACK_REGISTERS = List.of(WordStackRegister.values());
     private static final List<Condition> CONDITIONS = List.of(Condition.values());
 
@@ -77,14 +76,14 @@ public class CpuCycleTest {
                 generateConditionalTestCases(JumpRelative::jr_cc, 3, 2),
 
                 generateTestCase(Load::load_SP_HL, 2),
-                generateTestCases(Load::ld_r16_imm16, WORD_GENERAL_REGISTERS, 3),
+                generateTestCases(Load::ld_r16_imm16, WORD_R16_TARGETS, 3),
                 generateTestCase(Load::ld_A_indirectC, 2),
                 generateTestCase(Load::ld_indirectC_A, 2),
                 generateTestCase(Load::ld_imm16indirect_A, 4),
                 generateTestCase(Load::ld_A_imm16indirect, 4),
-                generateTestCases(Load::ld_A_mem16indirect, WORD_MEMORY_REGISTERS, 2),
-                generateTestCases(Load::ld_mem16indirect_A, WORD_MEMORY_REGISTERS, 2),
-                generateR8TestCases(Load::ld_r8_imm8, 2),
+                generateTestCases(Load::ld_A_mem16indirect, WORD_MEM16_TARGETS, 2),
+                generateTestCases(Load::ld_mem16indirect_A, WORD_MEM16_TARGETS, 2),
+                generateR8TargetTestCases(Load::ld_r8_imm8, 2, 3),
                 generateTestCase(Load::ld_imm16indirect_sp, 5),
                 generateTestCase(Load::ld_HL_SP_OFFSET, 3),
                 generateLdR8R8TestCases(),
@@ -200,8 +199,8 @@ public class CpuCycleTest {
 
     private static Stream<Arguments> generateLdR8R8TestCases() {
         return Stream.concat(
-                DIRECT_BYTE_REGISTERS.stream().flatMap(r8 -> generateR8TestCases(r -> Load.ld_r8_r8(r, r8), 1)),
-                generateTestCases(r -> Load.ld_r8_r8(ByteRegister.INDIRECT_HL, r), DIRECT_BYTE_REGISTERS, 2)
+                DIRECT_R8_TARGETS.stream().flatMap(r8 -> generateR8TargetTestCases(r -> Load.ld_r8_r8(r, r8), 1, 2)),
+                generateTestCases(r -> Load.ld_r8_r8(Target.indirect_hl, r), DIRECT_R8_TARGETS, 2)
         );
     }
 

@@ -4,11 +4,10 @@ import org.gameboy.CpuStructureBuilder;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import org.gameboy.cpu.instructions.targets.Target;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -21,9 +20,13 @@ import static org.gameboy.utils.BitUtilities.lower_byte;
 import static org.gameboy.utils.BitUtilities.set_lower_byte;
 
 class LoadTest {
+    static Stream<Target.R8> r8Values() {
+        return Arrays.stream(Target.R8.LOOKUP_TABLE);
+    }
+
     @ParameterizedTest
-    @EnumSource(ByteRegister.class)
-    void givenImmediateByte_whenLoadIntoRegister_thenRegisterUpdatedCorrectly(ByteRegister register) {
+    @MethodSource("r8Values")
+    void givenImmediateByte_whenLoadIntoRegister_thenRegisterUpdatedCorrectly(Target.R8 register) {
         byte immediateByteValue = (byte) 0xfa;
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withPC(0x00fa)
@@ -33,13 +36,13 @@ class LoadTest {
 
         BasicLoad.ld_r8_imm8(register).execute(cpuStructure);
 
-        byte registerValueAfter = (byte) accessor.getValue(register.convert());
+        byte registerValueAfter = (byte) accessor.getValue(register);
         assertThat(registerValueAfter).isEqualTo(immediateByteValue);
     }
 
     static Stream<Arguments> byteRegisterPairs() {
-        ByteRegister[] a = ByteRegister.values();
-        ByteRegister[] b = ByteRegister.values();
+        Target.R8[] a = Target.R8.LOOKUP_TABLE;
+        Target.R8[] b = Target.R8.LOOKUP_TABLE;
 
         return Arrays.stream(a)
             .flatMap(firstArgument ->
@@ -50,15 +53,15 @@ class LoadTest {
 
     @ParameterizedTest
     @MethodSource("byteRegisterPairs")
-    void givenRegisterData_whenLoadIntoRegister_thenRegisterUpdatedCorrectly(ByteRegister destination, ByteRegister source) {
+    void givenRegisterData_whenLoadIntoRegister_thenRegisterUpdatedCorrectly(Target.R8 destination, Target.R8 source) {
         short registerData = (short) 0xfa;
         CpuStructure cpuStructure = new CpuStructureBuilder().build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        accessor.setValue(source.convert(), registerData);
+        accessor.setValue(source, registerData);
 
         BasicLoad.ld_r8_r8(destination, source).execute(cpuStructure);
 
-        byte registerValueAfter = (byte) accessor.getValue(destination.convert());
+        byte registerValueAfter = (byte) accessor.getValue(destination);
         assertThat(registerValueAfter).isEqualTo(lower_byte(registerData));
     }
 

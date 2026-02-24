@@ -53,11 +53,11 @@ public class UnprefixedOpcodeTable implements OpcodeTable {
                 default -> JumpRelative.jr_cc(Condition.lookup(TwoBitValue.from(y, 0)));
             };
             case b001 -> switch(q){
-                case b0 -> Load.ld_r16_imm16(WordGeneralRegister.lookup(p));
+                case b0 -> Load.ld_r16_imm16(Target.R16.lookup(p));
                 case b1 -> Add.add_hl_r16(Target.R16.lookup(p));
             };
             case b010 -> {
-                WordMemoryRegister register = WordMemoryRegister.lookup(p);
+                Target.Mem16 register = Target.Mem16.lookup(p);
                 yield switch(q) {
                     case b0 -> Load.ld_mem16indirect_A(register);
                     case b1 -> Load.ld_A_mem16indirect(register);
@@ -69,7 +69,7 @@ public class UnprefixedOpcodeTable implements OpcodeTable {
             };
             case b100 -> Inc.inc_r8(Target.R8.lookup(y));
             case b101 -> Dec.dec_r8(Target.R8.lookup(y));
-            case b110 -> Load.ld_r8_imm8(ByteRegister.lookup(y));
+            case b110 -> Load.ld_r8_imm8(Target.R8.lookup(y));
             case b111 -> switch(y) {
                 case b000 -> RotateLeftCircular.rlca();
                 case b001 -> RotateRightCircular.rrca();
@@ -88,7 +88,7 @@ public class UnprefixedOpcodeTable implements OpcodeTable {
             return Halt.halt();
         }
 
-        return Load.ld_r8_r8(ByteRegister.lookup(y), ByteRegister.lookup(z));
+        return Load.ld_r8_r8(Target.R8.lookup(y), Target.R8.lookup(z));
     }
 
     private Instruction decodeBlock2(ThreeBitValue y, ThreeBitValue z) {
