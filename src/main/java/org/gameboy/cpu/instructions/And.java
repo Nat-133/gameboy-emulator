@@ -3,23 +3,21 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
-import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
-import org.gameboy.cpu.instructions.targets.OperationTarget;
+import org.gameboy.cpu.instructions.targets.Target;
 
 public class And implements Instruction{
-    private final GenericOperationTarget target;
+    private final Target target;
 
-    private And(GenericOperationTarget target) {
+    private And(Target target) {
         this.target = target;
     }
 
-    public static And and_r8(ByteRegister r8) {
-        return new And(r8.convert());
+    public static And and_r8(Target.R8 r8) {
+        return new And(r8);
     }
 
     public static And and_imm8() {
-        return new And(OperationTarget.IMM_8.direct());
+        return new And(Target.imm_8);
     }
 
     @Override

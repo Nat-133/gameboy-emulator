@@ -3,28 +3,26 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
-import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
-import org.gameboy.cpu.instructions.targets.OperationTarget;
+import org.gameboy.cpu.instructions.targets.Target;
 
 public class Sub implements Instruction{
-    private final GenericOperationTarget right;
+    private final Target right;
 
-    private Sub(GenericOperationTarget right) {
+    private Sub(Target right) {
         this.right = right;
     }
 
-    public static Sub sub_r8(ByteRegister r8) {
-        return new Sub(r8.convert());
+    public static Sub sub_r8(Target.R8 r8) {
+        return new Sub(r8);
     }
 
     public static Sub sub_a_imm8() {
-        return new Sub(OperationTarget.IMM_8.direct());
+        return new Sub(Target.imm_8);
     }
 
     @Override
     public String representation() {
-        return "SUB " + OperationTarget.A.direct().representation() + "," + this.right.representation();
+        return "SUB " + Target.a.representation() + "," + this.right.representation();
     }
 
     @Override

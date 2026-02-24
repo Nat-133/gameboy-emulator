@@ -40,6 +40,10 @@ public class CpuCycleTest {
             Target.h, Target.l, Target.a
     );
 
+    private static final List<Target.R16> WORD_R16_TARGETS = List.of(
+            Target.bc, Target.de, Target.hl, Target.sp
+    );
+
     private static final List<WordGeneralRegister> WORD_GENERAL_REGISTERS = List.of(WordGeneralRegister.values());
     private static final List<WordMemoryRegister> WORD_MEMORY_REGISTERS = List.of(WordMemoryRegister.values());
     private static final List<WordStackRegister> WORD_STACK_REGISTERS = List.of(WordStackRegister.values());
@@ -49,21 +53,21 @@ public class CpuCycleTest {
         return Stream.of(
                 generateTestCase(Nop::nop, 1),
 
-                generateR8TestCases(And::and_r8, 1),
+                generateR8TargetTestCases(And::and_r8, 1, 2),
                 generateTestCase(And::and_imm8, 2),
 
-                generateTestCase(Dec::dec_r8, ByteRegister.INDIRECT_HL, 3),
-                generateTestCases(Dec::dec_r8, DIRECT_BYTE_REGISTERS, 1),
-                generateTestCases(Dec::dec_r16, WORD_GENERAL_REGISTERS, 1),
+                generateTestCase(Dec::dec_r8, Target.indirect_hl, 3),
+                generateTestCases(Dec::dec_r8, DIRECT_R8_TARGETS, 1),
+                generateTestCases(Dec::dec_r16, WORD_R16_TARGETS, 1),
 
-                generateTestCase(Inc::inc_r8, ByteRegister.INDIRECT_HL, 3),
-                generateTestCases(Inc::inc_r8, DIRECT_BYTE_REGISTERS, 1),
-                generateTestCases(Inc::inc_r16, WORD_GENERAL_REGISTERS, 1),
+                generateTestCase(Inc::inc_r8, Target.indirect_hl, 3),
+                generateTestCases(Inc::inc_r8, DIRECT_R8_TARGETS, 1),
+                generateTestCases(Inc::inc_r16, WORD_R16_TARGETS, 1),
 
-                generateR8TestCases(Sub::sub_r8, 1),
+                generateR8TargetTestCases(Sub::sub_r8, 1, 2),
                 generateTestCase(Sub::sub_a_imm8, 2),
 
-                generateR8TestCases(SubWithCarry::sbc_a_r8, 1),
+                generateR8TargetTestCases(SubWithCarry::sbc_a_r8, 1, 2),
 
                 generateConditionalTestCases(Jump::jp_cc_nn, 4, 3),
                 generateTestCase(Jump::jp_nn, 4),
@@ -90,18 +94,18 @@ public class CpuCycleTest {
 
                 generateTestCase(Nop::nop, 1),
 
-                generateR8TestCases(Compare::cp_r8, 1),
+                generateR8TargetTestCases(Compare::cp_r8, 1, 2),
                 generateTestCase(Compare::cp_imm8, 2),
 
-                generateR8TestCases(Or::or_r8, 1),
+                generateR8TargetTestCases(Or::or_r8, 1, 2),
                 generateTestCase(Or::or_imm8, 2),
 
-                generateR8TestCases(Xor::xor_r8, 1),
+                generateR8TargetTestCases(Xor::xor_r8, 1, 2),
                 generateTestCase(Xor::xor_imm8, 2),
 
-                generateR8TestCases(Add::add_a_r8, 1),
+                generateR8TargetTestCases(Add::add_a_r8, 1, 2),
                 generateTestCase(Add::add_a_imm8, 2),
-                generateTestCases(Add::add_hl_r16, WORD_GENERAL_REGISTERS, 2),
+                generateTestCases(Add::add_hl_r16, WORD_R16_TARGETS, 2),
                 generateTestCase(Add::add_sp_e8, 4),
 
                 generateTestCase(RotateLeftCircular::rlca, 1),

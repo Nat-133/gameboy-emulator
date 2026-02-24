@@ -6,46 +6,43 @@ import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.ControlFlow;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
-import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
-import org.gameboy.cpu.instructions.targets.OperationTarget;
-import org.gameboy.cpu.instructions.targets.WordGeneralRegister;
+import org.gameboy.cpu.instructions.targets.Target;
 
 import java.util.Hashtable;
 
 import static org.gameboy.utils.BitUtilities.*;
 
 public class Add implements Instruction {
-    private final GenericOperationTarget left;
-    private final GenericOperationTarget right;
+    private final Target left;
+    private final Target right;
 
-    private Add(GenericOperationTarget left, GenericOperationTarget right) {
+    private Add(Target left, Target right) {
         this.left = left;
         this.right = right;
     }
 
-    public static Add add_a_r8(ByteRegister right) {
-        return new Add(OperationTarget.A.direct(), right.convert());
+    public static Add add_a_r8(Target.R8 right) {
+        return new Add(Target.a, right);
     }
 
     public static Add add_a_imm8() {
-        return new Add(OperationTarget.A.direct(), OperationTarget.IMM_8.direct());
+        return new Add(Target.a, Target.imm_8);
     }
 
-    public static Add add_hl_r16(WordGeneralRegister right) {
-        return new Add(OperationTarget.HL.direct(), right.convert());
+    public static Add add_hl_r16(Target.R16 right) {
+        return new Add(Target.hl, right);
     }
 
     public static Add add_sp_e8() {
-        return new Add(OperationTarget.SP.direct(), OperationTarget.IMM_8.direct());
+        return new Add(Target.sp, Target.imm_8);
     }
 
     @Override
     public void execute(CpuStructure cpuStructure) {
-        if (!this.left.isByteTarget() && !this.right.isByteTarget()) {
+        if (!(this.left instanceof Target.ByteTarget) && !(this.right instanceof Target.ByteTarget)) {
             // 16-bit addition
             executeSixteenBitAddition(cpuStructure);
-        } else if (!this.left.isByteTarget()) { // && this.right.isByteTarget()
+        } else if (!(this.left instanceof Target.ByteTarget)) { // && this.right instanceof Target.ByteTarget
             // 16-bit + 8-bit signed
             executeSignedAddition(cpuStructure);
         } else {
@@ -84,9 +81,9 @@ public class Add implements Instruction {
         byte b_lsb = lower_byte(b);
         ArithmeticResult lowerRes = cpuStructure.alu().add(a_lsb, b_lsb);
         short result = set_lower_byte(a, lowerRes.result());
-        
+
         boolean carryFromLower = lowerRes.flagChanges().getOrDefault(Flag.C, false);
-        
+
         operationTargetAccessor.setValue(this.left, result);
 
         cpuStructure.clock().tick();

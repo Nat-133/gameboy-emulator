@@ -3,23 +3,21 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
-import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
-import org.gameboy.cpu.instructions.targets.WordGeneralRegister;
+import org.gameboy.cpu.instructions.targets.Target;
 
 public class Dec implements Instruction{
-    private final GenericOperationTarget target;
+    private final Target target;
 
-    private Dec(GenericOperationTarget target) {
+    private Dec(Target target) {
         this.target = target;
     }
 
-    public static Instruction dec_r8(ByteRegister target) {
-        return new Dec(target.convert());
+    public static Instruction dec_r8(Target.R8 target) {
+        return new Dec(target);
     }
 
-    public static Instruction dec_r16(WordGeneralRegister target) {
-        return new Dec(target.convert());
+    public static Instruction dec_r16(Target.R16 target) {
+        return new Dec(target);
     }
 
     @Override
@@ -34,7 +32,7 @@ public class Dec implements Instruction{
 
         short newValue;
 
-        if (target.isByteTarget()) {
+        if (target instanceof Target.ByteTarget) {
             ArithmeticResult result = cpuStructure.alu().dec((byte) value);
 
             newValue = result.result();

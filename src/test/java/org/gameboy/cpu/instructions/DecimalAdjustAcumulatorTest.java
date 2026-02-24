@@ -4,7 +4,7 @@ import org.gameboy.CpuStructureBuilder;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import org.gameboy.cpu.instructions.targets.Target;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,7 +40,7 @@ class DecimalAdjustAcumulatorTest {
                 .withB(b)
                 .build();
 
-        Add.add_a_r8(ByteRegister.B).execute(cpuStructure);
+        Add.add_a_r8(Target.b).execute(cpuStructure);
         DecimalAdjustAcumulator.daa().execute(cpuStructure);
 
         int expected_bcd = decimalAdd(a, b);
@@ -62,7 +62,7 @@ class DecimalAdjustAcumulatorTest {
                 .withB(b)
                 .build();
 
-        Sub.sub_r8(ByteRegister.B).execute(cpuStructure);
+        Sub.sub_r8(Target.b).execute(cpuStructure);
         boolean carry_from_sub = cpuStructure.registers().getFlag(Flag.C);
         DecimalAdjustAcumulator.daa().execute(cpuStructure);
 

@@ -2,6 +2,7 @@ package org.gameboy.cpu.components;
 
 import org.gameboy.cpu.instructions.*;
 import org.gameboy.cpu.instructions.targets.*;
+import org.gameboy.cpu.instructions.targets.Target;
 import org.gameboy.utils.MultiBitValue.OneBitValue;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
@@ -53,7 +54,7 @@ public class UnprefixedOpcodeTable implements OpcodeTable {
             };
             case b001 -> switch(q){
                 case b0 -> Load.ld_r16_imm16(WordGeneralRegister.lookup(p));
-                case b1 -> Add.add_hl_r16(WordGeneralRegister.lookup(p));
+                case b1 -> Add.add_hl_r16(Target.R16.lookup(p));
             };
             case b010 -> {
                 WordMemoryRegister register = WordMemoryRegister.lookup(p);
@@ -63,11 +64,11 @@ public class UnprefixedOpcodeTable implements OpcodeTable {
                 };
             }
             case b011 -> switch (q) {
-                case b0 -> Inc.inc_r16(WordGeneralRegister.lookup(p));
-                case b1 -> Dec.dec_r16(WordGeneralRegister.lookup(p));
+                case b0 -> Inc.inc_r16(Target.R16.lookup(p));
+                case b1 -> Dec.dec_r16(Target.R16.lookup(p));
             };
-            case b100 -> Inc.inc_r8(ByteRegister.lookup(y));
-            case b101 -> Dec.dec_r8(ByteRegister.lookup(y));
+            case b100 -> Inc.inc_r8(Target.R8.lookup(y));
+            case b101 -> Dec.dec_r8(Target.R8.lookup(y));
             case b110 -> Load.ld_r8_imm8(ByteRegister.lookup(y));
             case b111 -> switch(y) {
                 case b000 -> RotateLeftCircular.rlca();
@@ -91,7 +92,7 @@ public class UnprefixedOpcodeTable implements OpcodeTable {
     }
 
     private Instruction decodeBlock2(ThreeBitValue y, ThreeBitValue z) {
-        ByteRegister r8 = ByteRegister.lookup(z);
+        Target.R8 r8 = Target.R8.lookup(z);
         return switch(y) {
             case b000 -> Add.add_a_r8(r8);
             case b001 -> AddWithCarry.adc_a_r8(r8);

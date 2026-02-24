@@ -5,8 +5,7 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
-import org.gameboy.cpu.instructions.targets.WordGeneralRegister;
+import org.gameboy.cpu.instructions.targets.Target;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,31 +16,30 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.gameboy.GameboyAssertions.assertFlagsMatch;
-import static org.gameboy.cpu.instructions.targets.WordGeneralRegister.*;
 import static org.gameboy.utils.BitUtilities.lower_nibble;
 import static org.gameboy.utils.BitUtilities.uint;
 
 class AddTest {
     static Stream<Arguments> getR8ValuePairs() {
         return Stream.of(
-                Arguments.of(0x12, ByteRegister.A, 0x12),
-                Arguments.of(0xff, ByteRegister.B, 0x01),
-                Arguments.of(0x0f, ByteRegister.C, 0x07),
-                Arguments.of(0xf0, ByteRegister.D, 0x0f),
-                Arguments.of(0xfa, ByteRegister.E, 0x09),
-                Arguments.of(0x00, ByteRegister.H, 0x00),
-                Arguments.of(0x00, ByteRegister.L, 0x01)
+                Arguments.of(0x12, Target.a, 0x12),
+                Arguments.of(0xff, Target.b, 0x01),
+                Arguments.of(0x0f, Target.c, 0x07),
+                Arguments.of(0xf0, Target.d, 0x0f),
+                Arguments.of(0xfa, Target.e, 0x09),
+                Arguments.of(0x00, Target.h, 0x00),
+                Arguments.of(0x00, Target.l, 0x01)
         );
     }
 
     @ParameterizedTest
     @MethodSource("getR8ValuePairs")
-    void givenByteRegisterAndValues_whenAdd_thenResultIsCorrect(int a, ByteRegister r8, int b){
+    void givenByteRegisterAndValues_whenAdd_thenResultIsCorrect(int a, Target.R8 r8, int b){
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withA(a)
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        accessor.setValue(r8.convert(), (short) b);
+        accessor.setValue(r8, (short) b);
 
         Add.add_a_r8(r8).execute(cpuStructure);
 
@@ -50,12 +48,12 @@ class AddTest {
 
     @ParameterizedTest
     @MethodSource("getR8ValuePairs")
-    void givenByteRegisterAndValues_whenAdd_thenFlagsAreCorrect(int a, ByteRegister r8, int b){
+    void givenByteRegisterAndValues_whenAdd_thenFlagsAreCorrect(int a, Target.R8 r8, int b){
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withA(a)
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        accessor.setValue(r8.convert(), (short) b);
+        accessor.setValue(r8, (short) b);
 
         Add.add_a_r8(r8).execute(cpuStructure);
 
@@ -78,7 +76,7 @@ class AddTest {
                 .withA(a)
                 .build();
 
-        Add.add_a_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
+        Add.add_a_r8(Target.indirect_hl).execute(cpuStructure);
 
         assertThat(cpuStructure.registers().A()).isEqualTo((byte) (a+b));
     }
@@ -93,7 +91,7 @@ class AddTest {
                 .withA(a)
                 .build();
 
-        Add.add_a_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
+        Add.add_a_r8(Target.indirect_hl).execute(cpuStructure);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, true)
@@ -103,22 +101,22 @@ class AddTest {
 
     static Stream<Arguments> getR16ValuePairs() {
         return Stream.of(
-                Arguments.of(0xffff, BC, 0x0001, false),
-                Arguments.of(0xff0f, DE, 0x0101, true),
-                Arguments.of(0x00ac, SP, 0x0062, false),
-                Arguments.of(0x0000, SP, 0x0000, true),
-                Arguments.of(0x0200, HL, 0x0200, false)
+                Arguments.of(0xffff, Target.bc, 0x0001, false),
+                Arguments.of(0xff0f, Target.de, 0x0101, true),
+                Arguments.of(0x00ac, Target.sp, 0x0062, false),
+                Arguments.of(0x0000, Target.sp, 0x0000, true),
+                Arguments.of(0x0200, Target.hl, 0x0200, false)
         );
     }
 
     @ParameterizedTest
     @MethodSource("getR16ValuePairs")
-    void givenTwoShortsAnd16BitRegister_whenAdd_thenResultIsCorrect(int a, WordGeneralRegister rr, int b) {
+    void givenTwoShortsAnd16BitRegister_whenAdd_thenResultIsCorrect(int a, Target.R16 rr, int b) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withHL(a)
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        accessor.setValue(rr.convert(), (short) b);
+        accessor.setValue(rr, (short) b);
 
         Add.add_hl_r16(rr).execute(cpuStructure);
 
@@ -128,7 +126,7 @@ class AddTest {
 
     @ParameterizedTest
     @MethodSource("getR16ValuePairs")
-    void givenTwoShortsAnd16BitRegister_whenAdd_thenFlagsAreCorrect(int a, WordGeneralRegister rr, int b, boolean zFlag) {
+    void givenTwoShortsAnd16BitRegister_whenAdd_thenFlagsAreCorrect(int a, Target.R16 rr, int b, boolean zFlag) {
         int upper_a = a >> 8;
         int upper_b = b >> 8;
         int lower_a = uint((byte) a);
@@ -138,7 +136,7 @@ class AddTest {
                 .withF(zFlag ? Flag.Z.getLocationMask() : 0)
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        accessor.setValue(rr.convert(), (short) b);
+        accessor.setValue(rr, (short) b);
 
         Add.add_hl_r16(rr).execute(cpuStructure);
 
