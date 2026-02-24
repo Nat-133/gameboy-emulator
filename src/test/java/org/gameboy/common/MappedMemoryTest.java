@@ -1,5 +1,6 @@
 package org.gameboy.common;
 
+import org.gameboy.cartridge.RomOnlyCartridge;
 import org.gameboy.components.TacRegister;
 import org.gameboy.components.joypad.JoypadController;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +56,8 @@ public class MappedMemoryTest {
         obp1Register = new IntBackedRegister();
         serialController = Mockito.mock(SerialController.class);
         joypadController = Mockito.mock(JoypadController.class);
-        memory = new MappedMemory(divRegister, timaRegister, tmaRegister, tacRegister, dmaRegister,
+        Cartridge cartridge = new RomOnlyCartridge(new byte[0]);
+        memory = new MappedMemory(cartridge, divRegister, timaRegister, tmaRegister, tacRegister, dmaRegister,
                                  interruptFlagsRegister, interruptEnableRegister,
                                  lcdcRegister, statRegister, scyRegister, scxRegister,
                                  lyRegister, lycRegister, wyRegister, wxRegister,
@@ -129,12 +131,12 @@ public class MappedMemoryTest {
     
     @Test
     public void testUnmappedAddressesUseDefaultMemory() {
-        short unmappedAddress = (short) 0x1000;
-        
-        assertEquals((byte) 0x00, memory.read(unmappedAddress));
-        
-        memory.write(unmappedAddress, (byte) 0x99);
-        assertEquals((byte) 0x99, memory.read(unmappedAddress));
+        short wramAddress = (short) 0xC000;
+
+        assertEquals((byte) 0x00, memory.read(wramAddress));
+
+        memory.write(wramAddress, (byte) 0x99);
+        assertEquals((byte) 0x99, memory.read(wramAddress));
     }
     
     @Test
