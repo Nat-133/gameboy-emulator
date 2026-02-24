@@ -13,7 +13,7 @@ public class Compare implements Instruction{
     }
 
     public static Compare cp_r8(Target.R8 register) {
-        return new Compare(register);
+        return new Compare((Target) register);
     }
 
     public static Compare cp_imm8() {

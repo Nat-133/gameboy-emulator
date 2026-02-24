@@ -26,6 +26,11 @@ public class OperationTargetAccessor {
         return new OperationTargetAccessor(cpuStructure);
     }
 
+    public short getValue(Target.R8 target) { return getValue((Target) target); }
+    public short getValue(Target.Stk16 target) { return getValue((Target) target); }
+    public short getValue(Target.Mem16 target) { return getValue((Target) target); }
+    public short getValue(Target.R16 target) { return getValue((Target) target); }
+
     public short getValue(Target target) {
         return switch (target) {
             // Byte registers
@@ -72,6 +77,11 @@ public class OperationTargetAccessor {
                     cpuStructure);
         };
     }
+
+    public void setValue(Target.R8 target, short value) { setValue((Target) target, value); }
+    public void setValue(Target.Stk16 target, short value) { setValue((Target) target, value); }
+    public void setValue(Target.Mem16 target, short value) { setValue((Target) target, value); }
+    public void setValue(Target.R16 target, short value) { setValue((Target) target, value); }
 
     public void setValue(Target target, short value) {
         byte byteValue = (byte) value;

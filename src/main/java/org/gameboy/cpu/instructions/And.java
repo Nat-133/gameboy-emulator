@@ -13,7 +13,7 @@ public class And implements Instruction{
     }
 
     public static And and_r8(Target.R8 r8) {
-        return new And(r8);
+        return new And((Target) r8);
     }
 
     public static And and_imm8() {

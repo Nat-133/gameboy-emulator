@@ -13,11 +13,11 @@ public class Dec implements Instruction{
     }
 
     public static Instruction dec_r8(Target.R8 target) {
-        return new Dec(target);
+        return new Dec((Target) target);
     }
 
     public static Instruction dec_r16(Target.R16 target) {
-        return new Dec(target);
+        return new Dec((Target) target);
     }
 
     @Override

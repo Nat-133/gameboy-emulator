@@ -13,7 +13,7 @@ public class Or implements Instruction{
     }
 
     public static Or or_r8(Target.R8 register) {
-        return new Or(register);
+        return new Or((Target) register);
     }
 
     public static Or or_imm8() {

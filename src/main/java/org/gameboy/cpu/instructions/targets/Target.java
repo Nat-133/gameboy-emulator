@@ -3,30 +3,45 @@ package org.gameboy.cpu.instructions.targets;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
-public sealed interface Target {
+public sealed interface Target
+        permits Target.A, Target.B, Target.C, Target.D, Target.E, Target.H, Target.L,
+                Target.BC, Target.DE, Target.HL, Target.SP, Target.AF, Target.PC,
+                Target.IndirectHL, Target.IndirectBC, Target.IndirectDE,
+                Target.IndirectHLInc, Target.IndirectHLDec,
+                Target.IndirectC, Target.IndirectImm8, Target.IndirectImm16,
+                Target.Imm8, Target.Imm16, Target.SPOffset {
     String representation();
 
-    // ── Facet interfaces ──────────────────────────────────────────────
+    // ── Grouping interfaces ───────────────────────────────────────────
 
-    sealed interface ByteTarget extends Target
-            permits IndirectC, IndirectImm8, IndirectImm16, Imm8,
-                    R8, Mem16 {}
+    sealed interface ByteTarget
+            permits A, B, C, D, E, H, L,
+                    IndirectHL, IndirectBC, IndirectDE, IndirectHLInc, IndirectHLDec,
+                    IndirectC, IndirectImm8, IndirectImm16, Imm8 {
+        String representation();
+    }
 
-    sealed interface WordTarget extends Target
-            permits PC, Imm16, SPOffset,
-                    R16, Stk16 {}
+    sealed interface WordTarget
+            permits BC, DE, HL, SP, AF, PC, Imm16, SPOffset {
+        String representation();
+    }
 
-    sealed interface RegisterTarget extends Target
-            permits A, B, C, D, E, H, L, PC, R16, Stk16 {}
+    sealed interface RegisterTarget
+            permits A, B, C, D, E, H, L, BC, DE, HL, SP, AF, PC {
+        String representation();
+    }
 
-    sealed interface IndirectTarget extends Target
-            permits IndirectHL, IndirectC, IndirectImm8, IndirectImm16,
-                    Mem16 {}
+    sealed interface IndirectTarget
+            permits IndirectHL, IndirectBC, IndirectDE, IndirectHLInc, IndirectHLDec,
+                    IndirectC, IndirectImm8, IndirectImm16 {
+        String representation();
+    }
 
     // ── Opcode grouping interfaces ────────────────────────────────────
 
-    sealed interface R8 extends ByteTarget
+    sealed interface R8
             permits A, B, C, D, E, H, L, IndirectHL {
+        String representation();
         R8[] LOOKUP_TABLE = {
                 B.INSTANCE, C.INSTANCE, D.INSTANCE, E.INSTANCE,
                 H.INSTANCE, L.INSTANCE, IndirectHL.INSTANCE, A.INSTANCE
@@ -37,8 +52,9 @@ public sealed interface Target {
         }
     }
 
-    sealed interface R16 extends WordTarget, RegisterTarget
+    sealed interface R16
             permits BC, DE, HL, SP {
+        String representation();
         R16[] LOOKUP_TABLE = {
                 BC.INSTANCE, DE.INSTANCE, HL.INSTANCE, SP.INSTANCE
         };
@@ -48,8 +64,9 @@ public sealed interface Target {
         }
     }
 
-    sealed interface Stk16 extends WordTarget, RegisterTarget
+    sealed interface Stk16
             permits BC, DE, HL, AF {
+        String representation();
         Stk16[] LOOKUP_TABLE = {
                 BC.INSTANCE, DE.INSTANCE, HL.INSTANCE, AF.INSTANCE
         };
@@ -59,8 +76,9 @@ public sealed interface Target {
         }
     }
 
-    sealed interface Mem16 extends ByteTarget, IndirectTarget
+    sealed interface Mem16
             permits IndirectBC, IndirectDE, IndirectHLInc, IndirectHLDec {
+        String representation();
         Mem16[] LOOKUP_TABLE = {
                 IndirectBC.INSTANCE, IndirectDE.INSTANCE,
                 IndirectHLInc.INSTANCE, IndirectHLDec.INSTANCE
@@ -73,145 +91,145 @@ public sealed interface Target {
 
     // ── Concrete singleton enums ──────────────────────────────────────
 
-    enum A implements R8, RegisterTarget {
+    enum A implements Target, R8, ByteTarget, RegisterTarget {
         INSTANCE;
         @Override public String representation() { return "A"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum B implements R8, RegisterTarget {
+    enum B implements Target, R8, ByteTarget, RegisterTarget {
         INSTANCE;
         @Override public String representation() { return "B"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum C implements R8, RegisterTarget {
+    enum C implements Target, R8, ByteTarget, RegisterTarget {
         INSTANCE;
         @Override public String representation() { return "C"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum D implements R8, RegisterTarget {
+    enum D implements Target, R8, ByteTarget, RegisterTarget {
         INSTANCE;
         @Override public String representation() { return "D"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum E implements R8, RegisterTarget {
+    enum E implements Target, R8, ByteTarget, RegisterTarget {
         INSTANCE;
         @Override public String representation() { return "E"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum H implements R8, RegisterTarget {
+    enum H implements Target, R8, ByteTarget, RegisterTarget {
         INSTANCE;
         @Override public String representation() { return "H"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum L implements R8, RegisterTarget {
+    enum L implements Target, R8, ByteTarget, RegisterTarget {
         INSTANCE;
         @Override public String representation() { return "L"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum BC implements R16, Stk16 {
+    enum BC implements Target, R16, Stk16, WordTarget, RegisterTarget {
         INSTANCE;
         @Override public String representation() { return "BC"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum DE implements R16, Stk16 {
+    enum DE implements Target, R16, Stk16, WordTarget, RegisterTarget {
         INSTANCE;
         @Override public String representation() { return "DE"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum HL implements R16, Stk16 {
+    enum HL implements Target, R16, Stk16, WordTarget, RegisterTarget {
         INSTANCE;
         @Override public String representation() { return "HL"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum SP implements R16 {
+    enum SP implements Target, R16, WordTarget, RegisterTarget {
         INSTANCE;
         @Override public String representation() { return "SP"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum AF implements Stk16 {
+    enum AF implements Target, Stk16, WordTarget, RegisterTarget {
         INSTANCE;
         @Override public String representation() { return "AF"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum PC implements WordTarget, RegisterTarget {
+    enum PC implements Target, WordTarget, RegisterTarget {
         INSTANCE;
         @Override public String representation() { return "PC"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum IndirectHL implements R8, IndirectTarget {
+    enum IndirectHL implements Target, R8, ByteTarget, IndirectTarget {
         INSTANCE;
         @Override public String representation() { return "(HL)"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum IndirectBC implements Mem16 {
+    enum IndirectBC implements Target, Mem16, ByteTarget, IndirectTarget {
         INSTANCE;
         @Override public String representation() { return "(BC)"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum IndirectDE implements Mem16 {
+    enum IndirectDE implements Target, Mem16, ByteTarget, IndirectTarget {
         INSTANCE;
         @Override public String representation() { return "(DE)"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum IndirectHLInc implements Mem16 {
+    enum IndirectHLInc implements Target, Mem16, ByteTarget, IndirectTarget {
         INSTANCE;
         @Override public String representation() { return "(HL+)"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum IndirectHLDec implements Mem16 {
+    enum IndirectHLDec implements Target, Mem16, ByteTarget, IndirectTarget {
         INSTANCE;
         @Override public String representation() { return "(HL-)"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum IndirectC implements ByteTarget, IndirectTarget {
+    enum IndirectC implements Target, ByteTarget, IndirectTarget {
         INSTANCE;
         @Override public String representation() { return "(C)"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum IndirectImm8 implements ByteTarget, IndirectTarget {
+    enum IndirectImm8 implements Target, ByteTarget, IndirectTarget {
         INSTANCE;
         @Override public String representation() { return "(imm8)"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum IndirectImm16 implements ByteTarget, IndirectTarget {
+    enum IndirectImm16 implements Target, ByteTarget, IndirectTarget {
         INSTANCE;
         @Override public String representation() { return "(imm16)"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum Imm8 implements ByteTarget {
+    enum Imm8 implements Target, ByteTarget {
         INSTANCE;
         @Override public String representation() { return "imm8"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum Imm16 implements WordTarget {
+    enum Imm16 implements Target, WordTarget {
         INSTANCE;
         @Override public String representation() { return "imm16"; }
         @Override public String toString() { return representation(); }
     }
 
-    enum SPOffset implements WordTarget {
+    enum SPOffset implements Target, WordTarget {
         INSTANCE;
         @Override public String representation() { return "SP+e8"; }
         @Override public String toString() { return representation(); }

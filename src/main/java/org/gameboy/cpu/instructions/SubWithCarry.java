@@ -14,7 +14,7 @@ public class SubWithCarry implements Instruction{
     }
 
     public static SubWithCarry sbc_a_r8(Target.R8 r8) {
-        return new SubWithCarry(r8);
+        return new SubWithCarry((Target) r8);
     }
 
     public static SubWithCarry sbc_a_imm8() {

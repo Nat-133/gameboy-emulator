@@ -22,7 +22,7 @@ public class Add implements Instruction {
     }
 
     public static Add add_a_r8(Target.R8 right) {
-        return new Add(Target.a, right);
+        return new Add(Target.a, (Target) right);
     }
 
     public static Add add_a_imm8() {
@@ -30,7 +30,7 @@ public class Add implements Instruction {
     }
 
     public static Add add_hl_r16(Target.R16 right) {
-        return new Add(Target.hl, right);
+        return new Add(Target.hl, (Target) right);
     }
 
     public static Add add_sp_e8() {

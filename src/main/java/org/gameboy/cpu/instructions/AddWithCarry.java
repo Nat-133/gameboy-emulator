@@ -14,7 +14,7 @@ public class AddWithCarry implements Instruction{
     }
 
     public static AddWithCarry adc_a_r8(Target.R8 r8) {
-        return new AddWithCarry(r8);
+        return new AddWithCarry((Target) r8);
     }
 
     public static AddWithCarry adc_a_imm8() {
