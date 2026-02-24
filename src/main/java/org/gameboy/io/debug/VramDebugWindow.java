@@ -3,90 +3,99 @@ package org.gameboy.io.debug;
 import org.gameboy.common.Memory;
 import org.gameboy.display.LcdcParser;
 import org.gameboy.display.PpuRegisters;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL;
 
-import javax.swing.*;
-import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 import static org.gameboy.display.Display.DISPLAY_HEIGHT;
 import static org.gameboy.display.Display.DISPLAY_WIDTH;
 import static org.gameboy.display.PpuRegisters.PpuRegister.*;
 import static org.gameboy.utils.BitUtilities.uint;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL41.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
-/**
- * Debug window for visualizing VRAM contents including:
- * - Background tile map with viewport overlay
- * - Window tile map with viewport overlay
- */
-public class VramDebugWindow extends JFrame {
+public class VramDebugWindow {
+    private static final int TILE_MAP_DISPLAY_SIZE = 512;  // 256 * 2
+    private static final int GAP = 10;
+    private static final int TILE_DATA_DISPLAY_WIDTH = 512;   // 256 * 2
+    private static final int TILE_DATA_DISPLAY_HEIGHT = 192;  // 96 * 2
+
+    private static final int WINDOW_WIDTH = TILE_MAP_DISPLAY_SIZE * 2 + GAP;
+    private static final int WINDOW_HEIGHT = TILE_MAP_DISPLAY_SIZE + GAP + TILE_DATA_DISPLAY_HEIGHT;
+
     private final TileRenderer tileRenderer;
     private final PpuRegisters registers;
-    private final Memory memory;
 
     private final TileMapView backgroundView;
     private final TileMapView windowView;
     private final TileDataView tileDataView;
-    private final JLabel registerInfoLabel;
-    private final JLabel tileDataLabel;
+
+    private long window;
+    private long mainWindow;
+    private int shaderProgram;
+    private int vao;
+    private int vbo;
+    private boolean visible;
 
     public VramDebugWindow(Memory memory, PpuRegisters registers) {
-        super("VRAM Debug Viewer");
-
-        this.memory = memory;
         this.registers = registers;
         this.tileRenderer = new TileRenderer(memory);
+        this.backgroundView = new TileMapView();
+        this.windowView = new TileMapView();
+        this.tileDataView = new TileDataView();
+    }
 
-        backgroundView = new TileMapView();
-        windowView = new TileMapView();
-        tileDataView = new TileDataView();
+    public void init(long mainWindow) {
+        this.mainWindow = mainWindow;
 
-        registerInfoLabel = new JLabel();
-        registerInfoLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
 
-        tileDataLabel = new JLabel("Tile Data (0x8000-0x97FF)");
-        tileDataLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-        tileDataLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT,
+                "VRAM Debug Viewer", NULL, mainWindow);
+        if (window == NULL) {
+            System.err.println("Failed to create debug window");
+            return;
+        }
 
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        // Position debug window next to main window
+        int[] mainX = new int[1], mainY = new int[1];
+        int[] mainW = new int[1];
+        glfwGetWindowPos(mainWindow, mainX, mainY);
+        glfwGetWindowSize(mainWindow, mainW, new int[1]);
+        glfwSetWindowPos(window, mainX[0] + mainW[0] + 10, mainY[0]);
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(new JLabel("Background Tile Map"), gbc);
+        // Initialize GL resources in debug window context
+        glfwMakeContextCurrent(window);
+        GL.createCapabilities();
 
-        gbc.gridy = 1;
-        add(backgroundView, gbc);
+        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        add(new JLabel("Window Tile Map"), gbc);
+        shaderProgram = createShaderProgram();
+        createQuad();
 
-        gbc.gridy = 1;
-        add(windowView, gbc);
+        backgroundView.init();
+        windowView.init();
+        tileDataView.init();
 
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(registerInfoLabel, gbc);
+        visible = true;
 
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(tileDataLabel, gbc);
-
-        gbc.gridy = 4;
-        gbc.fill = GridBagConstraints.BOTH;
-        add(tileDataView, gbc);
-
-        pack();
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setResizable(false);
+        // Restore main window context
+        glfwMakeContextCurrent(mainWindow);
     }
 
     public void refresh() {
+        if (window == NULL || !visible) return;
+
         byte lcdc = registers.read(LCDC);
         boolean useSigned = !LcdcParser.useUnsignedTileDataSelect(lcdc);
 
@@ -125,20 +134,126 @@ public class VramDebugWindow extends JFrame {
         var allTiles = tileRenderer.renderAllTiles();
         tileDataView.updateTileData(allTiles);
 
-        updateRegisterInfo(scx, scy, wx, wy);
+        render();
     }
 
-    private void updateRegisterInfo(int scx, int scy, int wx, int wy) {
-        String info = String.format(
-            "<html>Background Scroll: SCX=$%02X (%d), SCY=$%02X (%d) | " +
-            "Window Position: WX=$%02X (%d), WY=$%02X (%d)</html>",
-            scx, scx, scy, scy, wx, wx, wy, wy
-        );
-        registerInfoLabel.setText(info);
+    private void render() {
+        glfwMakeContextCurrent(window);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Background tile map (top-left)
+        glViewport(0, GAP + TILE_DATA_DISPLAY_HEIGHT,
+                TILE_MAP_DISPLAY_SIZE, TILE_MAP_DISPLAY_SIZE);
+        backgroundView.render(shaderProgram, vao);
+
+        // Window tile map (top-right)
+        glViewport(TILE_MAP_DISPLAY_SIZE + GAP, GAP + TILE_DATA_DISPLAY_HEIGHT,
+                TILE_MAP_DISPLAY_SIZE, TILE_MAP_DISPLAY_SIZE);
+        windowView.render(shaderProgram, vao);
+
+        // Tile data (bottom, centered)
+        glViewport(0, 0, TILE_DATA_DISPLAY_WIDTH, TILE_DATA_DISPLAY_HEIGHT);
+        tileDataView.render(shaderProgram, vao);
+
+        glfwSwapBuffers(window);
+
+        // Restore main window context
+        glfwMakeContextCurrent(mainWindow);
     }
 
-    public void showWindow() {
-        setVisible(true);
-        refresh();
+    public void cleanup() {
+        if (window == NULL) return;
+
+        glfwMakeContextCurrent(window);
+
+        backgroundView.cleanup();
+        windowView.cleanup();
+        tileDataView.cleanup();
+        glDeleteProgram(shaderProgram);
+        glDeleteBuffers(vbo);
+        glDeleteVertexArrays(vao);
+
+        glfwMakeContextCurrent(mainWindow);
+        glfwDestroyWindow(window);
+    }
+
+    private int createShaderProgram() {
+        String vertexSource = loadShaderResource("shaders/vertex.glsl");
+        String fragmentSource = loadShaderResource("shaders/fragment.glsl");
+
+        int vertexShader = compileShader(GL_VERTEX_SHADER, vertexSource);
+        int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
+
+        int program = glCreateProgram();
+        glAttachShader(program, vertexShader);
+        glAttachShader(program, fragmentShader);
+        glLinkProgram(program);
+
+        if (glGetProgrami(program, GL_LINK_STATUS) == GL_FALSE) {
+            String log = glGetProgramInfoLog(program);
+            glDeleteProgram(program);
+            throw new RuntimeException("Debug shader program linking failed: " + log);
+        }
+
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
+
+        return program;
+    }
+
+    private int compileShader(int type, String source) {
+        int shader = glCreateShader(type);
+        glShaderSource(shader, source);
+        glCompileShader(shader);
+
+        if (glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE) {
+            String log = glGetShaderInfoLog(shader);
+            glDeleteShader(shader);
+            throw new RuntimeException("Debug shader compilation failed: " + log);
+        }
+
+        return shader;
+    }
+
+    private String loadShaderResource(String path) {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
+            if (is == null) {
+                throw new RuntimeException("Shader resource not found: " + path);
+            }
+            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load shader: " + path, e);
+        }
+    }
+
+    private void createQuad() {
+        float[] vertices = {
+            -1.0f,  1.0f,  0.0f, 0.0f,
+            -1.0f, -1.0f,  0.0f, 1.0f,
+             1.0f,  1.0f,  1.0f, 0.0f,
+             1.0f, -1.0f,  1.0f, 1.0f,
+        };
+
+        vao = glGenVertexArrays();
+        vbo = glGenBuffers();
+
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+        ByteBuffer vertexBuffer = BufferUtils.createByteBuffer(vertices.length * Float.BYTES);
+        for (float v : vertices) {
+            vertexBuffer.putFloat(v);
+        }
+        vertexBuffer.flip();
+        glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * Float.BYTES, 0);
+        glEnableVertexAttribArray(0);
+
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * Float.BYTES, 2L * Float.BYTES);
+        glEnableVertexAttribArray(1);
+
+        glBindVertexArray(0);
     }
 }

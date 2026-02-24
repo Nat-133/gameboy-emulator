@@ -1,17 +1,29 @@
 package org.gameboy.io.debug;
 
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
+import org.lwjgl.BufferUtils;
 
-import javax.swing.*;
-import java.awt.*;
+import java.nio.ByteBuffer;
 
-public class TileMapView extends JPanel {
+import static org.lwjgl.opengl.GL41.*;
+
+public class TileMapView {
     private static final int MAP_SIZE = 256;
-    private static final int PIXEL_SCALE = 2;
+
+    private static final float[][] PALETTE = {
+        {224f / 255f, 248f / 255f, 208f / 255f},
+        {136f / 255f, 192f / 255f,  70f / 255f},
+        { 52f / 255f, 104f / 255f,  50f / 255f},
+        {  8f / 255f,  24f / 255f,  32f / 255f},
+    };
 
     private TwoBitValue[][] tileMapData;
-    private Rectangle viewport;
-    private Color viewportColor = new Color(255, 0, 0, 128);
+    private final ByteBuffer textureData;
+    private int textureId;
+    private boolean dirty;
+
+    private int viewportX, viewportY, viewportW, viewportH;
+    private boolean hasViewport;
 
     public TileMapView() {
         tileMapData = new TwoBitValue[MAP_SIZE][MAP_SIZE];
@@ -20,57 +32,102 @@ public class TileMapView extends JPanel {
                 tileMapData[y][x] = TwoBitValue.b00;
             }
         }
+        textureData = BufferUtils.createByteBuffer(MAP_SIZE * MAP_SIZE * 3);
+        dirty = true;
+    }
+
+    public void init() {
+        textureId = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, textureId);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, MAP_SIZE, MAP_SIZE, 0,
+                GL_RGB, GL_UNSIGNED_BYTE, (ByteBuffer) null);
     }
 
     public void updateTileMap(TwoBitValue[][] newData) {
         this.tileMapData = newData;
-        repaint();
+        this.dirty = true;
     }
 
     public void setViewport(int x, int y, int width, int height) {
-        this.viewport = new Rectangle(x, y, width, height);
-        repaint();
+        this.viewportX = x;
+        this.viewportY = y;
+        this.viewportW = width;
+        this.viewportH = height;
+        this.hasViewport = true;
+        this.dirty = true;
     }
 
     public void clearViewport() {
-        this.viewport = null;
-        repaint();
+        this.hasViewport = false;
+        this.dirty = true;
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
+    public void render(int shaderProgram, int vao) {
+        if (dirty) {
+            rebuildTexture();
+            dirty = false;
+        }
 
+        glUseProgram(shaderProgram);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureId);
+        glUniform1i(glGetUniformLocation(shaderProgram, "screenTexture"), 0);
+
+        glBindVertexArray(vao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glBindVertexArray(0);
+
+        glUseProgram(0);
+    }
+
+    public void cleanup() {
+        glDeleteTextures(textureId);
+    }
+
+    private void rebuildTexture() {
+        textureData.clear();
         for (int y = 0; y < MAP_SIZE; y++) {
             for (int x = 0; x < MAP_SIZE; x++) {
-                g2d.setColor(getColorForPixel(tileMapData[y][x]));
-                g2d.fillRect(x * PIXEL_SCALE, y * PIXEL_SCALE, PIXEL_SCALE, PIXEL_SCALE);
+                float[] color = PALETTE[tileMapData[y][x].value()];
+                textureData.put((byte) (color[0] * 255));
+                textureData.put((byte) (color[1] * 255));
+                textureData.put((byte) (color[2] * 255));
             }
+        }
+
+        if (hasViewport) {
+            drawViewportOverlay();
+        }
+
+        textureData.flip();
+
+        glBindTexture(GL_TEXTURE_2D, textureId);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, MAP_SIZE, MAP_SIZE,
+                GL_RGB, GL_UNSIGNED_BYTE, textureData);
+    }
+
+    private void drawViewportOverlay() {
+        // Draw red rectangle border into the texture data
+        byte r = (byte) 255, g = 0, b = 0;
+
+        for (int i = 0; i < viewportW; i++) {
+            setPixelInBuffer((viewportX + i) % MAP_SIZE, viewportY, r, g, b);
+            setPixelInBuffer((viewportX + i) % MAP_SIZE, (viewportY + viewportH - 1) % MAP_SIZE, r, g, b);
+        }
+        for (int i = 0; i < viewportH; i++) {
+            setPixelInBuffer(viewportX, (viewportY + i) % MAP_SIZE, r, g, b);
+            setPixelInBuffer((viewportX + viewportW - 1) % MAP_SIZE, (viewportY + i) % MAP_SIZE, r, g, b);
         }
     }
 
-    private Color getColorForPixel(TwoBitValue value) {
-        return switch (value) {
-            case b00 -> new Color(224, 248, 208);
-            case b01 -> new Color(136, 192, 70);
-            case b10 -> new Color(52, 104, 50);
-            case b11 -> new Color(8, 24, 32);
-        };
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(MAP_SIZE * PIXEL_SCALE, MAP_SIZE * PIXEL_SCALE);
-    }
-
-    @Override
-    public Dimension getMinimumSize() {
-        return getPreferredSize();
-    }
-
-    @Override
-    public Dimension getMaximumSize() {
-        return getPreferredSize();
+    private void setPixelInBuffer(int x, int y, byte r, byte g, byte b) {
+        int offset = (y * MAP_SIZE + x) * 3;
+        textureData.put(offset, r);
+        textureData.put(offset + 1, g);
+        textureData.put(offset + 2, b);
     }
 }

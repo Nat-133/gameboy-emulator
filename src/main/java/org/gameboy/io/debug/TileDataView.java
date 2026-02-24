@@ -1,21 +1,30 @@
 package org.gameboy.io.debug;
 
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
+import org.lwjgl.BufferUtils;
 
-import javax.swing.*;
-import java.awt.*;
+import java.nio.ByteBuffer;
 
-public class TileDataView extends JPanel {
+import static org.lwjgl.opengl.GL41.*;
+
+public class TileDataView {
     private static final int TILE_SIZE = 8;
     private static final int TILES_PER_ROW = 32;
     private static final int TILE_ROWS = 12;
-    private static final int PIXEL_SCALE = 2;
-    private static final int TILE_SPACING = 1;
+    static final int TEX_WIDTH = TILES_PER_ROW * TILE_SIZE;   // 256
+    static final int TEX_HEIGHT = TILE_ROWS * TILE_SIZE;       // 96
 
-    private static final int PANEL_WIDTH = TILES_PER_ROW * (TILE_SIZE * PIXEL_SCALE + TILE_SPACING) + TILE_SPACING;
-    private static final int PANEL_HEIGHT = TILE_ROWS * (TILE_SIZE * PIXEL_SCALE + TILE_SPACING) + TILE_SPACING;
+    private static final float[][] PALETTE = {
+        {224f / 255f, 248f / 255f, 208f / 255f},
+        {136f / 255f, 192f / 255f,  70f / 255f},
+        { 52f / 255f, 104f / 255f,  50f / 255f},
+        {  8f / 255f,  24f / 255f,  32f / 255f},
+    };
 
     private TwoBitValue[][][] tileData;
+    private final ByteBuffer textureData;
+    private int textureId;
+    private boolean dirty;
 
     public TileDataView() {
         tileData = new TwoBitValue[TILES_PER_ROW * TILE_ROWS][TILE_SIZE][TILE_SIZE];
@@ -26,68 +35,73 @@ public class TileDataView extends JPanel {
                 }
             }
         }
+        textureData = BufferUtils.createByteBuffer(TEX_WIDTH * TEX_HEIGHT * 3);
+        dirty = true;
+    }
 
-        Dimension size = new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
-        setPreferredSize(size);
-        setMinimumSize(size);
-        setSize(size);
+    public void init() {
+        textureId = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, textureId);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TEX_WIDTH, TEX_HEIGHT, 0,
+                GL_RGB, GL_UNSIGNED_BYTE, (ByteBuffer) null);
     }
 
     public void updateTileData(TwoBitValue[][][] newTileData) {
         this.tileData = newTileData;
-        repaint();
+        this.dirty = true;
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
+    public void render(int shaderProgram, int vao) {
+        if (dirty) {
+            rebuildTexture();
+            dirty = false;
+        }
 
-        g2d.setColor(Color.DARK_GRAY);
-        g2d.fillRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+        glUseProgram(shaderProgram);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureId);
+        glUniform1i(glGetUniformLocation(shaderProgram, "screenTexture"), 0);
 
-        for (int tileIdx = 0; tileIdx < Math.min(tileData.length, TILES_PER_ROW * TILE_ROWS); tileIdx++) {
-            int tileX = tileIdx % TILES_PER_ROW;
-            int tileY = tileIdx / TILES_PER_ROW;
+        glBindVertexArray(vao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glBindVertexArray(0);
 
-            int baseX = tileX * (TILE_SIZE * PIXEL_SCALE + TILE_SPACING);
-            int baseY = tileY * (TILE_SIZE * PIXEL_SCALE + TILE_SPACING);
+        glUseProgram(0);
+    }
 
-            for (int row = 0; row < TILE_SIZE; row++) {
-                for (int col = 0; col < TILE_SIZE; col++) {
-                    g2d.setColor(getColorForPixel(tileData[tileIdx][row][col]));
-                    g2d.fillRect(
-                        baseX + col * PIXEL_SCALE,
-                        baseY + row * PIXEL_SCALE,
-                        PIXEL_SCALE,
-                        PIXEL_SCALE
-                    );
+    public void cleanup() {
+        glDeleteTextures(textureId);
+    }
+
+    private void rebuildTexture() {
+        textureData.clear();
+        for (int pixelY = 0; pixelY < TEX_HEIGHT; pixelY++) {
+            for (int pixelX = 0; pixelX < TEX_WIDTH; pixelX++) {
+                int tileX = pixelX / TILE_SIZE;
+                int tileY = pixelY / TILE_SIZE;
+                int tileIdx = tileY * TILES_PER_ROW + tileX;
+                int row = pixelY % TILE_SIZE;
+                int col = pixelX % TILE_SIZE;
+
+                float[] color;
+                if (tileIdx < tileData.length) {
+                    color = PALETTE[tileData[tileIdx][row][col].value()];
+                } else {
+                    color = PALETTE[0];
                 }
+                textureData.put((byte) (color[0] * 255));
+                textureData.put((byte) (color[1] * 255));
+                textureData.put((byte) (color[2] * 255));
             }
         }
-    }
+        textureData.flip();
 
-    private Color getColorForPixel(TwoBitValue value) {
-        return switch (value) {
-            case b00 -> new Color(224, 248, 208);
-            case b01 -> new Color(136, 192, 70);
-            case b10 -> new Color(52, 104, 50);
-            case b11 -> new Color(8, 24, 32);
-        };
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
-    }
-
-    @Override
-    public Dimension getMinimumSize() {
-        return new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
-    }
-
-    @Override
-    public Dimension getMaximumSize() {
-        return new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
+        glBindTexture(GL_TEXTURE_2D, textureId);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, TEX_WIDTH, TEX_HEIGHT,
+                GL_RGB, GL_UNSIGNED_BYTE, textureData);
     }
 }

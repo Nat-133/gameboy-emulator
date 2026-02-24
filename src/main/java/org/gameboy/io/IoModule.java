@@ -5,8 +5,6 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import org.gameboy.display.Display;
 
-import java.awt.*;
-
 public class IoModule extends AbstractModule {
     @Override
     protected void configure() {
@@ -16,12 +14,13 @@ public class IoModule extends AbstractModule {
     @Provides
     @Singleton
     WindowDisplay provideWindowDisplay() {
-        return new WindowDisplay(
-            new Color(224, 248, 208),
-            new Color(136, 192, 70),
-            new Color(52, 104, 50),
-            new Color(8, 24, 32)
-        );
+        float[][] palette = {
+            {224f / 255f, 248f / 255f, 208f / 255f},  // lightest
+            {136f / 255f, 192f / 255f,  70f / 255f},
+            { 52f / 255f, 104f / 255f,  50f / 255f},
+            {  8f / 255f,  24f / 255f,  32f / 255f},   // darkest
+        };
+        return new WindowDisplay(palette);
     }
 
     @Provides
