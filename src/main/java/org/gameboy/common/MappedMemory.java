@@ -7,7 +7,6 @@ import org.gameboy.common.annotations.*;
 import org.gameboy.components.TacRegister;
 import org.gameboy.components.joypad.JoypadController;
 
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -19,9 +18,11 @@ public class MappedMemory implements Memory {
     private final MemoryLocation[] memoryMap = new MemoryLocation[0x10000];
     private final byte[] defaultMemory = new byte[0x10000];
     private final ConcurrentMap<Short, MemoryListener> memoryListeners = new ConcurrentHashMap<>();
+    private final Cartridge cartridge;
 
     @Inject
-    public MappedMemory(@Div ByteRegister divRegister,
+    public MappedMemory(Cartridge cartridge,
+                       @Div ByteRegister divRegister,
                        @Tima ByteRegister timaRegister,
                        @Tma ByteRegister tmaRegister,
                        @Tac TacRegister tacRegister,
@@ -41,6 +42,7 @@ public class MappedMemory implements Memory {
                        @Named("obp1") ByteRegister obp1Register,
                        SerialController serialController,
                        JoypadController joypadController) {
+        this.cartridge = cartridge;
 
         memoryMap[0xFF00] = new JoypadMapping(joypadController);
         memoryMap[0xFF01] = new SerialDataMapping(serialController);
@@ -72,7 +74,13 @@ public class MappedMemory implements Memory {
     public byte read(short address) {
         int addr = uint(address);
         MemoryLocation mappedValue = memoryMap[addr];
-        return (mappedValue != null) ? mappedValue.read() : defaultMemory[addr];
+        if (mappedValue != null) {
+            return mappedValue.read();
+        }
+        if (isCartridgeAddress(addr)) {
+            return cartridge.read(address);
+        }
+        return defaultMemory[addr];
     }
 
     @Override
@@ -81,6 +89,8 @@ public class MappedMemory implements Memory {
         MemoryLocation mappedValue = memoryMap[addr];
         if (mappedValue != null) {
             mappedValue.write(value);
+        } else if (isCartridgeAddress(addr)) {
+            cartridge.write(address, value);
         } else {
             defaultMemory[addr] = value;
         }
@@ -94,10 +104,8 @@ public class MappedMemory implements Memory {
         memoryListeners.put(address, listener);
     }
     
-    public void loadMemoryDumps(List<MemoryDump> memoryDumps) {
-        for (MemoryDump dump : memoryDumps) {
-            System.arraycopy(dump.memory(), 0, defaultMemory, uint(dump.startAddress()), dump.length());
-        }
+    private static boolean isCartridgeAddress(int addr) {
+        return (addr <= 0x7FFF) || (addr >= 0xA000 && addr <= 0xBFFF);
     }
 
     private interface MemoryLocation {

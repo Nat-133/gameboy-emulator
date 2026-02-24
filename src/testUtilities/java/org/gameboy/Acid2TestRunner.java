@@ -3,19 +3,15 @@ package org.gameboy;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.name.Names;
 import com.google.inject.util.Modules;
-import org.gameboy.common.MappedMemory;
-import org.gameboy.common.Memory;
-import org.gameboy.common.MemoryDump;
+import org.gameboy.common.Cartridge;
+import org.gameboy.cartridge.RomOnlyCartridge;
 import org.gameboy.cpu.Cpu;
 import org.gameboy.display.Display;
 import org.gameboy.display.PixelBuffer;
 import org.gameboy.display.PixelValue;
 
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 public class Acid2TestRunner {
     public static final int FRAME_COUNT = 60;
@@ -25,6 +21,7 @@ public class Acid2TestRunner {
 
     public Acid2TestRunner(byte[] romData) {
         display = new TestDisplay();
+        Cartridge cartridge = new RomOnlyCartridge(romData);
 
         AbstractModule testOverrideModule = new AbstractModule() {
             @Override
@@ -34,16 +31,8 @@ public class Acid2TestRunner {
         };
 
         Injector injector = Guice.createInjector(
-            Modules.override(new EmulatorModule()).with(testOverrideModule)
+            Modules.override(new EmulatorModule(cartridge)).with(testOverrideModule)
         );
-
-        List<MemoryDump> memoryDumps = new java.util.ArrayList<>();
-        memoryDumps.add(MemoryDump.fromZero(romData));
-
-        Memory underlyingMemory = injector.getInstance(Key.get(Memory.class, Names.named("underlying")));
-        if (underlyingMemory instanceof MappedMemory mappedMemory) {
-            mappedMemory.loadMemoryDumps(memoryDumps);
-        }
 
         cpu = injector.getInstance(Cpu.class);
     }

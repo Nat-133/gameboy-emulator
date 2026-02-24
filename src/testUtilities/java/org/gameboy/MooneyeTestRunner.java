@@ -2,15 +2,10 @@ package org.gameboy;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.name.Names;
-import org.gameboy.common.MappedMemory;
-import org.gameboy.common.Memory;
-import org.gameboy.common.MemoryDump;
+import org.gameboy.common.Cartridge;
+import org.gameboy.cartridge.RomOnlyCartridge;
 import org.gameboy.cpu.Cpu;
 import org.gameboy.cpu.components.CpuStructure;
-
-import java.util.List;
 
 public class MooneyeTestRunner {
     private static final int STAGNATION_THRESHOLD = 100; // Cycles with unchanged PC = infinite loop
@@ -22,15 +17,8 @@ public class MooneyeTestRunner {
     private int stagnationCount = 0;
 
     public MooneyeTestRunner(byte[] romData) {
-        Injector injector = Guice.createInjector(new EmulatorModule());
-
-        List<MemoryDump> memoryDumps = List.of(MemoryDump.fromZero(romData));
-
-        // Get the underlying MappedMemory to load ROM data
-        Memory underlyingMemory = injector.getInstance(Key.get(Memory.class, Names.named("underlying")));
-        if (underlyingMemory instanceof MappedMemory mappedMemory) {
-            mappedMemory.loadMemoryDumps(memoryDumps);
-        }
+        Cartridge cartridge = new RomOnlyCartridge(romData);
+        Injector injector = Guice.createInjector(new EmulatorModule(cartridge));
 
         cpu = injector.getInstance(Cpu.class);
         cpuStructure = injector.getInstance(CpuStructure.class);

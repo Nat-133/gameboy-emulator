@@ -3,6 +3,7 @@ package org.gameboy.common;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.gameboy.EmulatorModule;
+import org.gameboy.cartridge.RomOnlyCartridge;
 import org.gameboy.display.PpuRegisters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,8 @@ public class MappedMemoryIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        Injector injector = Guice.createInjector(new EmulatorModule());
+        Cartridge cartridge = new RomOnlyCartridge(new byte[0]);
+        Injector injector = Guice.createInjector(new EmulatorModule(cartridge));
         memory = injector.getInstance(Memory.class);
         ppuRegisters = injector.getInstance(PpuRegisters.class);
     }

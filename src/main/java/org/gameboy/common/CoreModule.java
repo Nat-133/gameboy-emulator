@@ -22,8 +22,6 @@ public class CoreModule extends AbstractModule {
 
         bind(Memory.class).annotatedWith(Names.named("underlying")).to(MappedMemory.class).in(Singleton.class);
 
-        bind(RomLoader.class).in(Singleton.class);
-        bind(MemoryInitializer.class).in(Singleton.class);
         bind(SerialController.class).in(Singleton.class);
         bind(InterruptController.class).in(Singleton.class);
     }

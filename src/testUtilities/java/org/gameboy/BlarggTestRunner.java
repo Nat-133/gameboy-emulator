@@ -2,15 +2,10 @@ package org.gameboy;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.name.Names;
-import org.gameboy.common.MappedMemory;
-import org.gameboy.common.Memory;
-import org.gameboy.common.MemoryDump;
+import org.gameboy.common.Cartridge;
+import org.gameboy.cartridge.RomOnlyCartridge;
 import org.gameboy.common.SerialController;
 import org.gameboy.cpu.Cpu;
-
-import java.util.List;
 
 public class BlarggTestRunner {
     private final Cpu cpu;
@@ -18,15 +13,8 @@ public class BlarggTestRunner {
     private int cycleCount = 0;
 
     public BlarggTestRunner(byte[] testRomData) {
-        Injector injector = Guice.createInjector(new EmulatorModule());
-
-        List<MemoryDump> memoryDumps = new java.util.ArrayList<>();
-        memoryDumps.add(MemoryDump.fromZero(testRomData));
-
-        Memory underlyingMemory = injector.getInstance(Key.get(Memory.class, Names.named("underlying")));
-        if (underlyingMemory instanceof MappedMemory mappedMemory) {
-            mappedMemory.loadMemoryDumps(memoryDumps);
-        }
+        Cartridge cartridge = new RomOnlyCartridge(testRomData);
+        Injector injector = Guice.createInjector(new EmulatorModule(cartridge));
 
         cpu = injector.getInstance(Cpu.class);
         serialController = injector.getInstance(SerialController.class);
