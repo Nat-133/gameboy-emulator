@@ -5,6 +5,7 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

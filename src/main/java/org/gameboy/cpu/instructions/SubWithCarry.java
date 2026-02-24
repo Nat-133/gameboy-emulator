@@ -5,6 +5,7 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
 import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class SubWithCarry implements Instruction{
     private final Target right;
@@ -13,17 +14,17 @@ public class SubWithCarry implements Instruction{
         this.right = right;
     }
 
-    public static SubWithCarry sbc_a_r8(Target.R8 r8) {
+    public static SubWithCarry sbc_a_r8(R8 r8) {
         return new SubWithCarry((Target) r8);
     }
 
     public static SubWithCarry sbc_a_imm8() {
-        return new SubWithCarry(Target.imm_8);
+        return new SubWithCarry(imm_8);
     }
 
     @Override
     public String representation() {
-        return "SBC " + Target.a.representation() + "," + this.right.representation();
+        return "SBC " + a.representation() + "," + this.right.representation();
     }
 
     @Override

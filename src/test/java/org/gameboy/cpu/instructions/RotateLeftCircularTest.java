@@ -5,7 +5,7 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -20,8 +20,8 @@ import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 import static org.gameboy.GameboyAssertions.assertThatHex;
 
 class RotateLeftCircularTest {
-    static Stream<Target.R8> r8Values() {
-        return Arrays.stream(Target.R8.LOOKUP_TABLE);
+    static Stream<R8> r8Values() {
+        return Arrays.stream(R8.LOOKUP_TABLE);
     }
 
     static Stream<Arguments> getRotateLeftCircularValues() {
@@ -55,7 +55,7 @@ class RotateLeftCircularTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegister_whenRLCwithZeroCarry_thenStateIsCorrect(Target.R8 r8) {
+    void givenByteRegister_whenRLCwithZeroCarry_thenStateIsCorrect(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withUnsetFlags(Flag.C)
                 .build();
@@ -81,7 +81,7 @@ class RotateLeftCircularTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegister_whenRLCwithOneCarry_thenStateIsCorrect(Target.R8 r8) {
+    void givenByteRegister_whenRLCwithOneCarry_thenStateIsCorrect(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withUnsetFlags(Flag.C)
                 .build();
@@ -107,7 +107,7 @@ class RotateLeftCircularTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegisterWithZeroValue_whenRLC_thenZeroFlagSet(Target.R8 r8) {
+    void givenByteRegisterWithZeroValue_whenRLC_thenZeroFlagSet(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withUnsetFlags(Flag.C)
                 .build();
@@ -133,7 +133,7 @@ class RotateLeftCircularTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegister_whenRLC_thenNAndHFlagsAlwaysZero(Target.R8 r8) {
+    void givenByteRegister_whenRLC_thenNAndHFlagsAlwaysZero(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.N, Flag.H)
                 .build();

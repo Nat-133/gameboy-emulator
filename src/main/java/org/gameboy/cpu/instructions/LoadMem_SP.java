@@ -3,6 +3,7 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.ControlFlow;
 import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class LoadMem_SP implements Load {
 
@@ -21,12 +22,12 @@ public class LoadMem_SP implements Load {
 
     @Override
     public Target source() {
-        return Target.sp;
+        return sp;
     }
 
     @Override
     public Target destination() {
-        return Target.indirect_imm_16;
+        return indirect_imm_16;
     }
 
     @Override

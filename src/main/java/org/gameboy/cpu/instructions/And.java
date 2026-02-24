@@ -4,6 +4,7 @@ import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
 import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class And implements Instruction{
     private final Target target;
@@ -12,12 +13,12 @@ public class And implements Instruction{
         this.target = target;
     }
 
-    public static And and_r8(Target.R8 r8) {
+    public static And and_r8(R8 r8) {
         return new And((Target) r8);
     }
 
     public static And and_imm8() {
-        return new And(Target.imm_8);
+        return new And(imm_8);
     }
 
     @Override

@@ -4,19 +4,19 @@ import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 
 public class Bit implements Instruction{
     private final ThreeBitValue bitIndex;
-    private final Target.R8 target;
+    private final R8 target;
 
-    private Bit(ThreeBitValue bitIndex, Target.R8 target) {
+    private Bit(ThreeBitValue bitIndex, R8 target) {
         this.bitIndex = bitIndex;
         this.target = target;
     }
 
-    public static Bit bit_b_r8(ThreeBitValue bitIndex, Target.R8 target) {
+    public static Bit bit_b_r8(ThreeBitValue bitIndex, R8 target) {
         return new Bit(bitIndex, target);
     }
 

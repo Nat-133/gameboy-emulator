@@ -4,6 +4,7 @@ import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
 import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class Or implements Instruction{
     private final Target target;
@@ -12,12 +13,12 @@ public class Or implements Instruction{
         this.target = target;
     }
 
-    public static Or or_r8(Target.R8 register) {
+    public static Or or_r8(R8 register) {
         return new Or((Target) register);
     }
 
     public static Or or_imm8() {
-        return new Or(Target.imm_8);
+        return new Or(imm_8);
     }
 
     @Override

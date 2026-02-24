@@ -4,16 +4,16 @@ import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class Swap implements Instruction{
-    private final Target.R8 target;
+    private final R8 target;
 
-    private Swap(Target.R8 target) {
+    private Swap(R8 target) {
         this.target = target;
     }
 
-    public static Swap swap_r8(Target.R8 target) {
+    public static Swap swap_r8(R8 target) {
         return new Swap(target);
     }
 

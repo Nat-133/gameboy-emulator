@@ -6,7 +6,7 @@ import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.ControlFlow;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
 import org.gameboy.cpu.instructions.targets.Condition;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class JumpRelative implements Instruction{
     private final Condition cc;
@@ -39,12 +39,12 @@ public class JumpRelative implements Instruction{
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor operationTargetAccessor = OperationTargetAccessor.from(cpuStructure);
         boolean shouldJump = evaluateCondition(cc, cpuStructure.registers());
-        byte offset = (byte) operationTargetAccessor.getValue(Target.imm_8);
+        byte offset = (byte) operationTargetAccessor.getValue(imm_8);
 
         if (shouldJump) {
-            short pc = cpuStructure.registers().PC();
-            short new_pc = ControlFlow.signedAdditionWithIdu(pc, offset, false, cpuStructure);
-            operationTargetAccessor.setValue(Target.pc, new_pc);
+            short currentPC = cpuStructure.registers().PC();
+            short new_pc = ControlFlow.signedAdditionWithIdu(currentPC, offset, false, cpuStructure);
+            operationTargetAccessor.setValue(pc, new_pc);
         }
     }
 

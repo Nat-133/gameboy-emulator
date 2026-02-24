@@ -4,6 +4,7 @@ import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
 import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class Dec implements Instruction{
     private final Target target;
@@ -12,11 +13,11 @@ public class Dec implements Instruction{
         this.target = target;
     }
 
-    public static Instruction dec_r8(Target.R8 target) {
+    public static Instruction dec_r8(R8 target) {
         return new Dec((Target) target);
     }
 
-    public static Instruction dec_r16(Target.R16 target) {
+    public static Instruction dec_r16(R16 target) {
         return new Dec((Target) target);
     }
 
@@ -32,7 +33,7 @@ public class Dec implements Instruction{
 
         short newValue;
 
-        if (target instanceof Target.ByteTarget) {
+        if (target instanceof ByteTarget) {
             ArithmeticResult result = cpuStructure.alu().dec((byte) value);
 
             newValue = result.result();

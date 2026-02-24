@@ -4,6 +4,7 @@ import org.gameboy.cpu.components.CpuRegisters;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.components.IncrementDecrementUnit;
 import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class LoadSP_HL implements Load {
     public static LoadSP_HL load_SP_HL() {
@@ -12,12 +13,12 @@ public class LoadSP_HL implements Load {
 
     @Override
     public Target source() {
-        return Target.hl;
+        return hl;
     }
 
     @Override
     public Target destination() {
-        return Target.sp;
+        return sp;
     }
 
     @Override

@@ -3,19 +3,19 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 
 public class Set implements Instruction{
     private final ThreeBitValue bitIndex;
-    private final Target.R8 target;
+    private final R8 target;
 
-    private Set(ThreeBitValue bitIndex, Target.R8 target) {
+    private Set(ThreeBitValue bitIndex, R8 target) {
         this.bitIndex = bitIndex;
         this.target = target;
     }
 
-    public static Set set_b_r8(ThreeBitValue bitIndex, Target.R8 target) {
+    public static Set set_b_r8(ThreeBitValue bitIndex, R8 target) {
         return new Set(bitIndex, target);
     }
 

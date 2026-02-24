@@ -3,7 +3,7 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.ControlFlow;
 import org.gameboy.cpu.instructions.targets.Condition;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class Call implements Instruction{
     private final Condition condition;
@@ -36,7 +36,7 @@ public class Call implements Instruction{
     public String representation() {
         return "CALL "
                 + (condition == null ? "" : condition.name() + ",")
-                + Target.imm_16.representation();
+                + imm_16.representation();
     }
 
     @Override

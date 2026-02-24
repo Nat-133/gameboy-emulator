@@ -5,7 +5,7 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -18,13 +18,13 @@ import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 import static org.gameboy.GameboyAssertions.assertThatHex;
 
 class ShiftRightLogicalTest {
-    static Stream<Target.R8> r8Values() {
-        return Arrays.stream(Target.R8.LOOKUP_TABLE);
+    static Stream<R8> r8Values() {
+        return Arrays.stream(R8.LOOKUP_TABLE);
     }
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegister_whenSrlWithCarrySet_thenStateIsCorrect(Target.R8 r8) {
+    void givenByteRegister_whenSrlWithCarrySet_thenStateIsCorrect(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.C)
                 .build();
@@ -50,7 +50,7 @@ class ShiftRightLogicalTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegister_whenSrlWithCarryUnset_thenStateIsCorrect(Target.R8 r8) {
+    void givenByteRegister_whenSrlWithCarryUnset_thenStateIsCorrect(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelyUnsetFlags(Flag.C)
                 .build();
@@ -76,7 +76,7 @@ class ShiftRightLogicalTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegister_whenSrlWithNoLSBSet_thenCarryUnset(Target.R8 r8) {
+    void givenByteRegister_whenSrlWithNoLSBSet_thenCarryUnset(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.C)
                 .build();
@@ -102,7 +102,7 @@ class ShiftRightLogicalTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegister_whenSrlWithSignBitSet_thenBit7ClearedToZero(Target.R8 r8) {
+    void givenByteRegister_whenSrlWithSignBitSet_thenBit7ClearedToZero(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withUnsetFlags(Flag.C)
                 .build();
@@ -128,7 +128,7 @@ class ShiftRightLogicalTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegisterWithOneValue_whenSrl_thenZeroFlagSet(Target.R8 r8) {
+    void givenByteRegisterWithOneValue_whenSrl_thenZeroFlagSet(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withUnsetFlags(Flag.C)
                 .build();
@@ -154,7 +154,7 @@ class ShiftRightLogicalTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegister_whenSrl_thenNAndHFlagsAlwaysZero(Target.R8 r8) {
+    void givenByteRegister_whenSrl_thenNAndHFlagsAlwaysZero(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.N, Flag.H)
                 .build();

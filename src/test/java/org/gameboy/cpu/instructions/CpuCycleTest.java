@@ -5,7 +5,7 @@ import org.gameboy.cpu.Cpu;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.targets.Condition;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -26,17 +26,17 @@ import static org.gameboy.utils.MultiBitValue.ThreeBitValue.b000;
 
 @SuppressWarnings("SameParameterValue")
 public class CpuCycleTest {
-    private static final List<Target.R8> DIRECT_R8_TARGETS = List.of(
-            Target.b, Target.c, Target.d, Target.e,
-            Target.h, Target.l, Target.a
+    private static final List<R8> DIRECT_R8_TARGETS = List.of(
+            b, c, d, e,
+            h, l, a
     );
 
-    private static final List<Target.R16> WORD_R16_TARGETS = List.of(
-            Target.bc, Target.de, Target.hl, Target.sp
+    private static final List<R16> WORD_R16_TARGETS = List.of(
+            bc, de, hl, sp
     );
 
-    private static final List<Target.Mem16> WORD_MEM16_TARGETS = List.of(Target.Mem16.LOOKUP_TABLE);
-    private static final List<Target.Stk16> WORD_STK16_TARGETS = List.of(Target.Stk16.LOOKUP_TABLE);
+    private static final List<Mem16> WORD_MEM16_TARGETS = List.of(Mem16.LOOKUP_TABLE);
+    private static final List<Stk16> WORD_STK16_TARGETS = List.of(Stk16.LOOKUP_TABLE);
     private static final List<Condition> CONDITIONS = List.of(Condition.values());
 
     static Stream<Arguments> getInstructionExpectations() {
@@ -46,11 +46,11 @@ public class CpuCycleTest {
                 generateR8TargetTestCases(And::and_r8, 1, 2),
                 generateTestCase(And::and_imm8, 2),
 
-                generateTestCase(Dec::dec_r8, Target.indirect_hl, 3),
+                generateTestCase(Dec::dec_r8, indirect_hl, 3),
                 generateTestCases(Dec::dec_r8, DIRECT_R8_TARGETS, 1),
                 generateTestCases(Dec::dec_r16, WORD_R16_TARGETS, 1),
 
-                generateTestCase(Inc::inc_r8, Target.indirect_hl, 3),
+                generateTestCase(Inc::inc_r8, indirect_hl, 3),
                 generateTestCases(Inc::inc_r8, DIRECT_R8_TARGETS, 1),
                 generateTestCases(Inc::inc_r16, WORD_R16_TARGETS, 1),
 
@@ -152,7 +152,7 @@ public class CpuCycleTest {
     }
 
     private static Stream<Arguments> generateR8TargetByteIndexTestCases(
-            BiFunction<ThreeBitValue, Target.R8, Instruction> constructor,
+            BiFunction<ThreeBitValue, R8, Instruction> constructor,
             int expectedCyclesNoMemoryLoad,
             int expectedCyclesWithMemoryLoad
     ) {
@@ -191,7 +191,7 @@ public class CpuCycleTest {
     private static Stream<Arguments> generateLdR8R8TestCases() {
         return Stream.concat(
                 DIRECT_R8_TARGETS.stream().flatMap(r8 -> generateR8TargetTestCases(r -> Load.ld_r8_r8(r, r8), 1, 2)),
-                generateTestCases(r -> Load.ld_r8_r8(Target.indirect_hl, r), DIRECT_R8_TARGETS, 2)
+                generateTestCases(r -> Load.ld_r8_r8(indirect_hl, r), DIRECT_R8_TARGETS, 2)
         );
     }
 
@@ -215,10 +215,10 @@ public class CpuCycleTest {
         );
     }
 
-    static Stream<Arguments> generateR8TargetTestCases(Function<Target.R8, Instruction> constructor, int expectedCyclesNoMemoryLoad, int expectedCyclesWithMemoryLoad) {
+    static Stream<Arguments> generateR8TargetTestCases(Function<R8, Instruction> constructor, int expectedCyclesNoMemoryLoad, int expectedCyclesWithMemoryLoad) {
         return Stream.of(
                 generateTestCases(constructor, CpuCycleTest.DIRECT_R8_TARGETS, expectedCyclesNoMemoryLoad),
-                generateTestCase(constructor, Target.indirect_hl, expectedCyclesWithMemoryLoad)
+                generateTestCase(constructor, indirect_hl, expectedCyclesWithMemoryLoad)
         ).flatMap(x -> x);
     }
 

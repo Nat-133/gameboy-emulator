@@ -7,6 +7,7 @@ import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.ControlFlow;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
 import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 import java.util.Hashtable;
 
@@ -21,28 +22,28 @@ public class Add implements Instruction {
         this.right = right;
     }
 
-    public static Add add_a_r8(Target.R8 right) {
-        return new Add(Target.a, (Target) right);
+    public static Add add_a_r8(R8 right) {
+        return new Add(a, (Target) right);
     }
 
     public static Add add_a_imm8() {
-        return new Add(Target.a, Target.imm_8);
+        return new Add(a, imm_8);
     }
 
-    public static Add add_hl_r16(Target.R16 right) {
-        return new Add(Target.hl, (Target) right);
+    public static Add add_hl_r16(R16 right) {
+        return new Add(hl, (Target) right);
     }
 
     public static Add add_sp_e8() {
-        return new Add(Target.sp, Target.imm_8);
+        return new Add(sp, imm_8);
     }
 
     @Override
     public void execute(CpuStructure cpuStructure) {
-        if (!(this.left instanceof Target.ByteTarget) && !(this.right instanceof Target.ByteTarget)) {
+        if (!(this.left instanceof ByteTarget) && !(this.right instanceof ByteTarget)) {
             // 16-bit addition
             executeSixteenBitAddition(cpuStructure);
-        } else if (!(this.left instanceof Target.ByteTarget)) { // && this.right instanceof Target.ByteTarget
+        } else if (!(this.left instanceof ByteTarget)) { // && this.right instanceof ByteTarget
             // 16-bit + 8-bit signed
             executeSignedAddition(cpuStructure);
         } else {

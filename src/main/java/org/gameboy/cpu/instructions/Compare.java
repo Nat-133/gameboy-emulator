@@ -4,6 +4,7 @@ import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
 import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class Compare implements Instruction{
     private final Target target;
@@ -12,12 +13,12 @@ public class Compare implements Instruction{
         this.target = target;
     }
 
-    public static Compare cp_r8(Target.R8 register) {
+    public static Compare cp_r8(R8 register) {
         return new Compare((Target) register);
     }
 
     public static Compare cp_imm8() {
-        return new Compare(Target.imm_8);
+        return new Compare(imm_8);
     }
 
     @Override

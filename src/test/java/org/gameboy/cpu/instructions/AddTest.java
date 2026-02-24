@@ -5,7 +5,7 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -22,19 +22,19 @@ import static org.gameboy.utils.BitUtilities.uint;
 class AddTest {
     static Stream<Arguments> getR8ValuePairs() {
         return Stream.of(
-                Arguments.of(0x12, Target.a, 0x12),
-                Arguments.of(0xff, Target.b, 0x01),
-                Arguments.of(0x0f, Target.c, 0x07),
-                Arguments.of(0xf0, Target.d, 0x0f),
-                Arguments.of(0xfa, Target.e, 0x09),
-                Arguments.of(0x00, Target.h, 0x00),
-                Arguments.of(0x00, Target.l, 0x01)
+                Arguments.of(0x12, a, 0x12),
+                Arguments.of(0xff, b, 0x01),
+                Arguments.of(0x0f, c, 0x07),
+                Arguments.of(0xf0, d, 0x0f),
+                Arguments.of(0xfa, e, 0x09),
+                Arguments.of(0x00, h, 0x00),
+                Arguments.of(0x00, l, 0x01)
         );
     }
 
     @ParameterizedTest
     @MethodSource("getR8ValuePairs")
-    void givenByteRegisterAndValues_whenAdd_thenResultIsCorrect(int a, Target.R8 r8, int b){
+    void givenByteRegisterAndValues_whenAdd_thenResultIsCorrect(int a, R8 r8, int b){
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withA(a)
                 .build();
@@ -48,7 +48,7 @@ class AddTest {
 
     @ParameterizedTest
     @MethodSource("getR8ValuePairs")
-    void givenByteRegisterAndValues_whenAdd_thenFlagsAreCorrect(int a, Target.R8 r8, int b){
+    void givenByteRegisterAndValues_whenAdd_thenFlagsAreCorrect(int a, R8 r8, int b){
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withA(a)
                 .build();
@@ -76,7 +76,7 @@ class AddTest {
                 .withA(a)
                 .build();
 
-        Add.add_a_r8(Target.indirect_hl).execute(cpuStructure);
+        Add.add_a_r8(indirect_hl).execute(cpuStructure);
 
         assertThat(cpuStructure.registers().A()).isEqualTo((byte) (a+b));
     }
@@ -91,7 +91,7 @@ class AddTest {
                 .withA(a)
                 .build();
 
-        Add.add_a_r8(Target.indirect_hl).execute(cpuStructure);
+        Add.add_a_r8(indirect_hl).execute(cpuStructure);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, true)
@@ -101,17 +101,17 @@ class AddTest {
 
     static Stream<Arguments> getR16ValuePairs() {
         return Stream.of(
-                Arguments.of(0xffff, Target.bc, 0x0001, false),
-                Arguments.of(0xff0f, Target.de, 0x0101, true),
-                Arguments.of(0x00ac, Target.sp, 0x0062, false),
-                Arguments.of(0x0000, Target.sp, 0x0000, true),
-                Arguments.of(0x0200, Target.hl, 0x0200, false)
+                Arguments.of(0xffff, bc, 0x0001, false),
+                Arguments.of(0xff0f, de, 0x0101, true),
+                Arguments.of(0x00ac, sp, 0x0062, false),
+                Arguments.of(0x0000, sp, 0x0000, true),
+                Arguments.of(0x0200, hl, 0x0200, false)
         );
     }
 
     @ParameterizedTest
     @MethodSource("getR16ValuePairs")
-    void givenTwoShortsAnd16BitRegister_whenAdd_thenResultIsCorrect(int a, Target.R16 rr, int b) {
+    void givenTwoShortsAnd16BitRegister_whenAdd_thenResultIsCorrect(int a, R16 rr, int b) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withHL(a)
                 .build();
@@ -126,7 +126,7 @@ class AddTest {
 
     @ParameterizedTest
     @MethodSource("getR16ValuePairs")
-    void givenTwoShortsAnd16BitRegister_whenAdd_thenFlagsAreCorrect(int a, Target.R16 rr, int b, boolean zFlag) {
+    void givenTwoShortsAnd16BitRegister_whenAdd_thenFlagsAreCorrect(int a, R16 rr, int b, boolean zFlag) {
         int upper_a = a >> 8;
         int upper_b = b >> 8;
         int lower_a = uint((byte) a);

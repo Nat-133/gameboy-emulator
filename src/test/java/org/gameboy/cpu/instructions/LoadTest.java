@@ -4,7 +4,7 @@ import org.gameboy.CpuStructureBuilder;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -20,13 +20,13 @@ import static org.gameboy.utils.BitUtilities.lower_byte;
 import static org.gameboy.utils.BitUtilities.set_lower_byte;
 
 class LoadTest {
-    static Stream<Target.R8> r8Values() {
-        return Arrays.stream(Target.R8.LOOKUP_TABLE);
+    static Stream<R8> r8Values() {
+        return Arrays.stream(R8.LOOKUP_TABLE);
     }
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenImmediateByte_whenLoadIntoRegister_thenRegisterUpdatedCorrectly(Target.R8 register) {
+    void givenImmediateByte_whenLoadIntoRegister_thenRegisterUpdatedCorrectly(R8 register) {
         byte immediateByteValue = (byte) 0xfa;
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withPC(0x00fa)
@@ -41,8 +41,8 @@ class LoadTest {
     }
 
     static Stream<Arguments> byteRegisterPairs() {
-        Target.R8[] a = Target.R8.LOOKUP_TABLE;
-        Target.R8[] b = Target.R8.LOOKUP_TABLE;
+        R8[] a = R8.LOOKUP_TABLE;
+        R8[] b = R8.LOOKUP_TABLE;
 
         return Arrays.stream(a)
             .flatMap(firstArgument ->
@@ -53,7 +53,7 @@ class LoadTest {
 
     @ParameterizedTest
     @MethodSource("byteRegisterPairs")
-    void givenRegisterData_whenLoadIntoRegister_thenRegisterUpdatedCorrectly(Target.R8 destination, Target.R8 source) {
+    void givenRegisterData_whenLoadIntoRegister_thenRegisterUpdatedCorrectly(R8 destination, R8 source) {
         short registerData = (short) 0xfa;
         CpuStructure cpuStructure = new CpuStructureBuilder().build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);

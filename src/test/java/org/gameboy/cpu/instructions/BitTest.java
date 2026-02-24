@@ -5,7 +5,7 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,13 +19,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 
 class BitTest {
-    static Stream<Target.R8> r8Values() {
-        return Arrays.stream(Target.R8.LOOKUP_TABLE);
+    static Stream<R8> r8Values() {
+        return Arrays.stream(R8.LOOKUP_TABLE);
     }
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegisterWithBitSet_whenBitTestBit0_thenZeroFlagUnset(Target.R8 r8) {
+    void givenByteRegisterWithBitSet_whenBitTestBit0_thenZeroFlagUnset(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.Z, Flag.N)
                 .withExclusivelyUnsetFlags(Flag.H, Flag.C)
@@ -50,7 +50,7 @@ class BitTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegisterWithBitUnset_whenBitTestBit0_thenZeroFlagSet(Target.R8 r8) {
+    void givenByteRegisterWithBitUnset_whenBitTestBit0_thenZeroFlagSet(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelyUnsetFlags(Flag.Z, Flag.N, Flag.H)
                 .withExclusivelySetFlags(Flag.C)
@@ -75,7 +75,7 @@ class BitTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegisterWithBitSet_whenBitTestBit7_thenZeroFlagUnset(Target.R8 r8) {
+    void givenByteRegisterWithBitSet_whenBitTestBit7_thenZeroFlagUnset(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.Z, Flag.N)
                 .withExclusivelyUnsetFlags(Flag.H, Flag.C)
@@ -100,7 +100,7 @@ class BitTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegisterWithBitUnset_whenBitTestBit7_thenZeroFlagSet(Target.R8 r8) {
+    void givenByteRegisterWithBitUnset_whenBitTestBit7_thenZeroFlagSet(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelyUnsetFlags(Flag.Z, Flag.N, Flag.H)
                 .withExclusivelySetFlags(Flag.C)
@@ -153,7 +153,7 @@ class BitTest {
                 .withA(value)
                 .build();
 
-        Bit.bit_b_r8(bitIndex, Target.a).execute(cpuStructure);
+        Bit.bit_b_r8(bitIndex, a).execute(cpuStructure);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.Z, expectedZeroFlag)
@@ -165,7 +165,7 @@ class BitTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegister_whenBitTest_thenCarryFlagUnchanged(Target.R8 r8) {
+    void givenByteRegister_whenBitTest_thenCarryFlagUnchanged(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.C)
                 .build();

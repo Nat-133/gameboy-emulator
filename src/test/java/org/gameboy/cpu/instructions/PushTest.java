@@ -4,7 +4,7 @@ import org.gameboy.CpuStructureBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.ControlFlow;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,13 +17,13 @@ import static org.gameboy.utils.BitUtilities.lower_byte;
 import static org.gameboy.utils.BitUtilities.upper_byte;
 
 class PushTest {
-    static Stream<Target.Stk16> stk16Targets() {
-        return Stream.of(Target.Stk16.LOOKUP_TABLE);
+    static Stream<Stk16> stk16Targets() {
+        return Stream.of(Stk16.LOOKUP_TABLE);
     }
 
     @ParameterizedTest
     @MethodSource("stk16Targets")
-    void givenWord_whenPush_thenWordInRegisterAndStackCorrect(Target.Stk16 destination) {
+    void givenWord_whenPush_thenWordInRegisterAndStackCorrect(Stk16 destination) {
         int sp = 0x6543;
         short expected = 0x1234;
         CpuStructure cpuStructure = new CpuStructureBuilder()
@@ -47,7 +47,7 @@ class PushTest {
     void givenWord_whenPush_thenPopReturnsWord() {
         int sp = 0x6543;
         short expected = 0x1234;
-        Target.Stk16 from = Target.bc;
+        Stk16 from = bc;
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withSP(sp)
                 .withBC(expected)

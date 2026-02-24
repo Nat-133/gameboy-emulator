@@ -4,6 +4,7 @@ import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.ControlFlow;
 import org.gameboy.cpu.instructions.targets.Condition;
 import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.gameboy.utils.BitUtilities;
 
 import static org.gameboy.cpu.instructions.common.ControlFlow.evaluateCondition;
@@ -18,15 +19,15 @@ public class Jump implements Instruction{
     }
 
     public static Jump jp_nn() {
-        return new Jump(null, Target.imm_16);
+        return new Jump(null, imm_16);
     }
 
     public static Jump jp_HL() {
-        return new Jump(null, Target.hl);
+        return new Jump(null, hl);
     }
 
     public static Jump jp_cc_nn(Condition cc) {
-        return new Jump(cc, Target.imm_16);
+        return new Jump(cc, imm_16);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class Jump implements Instruction{
 
     @Override
     public void execute(CpuStructure cpuStructure) {
-        if (this.target == Target.hl) {
+        if (this.target == hl) {
             executeJpHL(cpuStructure);
         }
         else {

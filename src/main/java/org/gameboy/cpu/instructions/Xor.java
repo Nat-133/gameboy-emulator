@@ -4,6 +4,7 @@ import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
 import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class Xor implements Instruction{
     private final Target target;
@@ -12,12 +13,12 @@ public class Xor implements Instruction{
         this.target = target;
     }
 
-    public static Xor xor_r8(Target.R8 register) {
+    public static Xor xor_r8(R8 register) {
         return new Xor((Target) register);
     }
 
     public static Xor xor_imm8() {
-        return new Xor(Target.imm_8);
+        return new Xor(imm_8);
     }
 
     @Override

@@ -4,7 +4,7 @@ import org.gameboy.CpuStructureBuilder;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,13 +19,13 @@ import static org.gameboy.GameboyAssertions.assertThatHex;
 import static org.gameboy.utils.BitUtilities.get_bit;
 
 class ResetTest {
-    static Stream<Target.R8> r8Values() {
-        return Arrays.stream(Target.R8.LOOKUP_TABLE);
+    static Stream<R8> r8Values() {
+        return Arrays.stream(R8.LOOKUP_TABLE);
     }
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegisterWithAllBitsSet_whenResetBit0_thenBit0ClearedAndValueCorrect(Target.R8 r8) {
+    void givenByteRegisterWithAllBitsSet_whenResetBit0_thenBit0ClearedAndValueCorrect(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.Z, Flag.N, Flag.H, Flag.C)
                 .build();
@@ -48,7 +48,7 @@ class ResetTest {
 
     @ParameterizedTest
     @MethodSource("r8Values")
-    void givenByteRegisterWithAllBitsSet_whenResetBit7_thenBit7ClearedAndValueCorrect(Target.R8 r8) {
+    void givenByteRegisterWithAllBitsSet_whenResetBit7_thenBit7ClearedAndValueCorrect(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelyUnsetFlags(Flag.Z, Flag.N, Flag.H, Flag.C)
                 .build();
@@ -88,7 +88,7 @@ class ResetTest {
         byte initialValue = (byte) 0b1111_1111;
         cpuStructure.registers().setA(initialValue);
 
-        Reset.res_b_r8(threeBitIndex, Target.a).execute(cpuStructure);
+        Reset.res_b_r8(threeBitIndex, a).execute(cpuStructure);
 
         assertThat(get_bit(cpuStructure.registers().A(), bitIndex)).isFalse();
 
@@ -107,7 +107,7 @@ class ResetTest {
         byte initialValue = (byte) 0b0000_0000;
         cpuStructure.registers().setA(initialValue);
 
-        Reset.res_b_r8(threeBitIndex, Target.a).execute(cpuStructure);
+        Reset.res_b_r8(threeBitIndex, a).execute(cpuStructure);
 
         assertThat(get_bit(cpuStructure.registers().A(), bitIndex)).isFalse();
         assertThatHex(cpuStructure.registers().A()).isEqualTo((byte) 0b0000_0000);

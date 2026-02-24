@@ -3,6 +3,7 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
 import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class LoadHigher implements Instruction{
     private final Target destination;
@@ -14,11 +15,11 @@ public class LoadHigher implements Instruction{
     }
 
     public static Instruction ldh_imm8_A() {
-        return new LoadHigher(Target.indirect_imm_8, Target.a);
+        return new LoadHigher(indirect_imm_8, a);
     }
 
     public static Instruction ldh_A_imm8() {
-        return new LoadHigher(Target.a, Target.indirect_imm_8);
+        return new LoadHigher(a, indirect_imm_8);
     }
 
     @Override

@@ -3,7 +3,7 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.CpuStructureBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -13,13 +13,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertThatHex;
 
 class PopTest {
-    static Stream<Target.Stk16> stk16Targets() {
-        return Stream.of(Target.Stk16.LOOKUP_TABLE);
+    static Stream<Stk16> stk16Targets() {
+        return Stream.of(Stk16.LOOKUP_TABLE);
     }
 
     @ParameterizedTest
     @MethodSource("stk16Targets")
-    void givenWord_whenPop_thenWordInRegisterAndStackCorrect(Target.Stk16 destination) {
+    void givenWord_whenPop_thenWordInRegisterAndStackCorrect(Stk16 destination) {
         int sp = 0x6543;
         int expected = 0x1230;
         CpuStructure cpuStructure = new CpuStructureBuilder()

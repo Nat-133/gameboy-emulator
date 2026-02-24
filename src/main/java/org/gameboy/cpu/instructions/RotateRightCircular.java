@@ -5,22 +5,22 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class RotateRightCircular implements Instruction{
-    private final Target.R8 target;
+    private final R8 target;
     private final boolean isPrefixInstruction;
 
-    private RotateRightCircular(Target.R8 target, boolean isPrefixInstruction) {
+    private RotateRightCircular(R8 target, boolean isPrefixInstruction) {
         this.target = target;
         this.isPrefixInstruction = isPrefixInstruction;
     }
 
     public static RotateRightCircular rrca() {
-        return new RotateRightCircular(Target.a, false);
+        return new RotateRightCircular(a, false);
     }
 
-    public static RotateRightCircular rrc_r8(Target.R8 target) {
+    public static RotateRightCircular rrc_r8(R8 target) {
         return new RotateRightCircular(target, true);
     }
 
