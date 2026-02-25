@@ -14,7 +14,7 @@ public class Xor implements Instruction{
     }
 
     public static Xor xor_r8(R8 register) {
-        return new Xor((Target) register);
+        return new Xor(register);
     }
 
     public static Xor xor_imm8() {

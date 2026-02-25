@@ -14,7 +14,7 @@ public class Sub implements Instruction{
     }
 
     public static Sub sub_r8(R8 r8) {
-        return new Sub((Target) r8);
+        return new Sub(r8);
     }
 
     public static Sub sub_a_imm8() {

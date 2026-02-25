@@ -15,23 +15,23 @@ public class BasicLoad implements Load {
     }
 
     static BasicLoad ld_r8_r8(R8 destination, R8 source) {
-        return new BasicLoad((Target) destination, (Target) source);
+        return new BasicLoad(destination, source);
     }
 
     static BasicLoad ld_r8_imm8(R8 destination) {
-        return new BasicLoad((Target) destination, imm_8);
+        return new BasicLoad(destination, imm_8);
     }
 
     static BasicLoad ld_r16_imm16(R16 register) {
-        return new BasicLoad((Target) register, imm_16);
+        return new BasicLoad(register, imm_16);
     }
 
     static BasicLoad ld_A_mem16indirect(Mem16 indirectSource) {
-        return new BasicLoad(a, (Target) indirectSource);
+        return new BasicLoad(a, indirectSource);
     }
 
     static BasicLoad ld_mem16indirect_A(Mem16 indirectDestination) {
-        return new BasicLoad((Target) indirectDestination, a);
+        return new BasicLoad(indirectDestination, a);
     }
 
     static BasicLoad ld_indirectC_A() {

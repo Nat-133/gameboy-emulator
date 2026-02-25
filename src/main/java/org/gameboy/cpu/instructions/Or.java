@@ -14,7 +14,7 @@ public class Or implements Instruction{
     }
 
     public static Or or_r8(R8 register) {
-        return new Or((Target) register);
+        return new Or(register);
     }
 
     public static Or or_imm8() {

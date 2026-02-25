@@ -14,11 +14,11 @@ public class Inc implements Instruction{
     }
 
     public static Instruction inc_r8(R8 target) {
-        return new Inc((Target) target);
+        return new Inc(target);
     }
 
     public static Instruction inc_r16(R16 target) {
-        return new Inc((Target) target);
+        return new Inc(target);
     }
 
     @Override

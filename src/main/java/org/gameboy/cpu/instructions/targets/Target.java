@@ -4,7 +4,9 @@ import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
 public sealed interface Target
-        permits Target.A, Target.B, Target.C, Target.D, Target.E, Target.H, Target.L,
+        permits Target.ByteTarget, Target.WordTarget, Target.RegisterTarget, Target.IndirectTarget,
+                Target.R8, Target.R16, Target.Stk16, Target.Mem16,
+                Target.A, Target.B, Target.C, Target.D, Target.E, Target.H, Target.L,
                 Target.BC, Target.DE, Target.HL, Target.SP, Target.AF, Target.PC,
                 Target.IndirectHL, Target.IndirectBC, Target.IndirectDE,
                 Target.IndirectHLInc, Target.IndirectHLDec,
@@ -14,24 +16,24 @@ public sealed interface Target
 
     // ── Grouping interfaces ───────────────────────────────────────────
 
-    sealed interface ByteTarget
+    sealed interface ByteTarget extends Target
             permits A, B, C, D, E, H, L,
                     IndirectHL, IndirectBC, IndirectDE, IndirectHLInc, IndirectHLDec,
                     IndirectC, IndirectImm8, IndirectImm16, Imm8 {
         String representation();
     }
 
-    sealed interface WordTarget
+    sealed interface WordTarget extends Target
             permits BC, DE, HL, SP, AF, PC, Imm16, SPOffset {
         String representation();
     }
 
-    sealed interface RegisterTarget
+    sealed interface RegisterTarget extends Target
             permits A, B, C, D, E, H, L, BC, DE, HL, SP, AF, PC {
         String representation();
     }
 
-    sealed interface IndirectTarget
+    sealed interface IndirectTarget extends Target
             permits IndirectHL, IndirectBC, IndirectDE, IndirectHLInc, IndirectHLDec,
                     IndirectC, IndirectImm8, IndirectImm16 {
         String representation();
@@ -39,7 +41,7 @@ public sealed interface Target
 
     // ── Opcode grouping interfaces ────────────────────────────────────
 
-    sealed interface R8
+    sealed interface R8 extends Target
             permits A, B, C, D, E, H, L, IndirectHL {
         String representation();
         R8[] LOOKUP_TABLE = {
@@ -52,7 +54,7 @@ public sealed interface Target
         }
     }
 
-    sealed interface R16
+    sealed interface R16 extends Target
             permits BC, DE, HL, SP {
         String representation();
         R16[] LOOKUP_TABLE = {
@@ -64,7 +66,7 @@ public sealed interface Target
         }
     }
 
-    sealed interface Stk16
+    sealed interface Stk16 extends Target
             permits BC, DE, HL, AF {
         String representation();
         Stk16[] LOOKUP_TABLE = {
@@ -76,7 +78,7 @@ public sealed interface Target
         }
     }
 
-    sealed interface Mem16
+    sealed interface Mem16 extends Target
             permits IndirectBC, IndirectDE, IndirectHLInc, IndirectHLDec {
         String representation();
         Mem16[] LOOKUP_TABLE = {
