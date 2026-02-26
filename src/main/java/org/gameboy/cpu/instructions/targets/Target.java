@@ -20,30 +20,25 @@ public sealed interface Target
             permits A, B, C, D, E, H, L,
                     IndirectHL, IndirectBC, IndirectDE, IndirectHLInc, IndirectHLDec,
                     IndirectC, IndirectImm8, IndirectImm16, Imm8 {
-        String representation();
     }
 
     sealed interface WordTarget extends Target
             permits BC, DE, HL, SP, AF, PC, Imm16, SPOffset {
-        String representation();
     }
 
     sealed interface RegisterTarget extends Target
             permits A, B, C, D, E, H, L, BC, DE, HL, SP, AF, PC {
-        String representation();
     }
 
     sealed interface IndirectTarget extends Target
             permits IndirectHL, IndirectBC, IndirectDE, IndirectHLInc, IndirectHLDec,
                     IndirectC, IndirectImm8, IndirectImm16 {
-        String representation();
     }
 
     // ── Opcode grouping interfaces ────────────────────────────────────
 
     sealed interface R8 extends Target
             permits A, B, C, D, E, H, L, IndirectHL {
-        String representation();
         R8[] LOOKUP_TABLE = {
                 B.INSTANCE, C.INSTANCE, D.INSTANCE, E.INSTANCE,
                 H.INSTANCE, L.INSTANCE, IndirectHL.INSTANCE, A.INSTANCE
@@ -56,7 +51,6 @@ public sealed interface Target
 
     sealed interface R16 extends Target
             permits BC, DE, HL, SP {
-        String representation();
         R16[] LOOKUP_TABLE = {
                 BC.INSTANCE, DE.INSTANCE, HL.INSTANCE, SP.INSTANCE
         };
@@ -68,7 +62,6 @@ public sealed interface Target
 
     sealed interface Stk16 extends Target
             permits BC, DE, HL, AF {
-        String representation();
         Stk16[] LOOKUP_TABLE = {
                 BC.INSTANCE, DE.INSTANCE, HL.INSTANCE, AF.INSTANCE
         };
@@ -80,7 +73,6 @@ public sealed interface Target
 
     sealed interface Mem16 extends Target
             permits IndirectBC, IndirectDE, IndirectHLInc, IndirectHLDec {
-        String representation();
         Mem16[] LOOKUP_TABLE = {
                 IndirectBC.INSTANCE, IndirectDE.INSTANCE,
                 IndirectHLInc.INSTANCE, IndirectHLDec.INSTANCE
