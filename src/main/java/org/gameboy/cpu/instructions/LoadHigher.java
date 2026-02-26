@@ -2,26 +2,24 @@ package org.gameboy.cpu.instructions;
 
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
-
-import static org.gameboy.cpu.instructions.targets.OperationTarget.A;
-import static org.gameboy.cpu.instructions.targets.OperationTarget.IMM_8;
+import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class LoadHigher implements Instruction{
-    private final GenericOperationTarget destination;
-    private final GenericOperationTarget source;
+    private final Target destination;
+    private final Target source;
 
-    private LoadHigher(GenericOperationTarget destination, GenericOperationTarget source) {
+    private LoadHigher(Target destination, Target source) {
         this.destination = destination;
         this.source = source;
     }
 
     public static Instruction ldh_imm8_A() {
-        return new LoadHigher(IMM_8.indirect(), A.direct());
+        return new LoadHigher(indirect_imm_8, a);
     }
 
     public static Instruction ldh_A_imm8() {
-        return new LoadHigher(A.direct(), IMM_8.indirect());
+        return new LoadHigher(a, indirect_imm_8);
     }
 
     @Override

@@ -3,23 +3,22 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
-import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
-import org.gameboy.cpu.instructions.targets.OperationTarget;
+import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class Or implements Instruction{
-    private final GenericOperationTarget target;
+    private final Target target;
 
-    private Or(GenericOperationTarget target) {
+    private Or(Target target) {
         this.target = target;
     }
 
-    public static Or or_r8(ByteRegister register) {
-        return new Or(register.convert());
+    public static Or or_r8(R8 register) {
+        return new Or(register);
     }
 
     public static Or or_imm8() {
-        return new Or(OperationTarget.IMM_8.direct());
+        return new Or(imm_8);
     }
 
     @Override

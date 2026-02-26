@@ -4,26 +4,26 @@ import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class ShiftLeftArithmetic implements Instruction{
-    private final ByteRegister target;
+    private final R8 target;
 
-    private ShiftLeftArithmetic(ByteRegister target) {
+    private ShiftLeftArithmetic(R8 target) {
         this.target = target;
     }
 
-    public static ShiftLeftArithmetic sla_r8(ByteRegister target) {
+    public static ShiftLeftArithmetic sla_r8(R8 target) {
         return new ShiftLeftArithmetic(target);
     }
 
     @Override
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        byte value = (byte) accessor.getValue(target.convert());
+        byte value = (byte) accessor.getValue(target);
         ArithmeticResult result = cpuStructure.alu().arithmetic_shift_left(value);
 
-        accessor.setValue(target.convert(), result.result());
+        accessor.setValue(target, result.result());
         
         FlagChangesetBuilder flagBuilder = new FlagChangesetBuilder(result.flagChanges());
 
@@ -32,7 +32,7 @@ public class ShiftLeftArithmetic implements Instruction{
 
     @Override
     public String representation() {
-        return "SLA " + this.target.convert().representation();
+        return "SLA " + this.target.representation();
     }
 
     @Override

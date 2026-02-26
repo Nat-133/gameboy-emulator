@@ -4,26 +4,26 @@ import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class Swap implements Instruction{
-    private final ByteRegister target;
+    private final R8 target;
 
-    private Swap(ByteRegister target) {
+    private Swap(R8 target) {
         this.target = target;
     }
 
-    public static Swap swap_r8(ByteRegister target) {
+    public static Swap swap_r8(R8 target) {
         return new Swap(target);
     }
 
     @Override
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        byte value = (byte) accessor.getValue(target.convert());
+        byte value = (byte) accessor.getValue(target);
         ArithmeticResult result = cpuStructure.alu().swap(value);
 
-        accessor.setValue(target.convert(), result.result());
+        accessor.setValue(target, result.result());
         
         FlagChangesetBuilder flagBuilder = new FlagChangesetBuilder(result.flagChanges());
 
@@ -32,7 +32,7 @@ public class Swap implements Instruction{
 
     @Override
     public String representation() {
-        return "SWAP " + this.target.convert().representation();
+        return "SWAP " + this.target.representation();
     }
 
     @Override

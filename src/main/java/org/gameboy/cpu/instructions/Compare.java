@@ -3,23 +3,22 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
-import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
-import org.gameboy.cpu.instructions.targets.OperationTarget;
+import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class Compare implements Instruction{
-    private final GenericOperationTarget target;
+    private final Target target;
 
-    private Compare(GenericOperationTarget target) {
+    private Compare(Target target) {
         this.target = target;
     }
 
-    public static Compare cp_r8(ByteRegister register) {
-        return new Compare(register.convert());
+    public static Compare cp_r8(R8 register) {
+        return new Compare(register);
     }
 
     public static Compare cp_imm8() {
-        return new Compare(OperationTarget.IMM_8.direct());
+        return new Compare(imm_8);
     }
 
     @Override

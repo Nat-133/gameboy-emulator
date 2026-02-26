@@ -1,7 +1,8 @@
 package org.gameboy.cpu.components;
 
 import org.gameboy.cpu.instructions.*;
-import org.gameboy.cpu.instructions.targets.*;
+import org.gameboy.cpu.instructions.targets.Condition;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.gameboy.utils.MultiBitValue.OneBitValue;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
@@ -52,23 +53,23 @@ public class UnprefixedOpcodeTable implements OpcodeTable {
                 default -> JumpRelative.jr_cc(Condition.lookup(TwoBitValue.from(y, 0)));
             };
             case b001 -> switch(q){
-                case b0 -> Load.ld_r16_imm16(WordGeneralRegister.lookup(p));
-                case b1 -> Add.add_hl_r16(WordGeneralRegister.lookup(p));
+                case b0 -> Load.ld_r16_imm16(R16.lookup(p));
+                case b1 -> Add.add_hl_r16(R16.lookup(p));
             };
             case b010 -> {
-                WordMemoryRegister register = WordMemoryRegister.lookup(p);
+                Mem16 register = Mem16.lookup(p);
                 yield switch(q) {
                     case b0 -> Load.ld_mem16indirect_A(register);
                     case b1 -> Load.ld_A_mem16indirect(register);
                 };
             }
             case b011 -> switch (q) {
-                case b0 -> Inc.inc_r16(WordGeneralRegister.lookup(p));
-                case b1 -> Dec.dec_r16(WordGeneralRegister.lookup(p));
+                case b0 -> Inc.inc_r16(R16.lookup(p));
+                case b1 -> Dec.dec_r16(R16.lookup(p));
             };
-            case b100 -> Inc.inc_r8(ByteRegister.lookup(y));
-            case b101 -> Dec.dec_r8(ByteRegister.lookup(y));
-            case b110 -> Load.ld_r8_imm8(ByteRegister.lookup(y));
+            case b100 -> Inc.inc_r8(R8.lookup(y));
+            case b101 -> Dec.dec_r8(R8.lookup(y));
+            case b110 -> Load.ld_r8_imm8(R8.lookup(y));
             case b111 -> switch(y) {
                 case b000 -> RotateLeftCircular.rlca();
                 case b001 -> RotateRightCircular.rrca();
@@ -87,11 +88,11 @@ public class UnprefixedOpcodeTable implements OpcodeTable {
             return Halt.halt();
         }
 
-        return Load.ld_r8_r8(ByteRegister.lookup(y), ByteRegister.lookup(z));
+        return Load.ld_r8_r8(R8.lookup(y), R8.lookup(z));
     }
 
     private Instruction decodeBlock2(ThreeBitValue y, ThreeBitValue z) {
-        ByteRegister r8 = ByteRegister.lookup(z);
+        R8 r8 = R8.lookup(z);
         return switch(y) {
             case b000 -> Add.add_a_r8(r8);
             case b001 -> AddWithCarry.adc_a_r8(r8);
@@ -118,7 +119,7 @@ public class UnprefixedOpcodeTable implements OpcodeTable {
                 case b111 -> Load.ld_HL_SP_OFFSET();
             };
             case b001 -> switch(q) {
-                case b0 -> Pop.pop_stk16(WordStackRegister.lookup(TwoBitValue.from(y, 1)));
+                case b0 -> Pop.pop_stk16(Stk16.lookup(TwoBitValue.from(y, 1)));
                 case b1 -> switch(TwoBitValue.from(y, 1)) {
                     case b00 -> Return.ret();
                     case b01 -> ReturnFromInterruptHandler.reti();
@@ -151,7 +152,7 @@ public class UnprefixedOpcodeTable implements OpcodeTable {
                 case b111 -> Illegal.illegal(y, z);
             };
             case b101 -> switch(q) {
-                case b0 -> Push.push_stk16(WordStackRegister.lookup(TwoBitValue.from(y, 1)));
+                case b0 -> Push.push_stk16(Stk16.lookup(TwoBitValue.from(y, 1)));
                 case b1 -> switch(TwoBitValue.from(y, 1)) {
                     case b00 -> Call.call();
                     case b01 -> Illegal.illegal(y, z);

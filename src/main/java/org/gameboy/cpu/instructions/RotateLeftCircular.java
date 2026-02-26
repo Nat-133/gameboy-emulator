@@ -5,32 +5,32 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class RotateLeftCircular implements Instruction{
-    private final ByteRegister target;
+    private final R8 target;
     private final boolean isPrefixInstruction;
 
-    private RotateLeftCircular(ByteRegister target, boolean isPrefixInstruction) {
+    private RotateLeftCircular(R8 target, boolean isPrefixInstruction) {
         this.target = target;
         this.isPrefixInstruction = isPrefixInstruction;
     }
 
     public static RotateLeftCircular rlca() {
-        return new RotateLeftCircular(ByteRegister.A, false);
+        return new RotateLeftCircular(a, false);
     }
 
-    public static RotateLeftCircular rlc_r8(ByteRegister target) {
+    public static RotateLeftCircular rlc_r8(R8 target) {
         return new RotateLeftCircular(target, true);
     }
 
     @Override
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        byte value = (byte) accessor.getValue(target.convert());
+        byte value = (byte) accessor.getValue(target);
         ArithmeticResult result = cpuStructure.alu().rotate_left_circular(value);
 
-        accessor.setValue(target.convert(), result.result());
+        accessor.setValue(target, result.result());
         
         FlagChangesetBuilder flagBuilder = new FlagChangesetBuilder(result.flagChanges());
 
@@ -42,7 +42,7 @@ public class RotateLeftCircular implements Instruction{
 
     @Override
     public String representation() {
-        return "RLC" + (isPrefixInstruction ? " " : "") + this.target.convert().representation();
+        return "RLC" + (isPrefixInstruction ? " " : "") + this.target.representation();
     }
 
     @Override

@@ -5,20 +5,26 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 import static org.gameboy.GameboyAssertions.assertThatHex;
 
 class ShiftRightArithmeticTest {
+    static Stream<R8> r8Values() {
+        return Arrays.stream(R8.LOOKUP_TABLE);
+    }
+
     @ParameterizedTest
-    @EnumSource(ByteRegister.class)
-    void givenByteRegister_whenSraWithNegativeByte_thenStateIsCorrect(ByteRegister r8) {
+    @MethodSource("r8Values")
+    void givenByteRegister_whenSraWithNegativeByte_thenStateIsCorrect(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.C)
                 .build();
@@ -26,11 +32,11 @@ class ShiftRightArithmeticTest {
 
         byte initialValue = (byte) 0b1010_1010;
         byte expectedValue = (byte) 0b1101_0101;
-        accessor.setValue(r8.convert(), initialValue);
+        accessor.setValue(r8, initialValue);
 
         ShiftRightArithmetic.sra_r8(r8).execute(cpuStructure);
 
-        byte actualValue = (byte) accessor.getValue(r8.convert());
+        byte actualValue = (byte) accessor.getValue(r8);
         assertThatHex(actualValue).isEqualTo(expectedValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
@@ -43,8 +49,8 @@ class ShiftRightArithmeticTest {
     }
 
     @ParameterizedTest
-    @EnumSource(ByteRegister.class)
-    void givenByteRegister_whenSRAwithPositiveByte_thenStateIsCorrect(ByteRegister r8) {
+    @MethodSource("r8Values")
+    void givenByteRegister_whenSRAwithPositiveByte_thenStateIsCorrect(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.C)
                 .build();
@@ -52,11 +58,11 @@ class ShiftRightArithmeticTest {
 
         byte initialValue = (byte) 0b0010_1010;
         byte expectedValue = (byte) 0b0001_0101;
-        accessor.setValue(r8.convert(), initialValue);
+        accessor.setValue(r8, initialValue);
 
         ShiftRightArithmetic.sra_r8(r8).execute(cpuStructure);
 
-        byte actualValue = (byte) accessor.getValue(r8.convert());
+        byte actualValue = (byte) accessor.getValue(r8);
         assertThatHex(actualValue).isEqualTo(expectedValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
@@ -69,8 +75,8 @@ class ShiftRightArithmeticTest {
     }
 
     @ParameterizedTest
-    @EnumSource(ByteRegister.class)
-    void givenByteRegister_whenSRAthatCausesCarry_thenCarrySet(ByteRegister r8) {
+    @MethodSource("r8Values")
+    void givenByteRegister_whenSRAthatCausesCarry_thenCarrySet(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelyUnsetFlags(Flag.C)
                 .build();
@@ -78,11 +84,11 @@ class ShiftRightArithmeticTest {
 
         byte initialValue = (byte) 0b0111_0101;
         byte expectedValue = (byte) 0b0011_1010;
-        accessor.setValue(r8.convert(), initialValue);
+        accessor.setValue(r8, initialValue);
 
         ShiftRightArithmetic.sra_r8(r8).execute(cpuStructure);
 
-        byte actualValue = (byte) accessor.getValue(r8.convert());
+        byte actualValue = (byte) accessor.getValue(r8);
         assertThatHex(actualValue).isEqualTo(expectedValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
@@ -95,8 +101,8 @@ class ShiftRightArithmeticTest {
     }
 
     @ParameterizedTest
-    @EnumSource(ByteRegister.class)
-    void givenByteRegisterWithZeroValue_whenSRA_thenZeroFlagSet(ByteRegister r8) {
+    @MethodSource("r8Values")
+    void givenByteRegisterWithZeroValue_whenSRA_thenZeroFlagSet(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withUnsetFlags(Flag.C)
                 .build();
@@ -104,11 +110,11 @@ class ShiftRightArithmeticTest {
 
         byte initialValue = (byte) 0b0000_0000;
         byte expectedValue = (byte) 0b0000_0000;
-        accessor.setValue(r8.convert(), initialValue);
+        accessor.setValue(r8, initialValue);
 
         ShiftRightArithmetic.sra_r8(r8).execute(cpuStructure);
 
-        byte actualValue = (byte) accessor.getValue(r8.convert());
+        byte actualValue = (byte) accessor.getValue(r8);
         assertThatHex(actualValue).isEqualTo(expectedValue);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
@@ -121,15 +127,15 @@ class ShiftRightArithmeticTest {
     }
 
     @ParameterizedTest
-    @EnumSource(ByteRegister.class)
-    void givenByteRegister_whenSRA_thenNAndHFlagsAlwaysZero(ByteRegister r8) {
+    @MethodSource("r8Values")
+    void givenByteRegister_whenSRA_thenNAndHFlagsAlwaysZero(R8 r8) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.N, Flag.H)
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
         byte initialValue = (byte) 0b1010_1010;
-        accessor.setValue(r8.convert(), initialValue);
+        accessor.setValue(r8, initialValue);
 
         ShiftRightArithmetic.sra_r8(r8).execute(cpuStructure);
 

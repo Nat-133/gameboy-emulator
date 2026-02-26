@@ -5,11 +5,9 @@ import org.gameboy.FlagValue;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
-import org.gameboy.cpu.instructions.targets.WordGeneralRegister;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
@@ -22,27 +20,38 @@ import static org.gameboy.FlagValue.unsetFlag;
 import static org.gameboy.cpu.Flag.*;
 
 class DecTest {
+    static Stream<R8> getAllR8() {
+        return Stream.of(
+                b, c, d, e,
+                h, l, indirect_hl, a
+        );
+    }
+
+    static Stream<R16> getAllR16() {
+        return Stream.of(bc, de, hl, sp);
+    }
+
     @ParameterizedTest
-    @EnumSource(ByteRegister.class)
-    void givenByteRegisterWithZeroValue_whenDec_thenRegisterUpdatedCorrectly(ByteRegister register) {
+    @MethodSource("getAllR8")
+    void givenByteRegisterWithZeroValue_whenDec_thenRegisterUpdatedCorrectly(R8 register) {
         CpuStructure cpuStructure = new CpuStructureBuilder().build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
         Dec.dec_r8(register).execute(cpuStructure);
 
-        byte registerValueAfter = (byte) accessor.getValue(register.convert());
+        byte registerValueAfter = (byte) accessor.getValue(register);
         assertThat(registerValueAfter).isEqualTo((byte) 0xff);
     }
 
     @ParameterizedTest
-    @EnumSource(WordGeneralRegister.class)
-    void givenByteRegisterWithZeroValue_whenDec_thenRegisterUpdatedCorrectly(WordGeneralRegister register) {
+    @MethodSource("getAllR16")
+    void givenByteRegisterWithZeroValue_whenDec_thenRegisterUpdatedCorrectly(R16 register) {
         CpuStructure cpuStructure = new CpuStructureBuilder().build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
         Dec.dec_r16(register).execute(cpuStructure);
 
-        short registerValueAfter = accessor.getValue(register.convert());
+        short registerValueAfter = accessor.getValue(register);
         assertThat(registerValueAfter).isEqualTo((short) 0xffff);
     }
 
@@ -63,7 +72,7 @@ class DecTest {
                 .withA(value)
                 .build();
 
-        Dec.dec_r8(ByteRegister.A).execute(cpuStructure);
+        Dec.dec_r8(a).execute(cpuStructure);
 
         List<FlagValue> actualFlags = expectedFlags.stream()
                 .map(FlagValue::getKey)
@@ -74,8 +83,8 @@ class DecTest {
     }
 
     @ParameterizedTest
-    @EnumSource
-    void givenShort_whenDec_thenNoFlags(WordGeneralRegister register) {
+    @MethodSource("getAllR16")
+    void givenShort_whenDec_thenNoFlags(R16 register) {
         CpuStructure cpuStructure = new CpuStructureBuilder().build();
 
         Dec.dec_r16(register).execute(cpuStructure);

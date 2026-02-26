@@ -5,11 +5,9 @@ import org.gameboy.FlagValue;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
-import org.gameboy.cpu.instructions.targets.WordGeneralRegister;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
@@ -22,21 +20,32 @@ import static org.gameboy.FlagValue.unsetFlag;
 import static org.gameboy.cpu.Flag.*;
 
 class IncTest {
+    static Stream<R8> getAllR8() {
+        return Stream.of(
+                b, c, d, e,
+                h, l, indirect_hl, a
+        );
+    }
+
+    static Stream<R16> getAllR16() {
+        return Stream.of(bc, de, hl, sp);
+    }
+
     @ParameterizedTest
-    @EnumSource(ByteRegister.class)
-    void givenByteRegisterWithZeroValue_whenInc_thenRegisterUpdatedCorrectly(ByteRegister register) {
+    @MethodSource("getAllR8")
+    void givenByteRegisterWithZeroValue_whenInc_thenRegisterUpdatedCorrectly(R8 register) {
         CpuStructure cpuStructure = new CpuStructureBuilder().build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
 
         Inc.inc_r8(register).execute(cpuStructure);
 
-        byte registerValueAfter = (byte) accessor.getValue(register.convert());
+        byte registerValueAfter = (byte) accessor.getValue(register);
         assertThat(registerValueAfter).isEqualTo((byte) 1);
     }
 
     @ParameterizedTest
-    @EnumSource(WordGeneralRegister.class)
-    void givenByteRegisterWithZeroValue_whenInc_thenRegisterUpdatedCorrectly(WordGeneralRegister register) {
+    @MethodSource("getAllR16")
+    void givenByteRegisterWithZeroValue_whenInc_thenRegisterUpdatedCorrectly(R16 register) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withAllRegistersSet(0xffff)
                 .build();
@@ -44,7 +53,7 @@ class IncTest {
 
         Inc.inc_r16(register).execute(cpuStructure);
 
-        short registerValueAfter = accessor.getValue(register.convert());
+        short registerValueAfter = accessor.getValue(register);
         assertThat(registerValueAfter).isEqualTo((short) 0);
     }
 
@@ -63,7 +72,7 @@ class IncTest {
                 .withA(value)
                 .build();
 
-        Inc.inc_r8(ByteRegister.A).execute(cpuStructure);
+        Inc.inc_r8(a).execute(cpuStructure);
 
         List<FlagValue> actualFlags = expectedFlags.stream()
                 .map(FlagValue::getKey)
@@ -74,8 +83,8 @@ class IncTest {
     }
 
     @ParameterizedTest
-    @EnumSource
-    void givenShort_whenInc_thenNoFlags(WordGeneralRegister register) {
+    @MethodSource("getAllR16")
+    void givenShort_whenInc_thenNoFlags(R16 register) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withAllRegistersSet(0xffff)
                 .withAF(0)

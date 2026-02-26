@@ -2,69 +2,65 @@ package org.gameboy.cpu.instructions;
 
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
-import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
-import org.gameboy.cpu.instructions.targets.WordGeneralRegister;
-import org.gameboy.cpu.instructions.targets.WordMemoryRegister;
-
-import static org.gameboy.cpu.instructions.targets.OperationTarget.*;
+import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class BasicLoad implements Load {
-    private final GenericOperationTarget destination;
-    private final GenericOperationTarget source;
+    private final Target destination;
+    private final Target source;
 
-    private BasicLoad(GenericOperationTarget destination, GenericOperationTarget source) {
+    private BasicLoad(Target destination, Target source) {
         this.destination = destination;
         this.source = source;
     }
 
-    static BasicLoad ld_r8_r8(ByteRegister destination, ByteRegister source) {
-        return new BasicLoad(destination.convert(), source.convert());
+    static BasicLoad ld_r8_r8(R8 destination, R8 source) {
+        return new BasicLoad(destination, source);
     }
 
-    static BasicLoad ld_r8_imm8(ByteRegister destination) {
-        return new BasicLoad(destination.convert(), IMM_8.direct());
+    static BasicLoad ld_r8_imm8(R8 destination) {
+        return new BasicLoad(destination, imm_8);
     }
 
-    static BasicLoad ld_r16_imm16(WordGeneralRegister register) {
-        return new BasicLoad(register.convert(), IMM_16.direct());
+    static BasicLoad ld_r16_imm16(R16 register) {
+        return new BasicLoad(register, imm_16);
     }
 
-    static BasicLoad ld_A_mem16indirect(WordMemoryRegister indirectSource) {
-        return new BasicLoad(A.direct(), indirectSource.convert());
+    static BasicLoad ld_A_mem16indirect(Mem16 indirectSource) {
+        return new BasicLoad(a, indirectSource);
     }
 
-    static BasicLoad ld_mem16indirect_A(WordMemoryRegister indirectDestination) {
-        return new BasicLoad(indirectDestination.convert(), A.direct());
+    static BasicLoad ld_mem16indirect_A(Mem16 indirectDestination) {
+        return new BasicLoad(indirectDestination, a);
     }
 
     static BasicLoad ld_indirectC_A() {
-        return new BasicLoad(C.indirect(), A.direct());
+        return new BasicLoad(indirect_c, a);
     }
 
     static BasicLoad ld_A_indirectC() {
-        return new BasicLoad(A.direct(), C.indirect());
+        return new BasicLoad(a, indirect_c);
     }
 
     static BasicLoad ld_HL_SP_OFFSET() {
-        return new BasicLoad(HL.direct(), SP_OFFSET.direct());
+        return new BasicLoad(hl, sp_offset);
     }
 
     static BasicLoad ld_imm16indirect_A() {
-        return new BasicLoad(IMM_16.indirect(), A.direct());
+        return new BasicLoad(indirect_imm_16, a);
     }
 
     static BasicLoad ld_A_imm16indirect() {
-        return new BasicLoad(A.direct(), IMM_16.indirect());
+        return new BasicLoad(a, indirect_imm_16);
     }
 
     @Override
-    public GenericOperationTarget source() {
+    public Target source() {
         return this.source;
     }
 
     @Override
-    public GenericOperationTarget destination() {
+    public Target destination() {
         return this.destination;
     }
 

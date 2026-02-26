@@ -1,7 +1,7 @@
 package org.gameboy.cpu.components;
 
 import org.gameboy.cpu.instructions.*;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
@@ -29,7 +29,7 @@ public class PrefixedOpcodeTable implements OpcodeTable {
         TwoBitValue x = get_x(opcode);
         ThreeBitValue y = get_y(opcode);
         ThreeBitValue z = get_z(opcode);
-        ByteRegister target = ByteRegister.lookup(z);
+        R8 target = R8.lookup(z);
 
         return switch(x) {
             case b00 -> switch(y) {

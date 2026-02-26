@@ -5,7 +5,7 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -21,24 +21,24 @@ import static org.gameboy.utils.BitUtilities.lower_nibble;
 class SubWithCarryTest {
     static Stream<Arguments> getR8ValuePairs() {
         return Stream.of(
-                Arguments.of(0x12, ByteRegister.A, 0x12),
-                Arguments.of(0xff, ByteRegister.B, 0x80),
-                Arguments.of(0x0f, ByteRegister.C, 0x07),
-                Arguments.of(0xf0, ByteRegister.D, 0x0f),
-                Arguments.of(0xfa, ByteRegister.E, 0xa9),
-                Arguments.of(0x00, ByteRegister.H, 0x00),
-                Arguments.of(0x00, ByteRegister.L, 0x01)
+                Arguments.of(0x12, a, 0x12),
+                Arguments.of(0xff, b, 0x80),
+                Arguments.of(0x0f, c, 0x07),
+                Arguments.of(0xf0, d, 0x0f),
+                Arguments.of(0xfa, e, 0xa9),
+                Arguments.of(0x00, h, 0x00),
+                Arguments.of(0x00, l, 0x01)
         );
     }
 
     @ParameterizedTest
     @MethodSource("getR8ValuePairs")
-    void givenByteRegisterAndValues_whenSubWithoutCarry_thenResultIsCorrect(int a, ByteRegister r8, int b) {
+    void givenByteRegisterAndValues_whenSubWithoutCarry_thenResultIsCorrect(int a, R8 r8, int b) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withA(a)
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        accessor.setValue(r8.convert(), (short) b);
+        accessor.setValue(r8, (short) b);
 
         SubWithCarry.sbc_a_r8(r8).execute(cpuStructure);
 
@@ -47,12 +47,12 @@ class SubWithCarryTest {
 
     @ParameterizedTest
     @MethodSource("getR8ValuePairs")
-    void givenByteRegisterAndValues_whenSubWithoutCarry_thenFlagsAreCorrect(int a, ByteRegister r8, int b) {
+    void givenByteRegisterAndValues_whenSubWithoutCarry_thenFlagsAreCorrect(int a, R8 r8, int b) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withA(a)
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        accessor.setValue(r8.convert(), (short) b);
+        accessor.setValue(r8, (short) b);
 
         SubWithCarry.sbc_a_r8(r8).execute(cpuStructure);
 
@@ -75,7 +75,7 @@ class SubWithCarryTest {
                 .withA(a)
                 .build();
 
-        SubWithCarry.sbc_a_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
+        SubWithCarry.sbc_a_r8(indirect_hl).execute(cpuStructure);
 
         assertThat(cpuStructure.registers().A()).isEqualTo((byte) (a - b));
     }
@@ -90,7 +90,7 @@ class SubWithCarryTest {
                 .withA(a)
                 .build();
 
-        SubWithCarry.sbc_a_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
+        SubWithCarry.sbc_a_r8(indirect_hl).execute(cpuStructure);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, true)
@@ -103,13 +103,13 @@ class SubWithCarryTest {
 
     @ParameterizedTest
     @MethodSource("getR8ValuePairs")
-    void givenByteRegisterAndValues_whenSubWithCarry_thenResultIsCorrect(int a, ByteRegister r8, int b) {
+    void givenByteRegisterAndValues_whenSubWithCarry_thenResultIsCorrect(int a, R8 r8, int b) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.C)
                 .withA(a)
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        accessor.setValue(r8.convert(), (short) b);
+        accessor.setValue(r8, (short) b);
 
         SubWithCarry.sbc_a_r8(r8).execute(cpuStructure);
 
@@ -118,13 +118,13 @@ class SubWithCarryTest {
 
     @ParameterizedTest
     @MethodSource("getR8ValuePairs")
-    void givenByteRegisterAndValues_whenSubWithCarry_thenFlagsAreCorrect(int a, ByteRegister r8, int b) {
+    void givenByteRegisterAndValues_whenSubWithCarry_thenFlagsAreCorrect(int a, R8 r8, int b) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withExclusivelySetFlags(Flag.C)
                 .withA(a)
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        accessor.setValue(r8.convert(), (short) b);
+        accessor.setValue(r8, (short) b);
 
         SubWithCarry.sbc_a_r8(r8).execute(cpuStructure);
 
@@ -148,7 +148,7 @@ class SubWithCarryTest {
                 .withA(a)
                 .build();
 
-        SubWithCarry.sbc_a_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
+        SubWithCarry.sbc_a_r8(indirect_hl).execute(cpuStructure);
 
         assertThat(cpuStructure.registers().A()).isEqualTo((byte) (a - b - 1));
     }
@@ -164,7 +164,7 @@ class SubWithCarryTest {
                 .withA(a)
                 .build();
 
-        SubWithCarry.sbc_a_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
+        SubWithCarry.sbc_a_r8(indirect_hl).execute(cpuStructure);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, true)

@@ -5,33 +5,33 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class RotateRight implements Instruction{
-    private final ByteRegister target;
+    private final R8 target;
     private final boolean isPrefixInstruction;
 
-    private RotateRight(ByteRegister target, boolean isPrefixInstruction) {
+    private RotateRight(R8 target, boolean isPrefixInstruction) {
         this.target = target;
         this.isPrefixInstruction = isPrefixInstruction;
     }
 
     public static RotateRight rra() {
-        return new RotateRight(ByteRegister.A, false);
+        return new RotateRight(a, false);
     }
 
-    public static RotateRight rr_r8(ByteRegister target) {
+    public static RotateRight rr_r8(R8 target) {
         return new RotateRight(target, true);
     }
 
     @Override
     public void execute(CpuStructure cpuStructure) {
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        byte value = (byte) accessor.getValue(target.convert());
+        byte value = (byte) accessor.getValue(target);
         boolean carryIn = cpuStructure.registers().getFlag(Flag.C);
         ArithmeticResult result = cpuStructure.alu().rotate_right(value, carryIn);
 
-        accessor.setValue(target.convert(), result.result());
+        accessor.setValue(target, result.result());
         
         FlagChangesetBuilder flagBuilder = new FlagChangesetBuilder(result.flagChanges());
 
@@ -43,7 +43,7 @@ public class RotateRight implements Instruction{
 
     @Override
     public String representation() {
-        return "RR" + (isPrefixInstruction ? " " : "") + this.target.convert().representation();
+        return "RR" + (isPrefixInstruction ? " " : "") + this.target.representation();
     }
 
     @Override

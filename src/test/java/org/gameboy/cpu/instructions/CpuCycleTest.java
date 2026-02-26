@@ -4,7 +4,8 @@ import org.gameboy.CpuStructureBuilder;
 import org.gameboy.cpu.Cpu;
 import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.components.CpuStructure;
-import org.gameboy.cpu.instructions.targets.*;
+import org.gameboy.cpu.instructions.targets.Condition;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.gameboy.utils.MultiBitValue.ThreeBitValue;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -25,40 +26,38 @@ import static org.gameboy.utils.MultiBitValue.ThreeBitValue.b000;
 
 @SuppressWarnings("SameParameterValue")
 public class CpuCycleTest {
-    private static final List<ByteRegister> DIRECT_BYTE_REGISTERS = List.of(
-            ByteRegister.B,
-            ByteRegister.C,
-            ByteRegister.D,
-            ByteRegister.E,
-            ByteRegister.H,
-            ByteRegister.L,
-            ByteRegister.A
+    private static final List<R8> DIRECT_R8_TARGETS = List.of(
+            b, c, d, e,
+            h, l, a
     );
 
-    private static final List<WordGeneralRegister> WORD_GENERAL_REGISTERS = List.of(WordGeneralRegister.values());
-    private static final List<WordMemoryRegister> WORD_MEMORY_REGISTERS = List.of(WordMemoryRegister.values());
-    private static final List<WordStackRegister> WORD_STACK_REGISTERS = List.of(WordStackRegister.values());
+    private static final List<R16> WORD_R16_TARGETS = List.of(
+            bc, de, hl, sp
+    );
+
+    private static final List<Mem16> WORD_MEM16_TARGETS = List.of(Mem16.LOOKUP_TABLE);
+    private static final List<Stk16> WORD_STK16_TARGETS = List.of(Stk16.LOOKUP_TABLE);
     private static final List<Condition> CONDITIONS = List.of(Condition.values());
 
     static Stream<Arguments> getInstructionExpectations() {
         return Stream.of(
                 generateTestCase(Nop::nop, 1),
 
-                generateR8TestCases(And::and_r8, 1),
+                generateR8TargetTestCases(And::and_r8, 1, 2),
                 generateTestCase(And::and_imm8, 2),
 
-                generateTestCase(Dec::dec_r8, ByteRegister.INDIRECT_HL, 3),
-                generateTestCases(Dec::dec_r8, DIRECT_BYTE_REGISTERS, 1),
-                generateTestCases(Dec::dec_r16, WORD_GENERAL_REGISTERS, 1),
+                generateTestCase(Dec::dec_r8, indirect_hl, 3),
+                generateTestCases(Dec::dec_r8, DIRECT_R8_TARGETS, 1),
+                generateTestCases(Dec::dec_r16, WORD_R16_TARGETS, 1),
 
-                generateTestCase(Inc::inc_r8, ByteRegister.INDIRECT_HL, 3),
-                generateTestCases(Inc::inc_r8, DIRECT_BYTE_REGISTERS, 1),
-                generateTestCases(Inc::inc_r16, WORD_GENERAL_REGISTERS, 1),
+                generateTestCase(Inc::inc_r8, indirect_hl, 3),
+                generateTestCases(Inc::inc_r8, DIRECT_R8_TARGETS, 1),
+                generateTestCases(Inc::inc_r16, WORD_R16_TARGETS, 1),
 
-                generateR8TestCases(Sub::sub_r8, 1),
+                generateR8TargetTestCases(Sub::sub_r8, 1, 2),
                 generateTestCase(Sub::sub_a_imm8, 2),
 
-                generateR8TestCases(SubWithCarry::sbc_a_r8, 1),
+                generateR8TargetTestCases(SubWithCarry::sbc_a_r8, 1, 2),
 
                 generateConditionalTestCases(Jump::jp_cc_nn, 4, 3),
                 generateTestCase(Jump::jp_nn, 4),
@@ -68,14 +67,14 @@ public class CpuCycleTest {
                 generateConditionalTestCases(JumpRelative::jr_cc, 3, 2),
 
                 generateTestCase(Load::load_SP_HL, 2),
-                generateTestCases(Load::ld_r16_imm16, WORD_GENERAL_REGISTERS, 3),
+                generateTestCases(Load::ld_r16_imm16, WORD_R16_TARGETS, 3),
                 generateTestCase(Load::ld_A_indirectC, 2),
                 generateTestCase(Load::ld_indirectC_A, 2),
                 generateTestCase(Load::ld_imm16indirect_A, 4),
                 generateTestCase(Load::ld_A_imm16indirect, 4),
-                generateTestCases(Load::ld_A_mem16indirect, WORD_MEMORY_REGISTERS, 2),
-                generateTestCases(Load::ld_mem16indirect_A, WORD_MEMORY_REGISTERS, 2),
-                generateR8TestCases(Load::ld_r8_imm8, 2),
+                generateTestCases(Load::ld_A_mem16indirect, WORD_MEM16_TARGETS, 2),
+                generateTestCases(Load::ld_mem16indirect_A, WORD_MEM16_TARGETS, 2),
+                generateR8TargetTestCases(Load::ld_r8_imm8, 2, 3),
                 generateTestCase(Load::ld_imm16indirect_sp, 5),
                 generateTestCase(Load::ld_HL_SP_OFFSET, 3),
                 generateLdR8R8TestCases(),
@@ -85,18 +84,18 @@ public class CpuCycleTest {
 
                 generateTestCase(Nop::nop, 1),
 
-                generateR8TestCases(Compare::cp_r8, 1),
+                generateR8TargetTestCases(Compare::cp_r8, 1, 2),
                 generateTestCase(Compare::cp_imm8, 2),
 
-                generateR8TestCases(Or::or_r8, 1),
+                generateR8TargetTestCases(Or::or_r8, 1, 2),
                 generateTestCase(Or::or_imm8, 2),
 
-                generateR8TestCases(Xor::xor_r8, 1),
+                generateR8TargetTestCases(Xor::xor_r8, 1, 2),
                 generateTestCase(Xor::xor_imm8, 2),
 
-                generateR8TestCases(Add::add_a_r8, 1),
+                generateR8TargetTestCases(Add::add_a_r8, 1, 2),
                 generateTestCase(Add::add_a_imm8, 2),
-                generateTestCases(Add::add_hl_r16, WORD_GENERAL_REGISTERS, 2),
+                generateTestCases(Add::add_hl_r16, WORD_R16_TARGETS, 2),
                 generateTestCase(Add::add_sp_e8, 4),
 
                 generateTestCase(RotateLeftCircular::rlca, 1),
@@ -115,9 +114,9 @@ public class CpuCycleTest {
 
                 generateTestCase(ComplimentCarryFlag::ccf, 1),
 
-                generateTestCases(Pop::pop_stk16, WORD_STACK_REGISTERS, 3),
+                generateTestCases(Pop::pop_stk16, WORD_STK16_TARGETS, 3),
 
-                generateTestCases(Push::push_stk16, WORD_STACK_REGISTERS, 4),
+                generateTestCases(Push::push_stk16, WORD_STK16_TARGETS, 4),
 
                 generateTestCase(Return::ret, 4),
                 generateConditionalTestCases(ConditionalReturn::ret_cc, 5, 2),
@@ -137,27 +136,27 @@ public class CpuCycleTest {
 
                 generateTestCase(Prefix::prefix, 1),
 
-                generateR8TestCases(RotateLeftCircular::rlc_r8, 1, 3),
-                generateR8TestCases(RotateRightCircular::rrc_r8, 1, 3),
-                generateR8TestCases(RotateLeft::rl_r8, 1, 3),
-                generateR8TestCases(RotateRight::rr_r8, 1, 3),
-                generateR8TestCases(ShiftLeftArithmetic::sla_r8, 1, 3),
-                generateR8TestCases(ShiftRightArithmetic::sra_r8, 1, 3),
-                generateR8TestCases(Swap::swap_r8, 1, 3),
-                generateR8TestCases(ShiftRightLogical::srl_r8, 1, 3),
+                generateR8TargetTestCases(RotateLeftCircular::rlc_r8, 1, 3),
+                generateR8TargetTestCases(RotateRightCircular::rrc_r8, 1, 3),
+                generateR8TargetTestCases(RotateLeft::rl_r8, 1, 3),
+                generateR8TargetTestCases(RotateRight::rr_r8, 1, 3),
+                generateR8TargetTestCases(ShiftLeftArithmetic::sla_r8, 1, 3),
+                generateR8TargetTestCases(ShiftRightArithmetic::sra_r8, 1, 3),
+                generateR8TargetTestCases(Swap::swap_r8, 1, 3),
+                generateR8TargetTestCases(ShiftRightLogical::srl_r8, 1, 3),
 
-                generateByteIndexTestCases(Bit::bit_b_r8, 1, 2),
-                generateByteIndexTestCases(Reset::res_b_r8, 1, 3),
-                generateByteIndexTestCases(Set::set_b_r8, 1, 3)
+                generateR8TargetByteIndexTestCases(Bit::bit_b_r8, 1, 2),
+                generateR8TargetByteIndexTestCases(Reset::res_b_r8, 1, 3),
+                generateR8TargetByteIndexTestCases(Set::set_b_r8, 1, 3)
         ).flatMap(x -> x);
     }
 
-    private static Stream<Arguments> generateByteIndexTestCases(
-            BiFunction<ThreeBitValue, ByteRegister, Instruction> constructor,
+    private static Stream<Arguments> generateR8TargetByteIndexTestCases(
+            BiFunction<ThreeBitValue, R8, Instruction> constructor,
             int expectedCyclesNoMemoryLoad,
             int expectedCyclesWithMemoryLoad
     ) {
-        return generateR8TestCases(r8 -> constructor.apply(b000, r8), expectedCyclesNoMemoryLoad, expectedCyclesWithMemoryLoad);
+        return generateR8TargetTestCases(r8 -> constructor.apply(b000, r8), expectedCyclesNoMemoryLoad, expectedCyclesWithMemoryLoad);
     }
 
     @ParameterizedTest
@@ -191,8 +190,8 @@ public class CpuCycleTest {
 
     private static Stream<Arguments> generateLdR8R8TestCases() {
         return Stream.concat(
-                DIRECT_BYTE_REGISTERS.stream().flatMap(r8 -> generateR8TestCases(r -> Load.ld_r8_r8(r, r8), 1)),
-                generateTestCases(r -> Load.ld_r8_r8(ByteRegister.INDIRECT_HL, r), DIRECT_BYTE_REGISTERS, 2)
+                DIRECT_R8_TARGETS.stream().flatMap(r8 -> generateR8TargetTestCases(r -> Load.ld_r8_r8(r, r8), 1, 2)),
+                generateTestCases(r -> Load.ld_r8_r8(indirect_hl, r), DIRECT_R8_TARGETS, 2)
         );
     }
 
@@ -216,14 +215,10 @@ public class CpuCycleTest {
         );
     }
 
-    static Stream<Arguments> generateR8TestCases(Function<ByteRegister, Instruction> constructor, int expectedCyclesNoMemoryLoad) {
-        return generateR8TestCases(constructor, expectedCyclesNoMemoryLoad, expectedCyclesNoMemoryLoad + 1);
-    }
-
-    static Stream<Arguments> generateR8TestCases(Function<ByteRegister, Instruction> constructor, int expectedCyclesNoMemoryLoad, int expectedCyclesWithMemoryLoad) {
+    static Stream<Arguments> generateR8TargetTestCases(Function<R8, Instruction> constructor, int expectedCyclesNoMemoryLoad, int expectedCyclesWithMemoryLoad) {
         return Stream.of(
-                generateTestCases(constructor, CpuCycleTest.DIRECT_BYTE_REGISTERS, expectedCyclesNoMemoryLoad),
-                generateTestCase(constructor, ByteRegister.INDIRECT_HL, expectedCyclesWithMemoryLoad)
+                generateTestCases(constructor, CpuCycleTest.DIRECT_R8_TARGETS, expectedCyclesNoMemoryLoad),
+                generateTestCase(constructor, indirect_hl, expectedCyclesWithMemoryLoad)
         ).flatMap(x -> x);
     }
 

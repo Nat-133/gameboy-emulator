@@ -3,18 +3,17 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.ControlFlow;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
-import org.gameboy.cpu.instructions.targets.WordStackRegister;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class Push implements Instruction {
-    private final GenericOperationTarget target;
+    private final Stk16 target;
 
-    private Push(GenericOperationTarget target) {
+    private Push(Stk16 target) {
         this.target = target;
     }
 
-    public static Push push_stk16(WordStackRegister rr) {
-        return new Push(rr.convert());
+    public static Push push_stk16(Stk16 rr) {
+        return new Push(rr);
     }
 
     @Override

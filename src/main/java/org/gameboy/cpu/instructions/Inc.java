@@ -3,23 +3,22 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.ArithmeticResult;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
-import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
-import org.gameboy.cpu.instructions.targets.WordGeneralRegister;
+import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class Inc implements Instruction{
-    private final GenericOperationTarget target;
+    private final Target target;
 
-    private Inc(GenericOperationTarget target) {
+    private Inc(Target target) {
         this.target = target;
     }
 
-    public static Instruction inc_r8(ByteRegister target) {
-        return new Inc(target.convert());
+    public static Instruction inc_r8(R8 target) {
+        return new Inc(target);
     }
 
-    public static Instruction inc_r16(WordGeneralRegister target) {
-        return new Inc(target.convert());
+    public static Instruction inc_r16(R16 target) {
+        return new Inc(target);
     }
 
     @Override
@@ -34,7 +33,7 @@ public class Inc implements Instruction{
 
         short newValue;
 
-        if (target.isByteTarget()) {
+        if (target instanceof ByteTarget) {
             ArithmeticResult result = cpuStructure.alu().inc((byte) value);
 
             newValue = result.result();

@@ -5,7 +5,7 @@ import org.gameboy.cpu.Flag;
 import org.gameboy.cpu.FlagChangesetBuilder;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.common.OperationTargetAccessor;
-import org.gameboy.cpu.instructions.targets.ByteRegister;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -20,24 +20,24 @@ import static org.gameboy.GameboyAssertions.assertFlagsMatch;
 class OrTest {
     static Stream<Arguments> getR8ValuePairs() {
         return Stream.of(
-                Arguments.of(0x12, ByteRegister.A, 0x12),
-                Arguments.of(0xff, ByteRegister.B, 0x80),
-                Arguments.of(0x0f, ByteRegister.C, 0x07),
-                Arguments.of(0xf0, ByteRegister.D, 0x0f),
-                Arguments.of(0xfa, ByteRegister.E, 0xa9),
-                Arguments.of(0x00, ByteRegister.H, 0x00),
-                Arguments.of(0x00, ByteRegister.L, 0x01)
+                Arguments.of(0x12, a, 0x12),
+                Arguments.of(0xff, b, 0x80),
+                Arguments.of(0x0f, c, 0x07),
+                Arguments.of(0xf0, d, 0x0f),
+                Arguments.of(0xfa, e, 0xa9),
+                Arguments.of(0x00, h, 0x00),
+                Arguments.of(0x00, l, 0x01)
         );
     }
 
     @ParameterizedTest
     @MethodSource("getR8ValuePairs")
-    void givenByteRegisterAndValues_whenOr_thenResultIsCorrect(int a, ByteRegister r8, int b) {
+    void givenByteRegisterAndValues_whenOr_thenResultIsCorrect(int a, R8 r8, int b) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .withA(a)
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        accessor.setValue(r8.convert(), (short) b);
+        accessor.setValue(r8, (short) b);
 
         Or.or_r8(r8).execute(cpuStructure);
 
@@ -46,11 +46,11 @@ class OrTest {
 
     @ParameterizedTest
     @MethodSource("getR8ValuePairs")
-    void givenByteRegisterAndValues_whenOr_thenFlagsAreCorrect(int a, ByteRegister r8, int b) {
+    void givenByteRegisterAndValues_whenOr_thenFlagsAreCorrect(int a, R8 r8, int b) {
         CpuStructure cpuStructure = new CpuStructureBuilder()
                 .build();
         OperationTargetAccessor accessor = OperationTargetAccessor.from(cpuStructure);
-        accessor.setValue(r8.convert(), (short) b);
+        accessor.setValue(r8, (short) b);
 
         Or.or_r8(r8).execute(cpuStructure);
 
@@ -73,7 +73,7 @@ class OrTest {
                 .withIndirectHL(b)
                 .build();
 
-        Or.or_r8(ByteRegister.INDIRECT_HL).execute(cpuStructure);
+        Or.or_r8(indirect_hl).execute(cpuStructure);
 
         Hashtable<Flag, Boolean> expectedFlags = new FlagChangesetBuilder()
                 .with(Flag.H, false)

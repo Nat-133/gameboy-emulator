@@ -3,10 +3,8 @@ package org.gameboy.cpu.instructions;
 import org.gameboy.cpu.components.CpuRegisters;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.components.IncrementDecrementUnit;
-import org.gameboy.cpu.instructions.targets.GenericOperationTarget;
-import org.gameboy.cpu.instructions.targets.OperationTarget;
-
-import static org.gameboy.cpu.instructions.targets.OperationTarget.SP;
+import org.gameboy.cpu.instructions.targets.Target;
+import static org.gameboy.cpu.instructions.targets.Target.*;
 
 public class LoadSP_HL implements Load {
     public static LoadSP_HL load_SP_HL() {
@@ -14,13 +12,13 @@ public class LoadSP_HL implements Load {
     }
 
     @Override
-    public GenericOperationTarget source() {
-        return OperationTarget.HL.direct();
+    public Target source() {
+        return hl;
     }
 
     @Override
-    public GenericOperationTarget destination() {
-        return SP.direct();
+    public Target destination() {
+        return sp;
     }
 
     @Override
