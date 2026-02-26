@@ -14,6 +14,31 @@ public sealed interface Target
                 Target.Imm8, Target.Imm16, Target.SPOffset {
     String representation();
 
+    A             a               = A.INSTANCE;
+    B             b               = B.INSTANCE;
+    C             c               = C.INSTANCE;
+    D             d               = D.INSTANCE;
+    E             e               = E.INSTANCE;
+    H             h               = H.INSTANCE;
+    L             l               = L.INSTANCE;
+    BC            bc              = BC.INSTANCE;
+    DE            de              = DE.INSTANCE;
+    HL            hl              = HL.INSTANCE;
+    SP            sp              = SP.INSTANCE;
+    AF            af              = AF.INSTANCE;
+    PC            pc              = PC.INSTANCE;
+    IndirectHL    indirect_hl     = IndirectHL.INSTANCE;
+    IndirectBC    indirect_bc     = IndirectBC.INSTANCE;
+    IndirectDE    indirect_de     = IndirectDE.INSTANCE;
+    IndirectHLInc indirect_hl_inc = IndirectHLInc.INSTANCE;
+    IndirectHLDec indirect_hl_dec = IndirectHLDec.INSTANCE;
+    IndirectC     indirect_c      = IndirectC.INSTANCE;
+    IndirectImm8  indirect_imm_8  = IndirectImm8.INSTANCE;
+    IndirectImm16 indirect_imm_16 = IndirectImm16.INSTANCE;
+    Imm8          imm_8           = Imm8.INSTANCE;
+    Imm16         imm_16          = Imm16.INSTANCE;
+    SPOffset      sp_offset       = SPOffset.INSTANCE;
+
     // ── Grouping interfaces ───────────────────────────────────────────
 
     sealed interface ByteTarget extends Target
@@ -37,6 +62,7 @@ public sealed interface Target
 
     // ── Opcode grouping interfaces ────────────────────────────────────
 
+    // 8-bit register or (HL) — the "r8" operand group in the CPU manual
     sealed interface R8 extends Target
             permits A, B, C, D, E, H, L, IndirectHL {
         R8[] LOOKUP_TABLE = {
@@ -49,6 +75,7 @@ public sealed interface Target
         }
     }
 
+    // 16-bit general-purpose register pair — the "r16" operand group in the CPU manual
     sealed interface R16 extends Target
             permits BC, DE, HL, SP {
         R16[] LOOKUP_TABLE = {
@@ -60,6 +87,7 @@ public sealed interface Target
         }
     }
 
+    // 16-bit register pair used by PUSH/POP (AF instead of SP) — the "r16stk" operand group
     sealed interface Stk16 extends Target
             permits BC, DE, HL, AF {
         Stk16[] LOOKUP_TABLE = {
@@ -71,6 +99,7 @@ public sealed interface Target
         }
     }
 
+    // 16-bit register used as a memory pointer — the "r16mem" operand group
     sealed interface Mem16 extends Target
             permits IndirectBC, IndirectDE, IndirectHLInc, IndirectHLDec {
         Mem16[] LOOKUP_TABLE = {
@@ -228,31 +257,4 @@ public sealed interface Target
         @Override public String representation() { return "SP+e8"; }
         @Override public String toString() { return representation(); }
     }
-
-    // ── Convenience constants ─────────────────────────────────────────
-
-    A a = A.INSTANCE;
-    B b = B.INSTANCE;
-    C c = C.INSTANCE;
-    D d = D.INSTANCE;
-    E e = E.INSTANCE;
-    H h = H.INSTANCE;
-    L l = L.INSTANCE;
-    BC bc = BC.INSTANCE;
-    DE de = DE.INSTANCE;
-    HL hl = HL.INSTANCE;
-    SP sp = SP.INSTANCE;
-    AF af = AF.INSTANCE;
-    PC pc = PC.INSTANCE;
-    IndirectHL indirect_hl = IndirectHL.INSTANCE;
-    IndirectBC indirect_bc = IndirectBC.INSTANCE;
-    IndirectDE indirect_de = IndirectDE.INSTANCE;
-    IndirectHLInc indirect_hl_inc = IndirectHLInc.INSTANCE;
-    IndirectHLDec indirect_hl_dec = IndirectHLDec.INSTANCE;
-    IndirectC indirect_c = IndirectC.INSTANCE;
-    IndirectImm8 indirect_imm_8 = IndirectImm8.INSTANCE;
-    IndirectImm16 indirect_imm_16 = IndirectImm16.INSTANCE;
-    Imm8 imm_8 = Imm8.INSTANCE;
-    Imm16 imm_16 = Imm16.INSTANCE;
-    SPOffset sp_offset = SPOffset.INSTANCE;
 }
