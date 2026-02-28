@@ -115,4 +115,70 @@ public class Mbc1CartridgeTest {
 
         assertThatHex(cart.read((short) 0x4000)).isEqualTo((byte) 0xDD);
     }
+
+    // --- RAM Enable/Disable ---
+
+    @Test
+    public void givenRamDisabled_whenReadFromRam_thenReturns0xFF() {
+        byte[] rom = mbc1Rom(4);
+        Cartridge cart = createCartridge(rom);
+
+        assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0xFF);
+    }
+
+    @Test
+    public void givenRamEnabled_whenWriteAndRead_thenReturnsWrittenValue() {
+        byte[] rom = mbc1Rom(4);
+        Cartridge cart = createCartridge(rom);
+
+        cart.write((short) 0x0000, (byte) 0x0A); // Enable RAM
+        cart.write((short) 0xA000, (byte) 0x42);
+
+        assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0x42);
+    }
+
+    @Test
+    public void givenRamEnabledThenDisabled_whenRead_thenReturns0xFF() {
+        byte[] rom = mbc1Rom(4);
+        Cartridge cart = createCartridge(rom);
+
+        cart.write((short) 0x0000, (byte) 0x0A); // Enable
+        cart.write((short) 0xA000, (byte) 0x42);
+        cart.write((short) 0x0000, (byte) 0x00); // Disable
+
+        assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0xFF);
+    }
+
+    @Test
+    public void givenRamDisabled_whenWriteToRam_thenWriteIgnored() {
+        byte[] rom = mbc1Rom(4);
+        Cartridge cart = createCartridge(rom);
+
+        cart.write((short) 0xA000, (byte) 0x42); // Write while disabled
+        cart.write((short) 0x0000, (byte) 0x0A); // Enable
+
+        assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0x00);
+    }
+
+    @Test
+    public void givenRamEnableRegister_thenOnly4BitsChecked() {
+        byte[] rom = mbc1Rom(4);
+        Cartridge cart = createCartridge(rom);
+
+        cart.write((short) 0x0000, (byte) 0xFA); // Low 4 bits = 0x0A
+        cart.write((short) 0xA000, (byte) 0x42);
+
+        assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0x42);
+    }
+
+    @Test
+    public void givenNon0x0ALowNibble_thenRamRemainsDisabled() {
+        byte[] rom = mbc1Rom(4);
+        Cartridge cart = createCartridge(rom);
+
+        cart.write((short) 0x0000, (byte) 0x0B);
+        cart.write((short) 0xA000, (byte) 0x42);
+
+        assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0xFF);
+    }
 }
