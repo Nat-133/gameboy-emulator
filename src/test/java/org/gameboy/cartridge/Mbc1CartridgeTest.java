@@ -273,4 +273,95 @@ public class Mbc1CartridgeTest {
         cart.write((short) 0x4000, (byte) 0x01); // BANK2 = 1, masked to 0
         assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0xAA);
     }
+
+    // --- No-RAM cartridge ---
+
+    @Test
+    public void givenCartridgeWithNoRam_whenReadRam_thenReturns0xFF() {
+        byte[] rom = new byte[4 * 0x4000];
+        rom[0x0147] = 0x01; // MBC1, no RAM
+        rom[0x0148] = 0x01; // 4 ROM banks
+        rom[0x0149] = 0x00; // No RAM
+
+        Cartridge cart = new Mbc1Cartridge(rom);
+        cart.write((short) 0x0000, (byte) 0x0A); // Enable RAM (no effect)
+
+        assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0xFF);
+    }
+
+    @Test
+    public void givenCartridgeWithNoRam_whenWriteRam_thenIgnored() {
+        byte[] rom = new byte[4 * 0x4000];
+        rom[0x0147] = 0x01; // MBC1, no RAM
+        rom[0x0148] = 0x01;
+        rom[0x0149] = 0x00;
+
+        Cartridge cart = new Mbc1Cartridge(rom);
+        cart.write((short) 0x0000, (byte) 0x0A);
+        cart.write((short) 0xA000, (byte) 0x42); // Should be silently ignored
+
+        assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0xFF);
+    }
+
+    // --- Boundary address reads ---
+
+    @Test
+    public void givenRomBank0_whenReadAtEndOfBank_thenCorrect() {
+        byte[] rom = mbc1Rom(4);
+        rom[0x3FFF] = (byte) 0xFE;
+
+        Cartridge cart = createCartridge(rom);
+
+        assertThatHex(cart.read((short) 0x3FFF)).isEqualTo((byte) 0xFE);
+    }
+
+    @Test
+    public void givenSwitchableBank_whenReadAtEndOfBank_thenCorrect() {
+        byte[] rom = mbc1Rom(4);
+        rom[0x7FFF] = (byte) 0xFD; // Bank 1, last byte
+
+        Cartridge cart = createCartridge(rom);
+
+        assertThatHex(cart.read((short) 0x7FFF)).isEqualTo((byte) 0xFD);
+    }
+
+    @Test
+    public void givenRam_whenReadAtEndOfRam_thenCorrect() {
+        byte[] rom = mbc1Rom(4);
+        Cartridge cart = createCartridge(rom);
+
+        cart.write((short) 0x0000, (byte) 0x0A);
+        cart.write((short) 0xBFFF, (byte) 0xFC);
+
+        assertThatHex(cart.read((short) 0xBFFF)).isEqualTo((byte) 0xFC);
+    }
+
+    // --- Banking mode register ---
+
+    @Test
+    public void givenBankingModeRegister_thenOnly1BitUsed() {
+        byte[] rom = mbc1Rom(128);
+        rom[0x20 * 0x4000] = (byte) 0xEE;
+
+        Cartridge cart = createCartridge(rom);
+        cart.write((short) 0x6000, (byte) 0xFF); // Only bit 0 used -> mode 1
+        cart.write((short) 0x4000, (byte) 0x01); // BANK2 = 1
+
+        // Mode 1: bank 0 region reads from bank (1 << 5) = 0x20
+        assertThatHex(cart.read((short) 0x0000)).isEqualTo((byte) 0xEE);
+    }
+
+    // --- BANK2 register ---
+
+    @Test
+    public void givenBank2Register_thenOnly2BitsUsed() {
+        byte[] rom = mbc1Rom(128);
+        rom[0x21 * 0x4000] = (byte) 0xCC; // Bank 0x21 = (1 << 5) | 1
+
+        Cartridge cart = createCartridge(rom);
+        cart.write((short) 0x4000, (byte) 0xFD); // 0xFD & 0x03 = 0x01
+
+        // BANK1 defaults to 1, so bank = (1 << 5) | 1 = 0x21
+        assertThatHex(cart.read((short) 0x4000)).isEqualTo((byte) 0xCC);
+    }
 }
