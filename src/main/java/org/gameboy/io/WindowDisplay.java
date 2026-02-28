@@ -47,12 +47,20 @@ public class WindowDisplay implements Display {
         createQuad();
     }
 
-    public void render() {
+    public void updateTexture() {
         if (dirty) {
             updateTextureData();
             uploadTexture();
             dirty = false;
         }
+    }
+
+    public int getTextureId() {
+        return textureId;
+    }
+
+    public void render() {
+        updateTexture();
 
         glUseProgram(shaderProgram);
         glActiveTexture(GL_TEXTURE0);

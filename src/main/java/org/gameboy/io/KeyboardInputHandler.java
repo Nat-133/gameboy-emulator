@@ -1,7 +1,7 @@
 package org.gameboy.io;
 
 import com.google.inject.Inject;
-import org.gameboy.components.joypad.Button;
+import org.gameboy.components.joypad.MultiSourceButton;
 import org.gameboy.components.joypad.annotations.*;
 
 import java.util.Map;
@@ -9,18 +9,19 @@ import java.util.Map;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class KeyboardInputHandler {
-    private final Map<Integer, Button> keyToButton;
+    private static final String SOURCE = "keyboard";
+    private final Map<Integer, MultiSourceButton> keyToButton;
 
     @Inject
     public KeyboardInputHandler(
-            @ButtonUp Button up,
-            @ButtonDown Button down,
-            @ButtonLeft Button left,
-            @ButtonRight Button right,
-            @ButtonA Button a,
-            @ButtonB Button b,
-            @ButtonStart Button start,
-            @ButtonSelect Button select) {
+            @ButtonUp MultiSourceButton up,
+            @ButtonDown MultiSourceButton down,
+            @ButtonLeft MultiSourceButton left,
+            @ButtonRight MultiSourceButton right,
+            @ButtonA MultiSourceButton a,
+            @ButtonB MultiSourceButton b,
+            @ButtonStart MultiSourceButton start,
+            @ButtonSelect MultiSourceButton select) {
         this.keyToButton = Map.of(
             GLFW_KEY_W, up,
             GLFW_KEY_S, down,
@@ -38,12 +39,12 @@ public class KeyboardInputHandler {
     }
 
     private void handleKey(long window, int key, int scancode, int action, int mods) {
-        Button button = keyToButton.get(key);
+        MultiSourceButton button = keyToButton.get(key);
         if (button != null) {
             if (action == GLFW_PRESS) {
-                button.press();
+                button.press(SOURCE);
             } else if (action == GLFW_RELEASE) {
-                button.release();
+                button.release(SOURCE);
             }
         }
     }

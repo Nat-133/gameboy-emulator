@@ -53,4 +53,45 @@ public class JoypadModule extends AbstractModule {
     Button provideStartButton() {
         return new Button();
     }
+
+    // MultiSourceButton wrappers
+    @Provides @Singleton @ButtonRight
+    MultiSourceButton provideRightMultiSource(@ButtonRight Button button) {
+        return new MultiSourceButton(button);
+    }
+
+    @Provides @Singleton @ButtonLeft
+    MultiSourceButton provideLeftMultiSource(@ButtonLeft Button button) {
+        return new MultiSourceButton(button);
+    }
+
+    @Provides @Singleton @ButtonUp
+    MultiSourceButton provideUpMultiSource(@ButtonUp Button button) {
+        return new MultiSourceButton(button);
+    }
+
+    @Provides @Singleton @ButtonDown
+    MultiSourceButton provideDownMultiSource(@ButtonDown Button button) {
+        return new MultiSourceButton(button);
+    }
+
+    @Provides @Singleton @ButtonA
+    MultiSourceButton provideAMultiSource(@ButtonA Button button) {
+        return new MultiSourceButton(button);
+    }
+
+    @Provides @Singleton @ButtonB
+    MultiSourceButton provideBMultiSource(@ButtonB Button button) {
+        return new MultiSourceButton(button);
+    }
+
+    @Provides @Singleton @ButtonSelect
+    MultiSourceButton provideSelectMultiSource(@ButtonSelect Button button) {
+        return new MultiSourceButton(button);
+    }
+
+    @Provides @Singleton @ButtonStart
+    MultiSourceButton provideStartMultiSource(@ButtonStart Button button) {
+        return new MultiSourceButton(button);
+    }
 }

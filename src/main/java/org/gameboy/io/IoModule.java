@@ -9,6 +9,8 @@ public class IoModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(KeyboardInputHandler.class).in(Singleton.class);
+        bind(MouseInputHandler.class).in(Singleton.class);
+        bind(GameBoyShell.class).in(Singleton.class);
     }
 
     @Provides
