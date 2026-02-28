@@ -2,16 +2,16 @@ package org.gameboy;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.gameboy.cartridge.CartridgeFactory;
 import org.gameboy.common.Cartridge;
 import org.gameboy.common.RomLoader;
-import org.gameboy.cartridge.CartridgeFactory;
 import org.gameboy.cpu.Cpu;
 import org.gameboy.io.EmulatorWindow;
 
 import java.io.IOException;
 
 public class Main {
-    private static final String DEFAULT_GAME_ROM = "roms/pokemon_blue.gb";
+    private static final String DEFAULT_GAME_ROM = "roms/Super Mario Land (World) (Rev 1).gb";
 
     public static void main(String[] args) {
         try {
