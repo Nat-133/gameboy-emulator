@@ -181,4 +181,96 @@ public class Mbc1CartridgeTest {
 
         assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0xFF);
     }
+
+    // --- Mode 1: ROM Bank 0 Region ---
+
+    @Test
+    public void givenMode1WithBank2Set_whenReadFromBank0Region_thenUsesBank2AsUpperBits() {
+        byte[] rom = mbc1Rom(128); // Need 128 banks for BANK2 to matter
+        rom[0x20 * 0x4000] = (byte) 0xEE; // Bank 0x20 = (1 << 5), offset 0
+
+        Cartridge cart = createCartridge(rom);
+        cart.write((short) 0x6000, (byte) 0x01); // Mode 1
+        cart.write((short) 0x4000, (byte) 0x01); // BANK2 = 1
+
+        assertThatHex(cart.read((short) 0x0000)).isEqualTo((byte) 0xEE);
+    }
+
+    @Test
+    public void givenMode1WithBank2Zero_whenReadFromBank0Region_thenReturnsBank0() {
+        byte[] rom = mbc1Rom(128);
+        rom[0x0000] = (byte) 0xFF;
+
+        Cartridge cart = createCartridge(rom);
+        cart.write((short) 0x6000, (byte) 0x01); // Mode 1, BANK2 = 0
+
+        assertThatHex(cart.read((short) 0x0000)).isEqualTo((byte) 0xFF);
+    }
+
+    // --- Mode 1: RAM Banking ---
+
+    @Test
+    public void givenMode0_whenAccessRam_thenAlwaysBank0() {
+        byte[] rom = mbc1Rom(4);
+        Cartridge cart = createCartridge(rom);
+
+        cart.write((short) 0x0000, (byte) 0x0A); // Enable RAM
+
+        // Write to RAM bank 0
+        cart.write((short) 0xA000, (byte) 0x11);
+
+        // Set BANK2 = 1 (in mode 0, should NOT affect RAM)
+        cart.write((short) 0x4000, (byte) 0x01);
+        cart.write((short) 0xA000, (byte) 0x22);
+
+        // Both writes went to bank 0, so last write wins
+        assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0x22);
+
+        // Set BANK2 = 0, same data
+        cart.write((short) 0x4000, (byte) 0x00);
+        assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0x22);
+    }
+
+    @Test
+    public void givenMode1_whenAccessRam_thenUsesBank2() {
+        byte[] rom = mbc1Rom(4);
+        Cartridge cart = createCartridge(rom);
+
+        cart.write((short) 0x0000, (byte) 0x0A); // Enable RAM
+        cart.write((short) 0x6000, (byte) 0x01); // Mode 1
+
+        // Write to RAM bank 0
+        cart.write((short) 0x4000, (byte) 0x00); // BANK2 = 0
+        cart.write((short) 0xA000, (byte) 0x11);
+
+        // Switch to RAM bank 1
+        cart.write((short) 0x4000, (byte) 0x01); // BANK2 = 1
+        cart.write((short) 0xA000, (byte) 0x22);
+
+        // Read bank 1
+        assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0x22);
+
+        // Switch back to bank 0
+        cart.write((short) 0x4000, (byte) 0x00);
+        assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0x11);
+    }
+
+    @Test
+    public void givenMode1WithSmallRam_whenSelectHighBank_thenMaskedToBank0() {
+        byte[] rom = new byte[4 * 0x4000];
+        rom[0x0147] = 0x02; // MBC1+RAM
+        rom[0x0148] = 0x01; // 4 ROM banks
+        rom[0x0149] = 0x02; // 1 RAM bank -> mask 0x00
+
+        Cartridge cart = new Mbc1Cartridge(rom);
+
+        cart.write((short) 0x0000, (byte) 0x0A); // Enable
+        cart.write((short) 0x6000, (byte) 0x01); // Mode 1
+
+        cart.write((short) 0x4000, (byte) 0x00); // BANK2 = 0
+        cart.write((short) 0xA000, (byte) 0xAA);
+
+        cart.write((short) 0x4000, (byte) 0x01); // BANK2 = 1, masked to 0
+        assertThatHex(cart.read((short) 0xA000)).isEqualTo((byte) 0xAA);
+    }
 }
