@@ -12,6 +12,7 @@ public class CartridgeFactory {
 
         return switch (type) {
             case 0x00 -> new RomOnlyCartridge(romData);
+            case 0x01, 0x02, 0x03 -> new Mbc1Cartridge(romData);
             case 0x0F, 0x10, 0x11, 0x12, 0x13 -> new Mbc3Cartridge(romData, Instant::now);
             default -> throw new UnsupportedOperationException(
                     "Unsupported cartridge type: 0x%02x".formatted(type));

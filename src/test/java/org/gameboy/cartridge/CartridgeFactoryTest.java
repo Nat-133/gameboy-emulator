@@ -64,9 +64,30 @@ public class CartridgeFactoryTest {
     }
 
     @Test
+    public void givenTypeCode0x01_thenCreatesMbc1Cartridge() {
+        Cartridge cart = CartridgeFactory.fromRom(romWithType((byte) 0x01));
+
+        assertThat(cart).isInstanceOf(Mbc1Cartridge.class);
+    }
+
+    @Test
+    public void givenTypeCode0x02_thenCreatesMbc1Cartridge() {
+        Cartridge cart = CartridgeFactory.fromRom(romWithType((byte) 0x02));
+
+        assertThat(cart).isInstanceOf(Mbc1Cartridge.class);
+    }
+
+    @Test
+    public void givenTypeCode0x03_thenCreatesMbc1Cartridge() {
+        Cartridge cart = CartridgeFactory.fromRom(romWithType((byte) 0x03));
+
+        assertThat(cart).isInstanceOf(Mbc1Cartridge.class);
+    }
+
+    @Test
     public void givenUnsupportedTypeCode_thenThrowsException() {
-        assertThatThrownBy(() -> CartridgeFactory.fromRom(romWithType((byte) 0x01)))
+        assertThatThrownBy(() -> CartridgeFactory.fromRom(romWithType((byte) 0x04)))
                 .isInstanceOf(UnsupportedOperationException.class)
-                .hasMessageContaining("0x01");
+                .hasMessageContaining("0x04");
     }
 }
