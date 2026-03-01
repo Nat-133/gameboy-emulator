@@ -15,6 +15,7 @@ import java.nio.file.Path;
 
 public class Main {
     private static final Path ROMS_DIR = Path.of("roms");
+    private static final Path DEFAULT_ROM = Path.of("shocklobster.gb");
 
     public static void main(String[] args) {
         try {
@@ -69,18 +70,22 @@ public class Main {
     }
 
     private static Path defaultRom() throws IOException {
-        if (!Files.isDirectory(ROMS_DIR)) {
-            throw new IOException("No ROM specified and roms/ directory not found");
-        }
-
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(ROMS_DIR, "*.gb")) {
-            for (Path entry : stream) {
-                if (Files.isRegularFile(entry)) {
-                    return entry;
+        // Check roms/ directory first (user's own ROMs take priority)
+        if (Files.isDirectory(ROMS_DIR)) {
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(ROMS_DIR, "*.gb")) {
+                for (Path entry : stream) {
+                    if (Files.isRegularFile(entry)) {
+                        return entry;
+                    }
                 }
             }
         }
 
-        throw new IOException("No .gb files found in roms/ directory");
+        // Fall back to bundled default ROM
+        if (Files.isRegularFile(DEFAULT_ROM)) {
+            return DEFAULT_ROM;
+        }
+
+        throw new IOException("No ROM found. Place .gb files in roms/ or provide a path as argument.");
     }
 }
