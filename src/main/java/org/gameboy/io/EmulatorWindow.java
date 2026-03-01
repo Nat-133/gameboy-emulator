@@ -23,6 +23,7 @@ public class EmulatorWindow {
     private final KeyboardInputHandler inputHandler;
     private final MouseInputHandler mouseInputHandler;
     private final GameBoyShell gameBoyShell;
+    private final AudioOutput audioOutput;
     private final VramDebugWindow debugWindow;
 
     private final MultiSourceButton up, down, left, right, a, b, start, select;
@@ -39,6 +40,7 @@ public class EmulatorWindow {
                           KeyboardInputHandler inputHandler,
                           MouseInputHandler mouseInputHandler,
                           GameBoyShell gameBoyShell,
+                          AudioOutput audioOutput,
                           @Named("underlying") Memory memory,
                           PpuRegisters ppuRegisters,
                           @ButtonUp MultiSourceButton up,
@@ -53,6 +55,7 @@ public class EmulatorWindow {
         this.inputHandler = inputHandler;
         this.mouseInputHandler = mouseInputHandler;
         this.gameBoyShell = gameBoyShell;
+        this.audioOutput = audioOutput;
         this.debugWindow = new VramDebugWindow(memory, ppuRegisters);
 
         this.up = up;
@@ -107,6 +110,7 @@ public class EmulatorWindow {
                         buttonStates[i] = buttonAnimations[i].getProgress();
                     }
 
+                    audioOutput.update();
                     glClear(GL_COLOR_BUFFER_BIT);
                     gameBoyShell.render(windowDisplay.getTextureId(), (float) now, buttonStates);
                     glfwSwapBuffers(window);
@@ -153,9 +157,11 @@ public class EmulatorWindow {
         mouseInputHandler.setInteractiveElements(gameBoyShell.getInteractiveElements());
         mouseInputHandler.registerCallbacks(window);
         debugWindow.init(window);
+        audioOutput.start();
     }
 
     private void cleanup() {
+        audioOutput.stop();
         windowDisplay.cleanup();
         gameBoyShell.cleanup();
         debugWindow.cleanup();
