@@ -2,6 +2,7 @@ package org.gameboy;
 
 import com.google.inject.AbstractModule;
 import org.gameboy.common.Cartridge;
+import org.gameboy.audio.AudioModule;
 import org.gameboy.common.CoreModule;
 import org.gameboy.components.joypad.JoypadModule;
 import org.gameboy.cpu.CpuModule;
@@ -23,5 +24,6 @@ public class EmulatorModule extends AbstractModule {
         install(new DisplayModule());
         install(new JoypadModule());
         install(new IoModule());
+        install(new AudioModule());
     }
 }

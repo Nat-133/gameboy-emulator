@@ -12,6 +12,7 @@ import org.gameboy.components.Timer;
 import org.gameboy.cpu.annotations.Prefixed;
 import org.gameboy.cpu.annotations.Unprefixed;
 import org.gameboy.cpu.components.*;
+import org.gameboy.audio.Apu;
 import org.gameboy.display.PictureProcessingUnit;
 
 public class CpuModule extends AbstractModule {
@@ -51,11 +52,13 @@ public class CpuModule extends AbstractModule {
     Clock provideCpuClock(Provider<PictureProcessingUnit> ppuProvider,
                           Provider<Timer> timerProvider,
                           Provider<DmaController> dmaControllerProvider,
-                          Provider<SerialController> serialControllerProvider) {
+                          Provider<SerialController> serialControllerProvider,
+                          Provider<Apu> apuProvider) {
         Timer timer = timerProvider.get();
         PictureProcessingUnit ppu = ppuProvider.get();
         DmaController dmaController = dmaControllerProvider.get();
         SerialController serialController = serialControllerProvider.get();
+        Apu apu = apuProvider.get();
 
         return new ClockWithParallelProcess(() -> {
             timer.mCycle();
@@ -63,6 +66,7 @@ public class CpuModule extends AbstractModule {
             dmaController.mCycle();
             for (int i = 0; i < 4; i++) {
                 ppu.tCycle();
+                apu.tCycle();
             }
         }, new RealTimeFramePacer());
     }

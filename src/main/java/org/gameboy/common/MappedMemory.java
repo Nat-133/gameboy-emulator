@@ -3,10 +3,12 @@ package org.gameboy.common;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.gameboy.audio.ApuRegisters;
 import org.gameboy.common.annotations.*;
 import org.gameboy.components.TacRegister;
 import org.gameboy.components.joypad.JoypadController;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -41,7 +43,8 @@ public class MappedMemory implements Memory {
                        @Named("obp0") ByteRegister obp0Register,
                        @Named("obp1") ByteRegister obp1Register,
                        SerialController serialController,
-                       JoypadController joypadController) {
+                       JoypadController joypadController,
+                       ApuRegisters apuRegisters) {
         this.cartridge = cartridge;
 
         memoryMap[0xFF00] = new JoypadMapping(joypadController);
@@ -68,6 +71,11 @@ public class MappedMemory implements Memory {
         memoryMap[0xFF4A] = new ByteRegisterMapping(wyRegister);
         memoryMap[0xFF4B] = new ByteRegisterMapping(wxRegister);
         memoryMap[0xFFFF] = new ByteRegisterMapping(interruptEnableRegister);
+
+        // APU registers (0xFF10-0xFF26 + wave RAM 0xFF30-0xFF3F)
+        for (Map.Entry<Integer, ByteRegister> entry : apuRegisters.getRegisterMap().entrySet()) {
+            memoryMap[entry.getKey()] = new ByteRegisterMapping(entry.getValue());
+        }
     }
 
     @Override

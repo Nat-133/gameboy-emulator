@@ -1,5 +1,6 @@
 package org.gameboy.common;
 
+import org.gameboy.audio.ApuRegisters;
 import org.gameboy.cartridge.RomOnlyCartridge;
 import org.gameboy.components.TacRegister;
 import org.gameboy.components.joypad.JoypadController;
@@ -62,7 +63,8 @@ public class MappedMemoryTest {
                                  lcdcRegister, statRegister, scyRegister, scxRegister,
                                  lyRegister, lycRegister, wyRegister, wxRegister,
                                  bgpRegister, obp0Register, obp1Register,
-                                 serialController, joypadController);
+                                 serialController, joypadController,
+                                 new ApuRegisters());
     }
 
     @Test

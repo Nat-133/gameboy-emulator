@@ -5,6 +5,8 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import org.gameboy.display.Display;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 public class IoModule extends AbstractModule {
     @Override
     protected void configure() {
@@ -29,5 +31,11 @@ public class IoModule extends AbstractModule {
     @Singleton
     Display provideDisplay(WindowDisplay windowDisplay) {
         return windowDisplay;
+    }
+
+    @Provides
+    @Singleton
+    AudioOutput provideAudioOutput(ConcurrentLinkedQueue<short[]> sampleQueue) {
+        return new AudioOutput(sampleQueue);
     }
 }
