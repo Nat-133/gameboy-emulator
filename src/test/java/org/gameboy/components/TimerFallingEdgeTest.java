@@ -24,15 +24,13 @@ class TimerFallingEdgeTest {
     void setUp() {
         InternalTimerCounter internalCounter = new InternalTimerCounter(0);
         divRegister = new DividerRegister(internalCounter);
-        ByteRegister unwrappedTima = new IntBackedRegister();
         tmaRegister = new IntBackedRegister();
         TacRegister tacReg = new TacRegister();
         tacRegister = tacReg;
         interruptController = mock(InterruptController.class);
 
-        timer = new Timer(internalCounter, unwrappedTima, tmaRegister, tacReg, interruptController);
-        // Use the wrapped TIMA register that the Timer exposes
-        timaRegister = timer.getTimaRegister();
+        timer = new Timer(internalCounter, new IntBackedRegister(), tmaRegister, tacReg, interruptController);
+        timaRegister = new TimaRegister(timer);
     }
 
     @Test

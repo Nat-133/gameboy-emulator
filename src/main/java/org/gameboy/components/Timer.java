@@ -1,12 +1,17 @@
 package org.gameboy.components;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.gameboy.common.ByteRegister;
+import org.gameboy.common.IntBackedRegister;
 import org.gameboy.common.Interrupt;
 import org.gameboy.common.InterruptController;
+import org.gameboy.common.annotations.Tma;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
 import static org.gameboy.utils.BitUtilities.get_bit;
 
+@Singleton
 public class Timer {
     private enum ReloadPhase {
         NORMAL,
@@ -15,8 +20,7 @@ public class Timer {
     }
 
     private final InternalTimerCounter internalCounter;
-    private final ByteRegister timaRegister;
-    private final ByteRegister underlyingTima;
+    private final IntBackedRegister underlyingTima;
     private final ByteRegister timerModulo;
     private final ByteRegister timerControl;
     private final InterruptController interruptController;
@@ -26,18 +30,14 @@ public class Timer {
     private boolean wasOverflowCancelled = false;
     private byte capturedTmaValue = 0;
 
-    public ByteRegister getTimaRegister() {
-        return timaRegister;
-    }
-
+    @Inject
     public Timer(InternalTimerCounter internalCounter,
-                 ByteRegister tima,
-                 ByteRegister tma,
+                 IntBackedRegister rawTima,
+                 @Tma ByteRegister tma,
                  TacRegister tac,
                  InterruptController interruptController) {
         this.internalCounter = internalCounter;
-        this.underlyingTima = tima;
-        this.timaRegister = createTimaWrapper(tima);
+        this.underlyingTima = rawTima;
         this.timerModulo = tma;
         this.timerControl = tac;
         this.interruptController = interruptController;
@@ -46,25 +46,19 @@ public class Timer {
         tac.setWriteListener(this::checkForFallingEdge);
     }
 
-    private ByteRegister createTimaWrapper(ByteRegister tima) {
-        return new ByteRegister() {
-            @Override
-            public byte read() {
-                return tima.read();
-            }
+    public byte readTima() {
+        return underlyingTima.read();
+    }
 
-            @Override
-            public void write(byte newValue) {
-                switch (reloadPhase) {
-                    case RELOAD_PENDING -> {
-                        wasOverflowCancelled = true;
-                        tima.write(newValue);
-                    }
-                    case RELOADING -> {}
-                    case NORMAL -> tima.write(newValue);
-                }
+    public void writeTima(byte newValue) {
+        switch (reloadPhase) {
+            case RELOAD_PENDING -> {
+                wasOverflowCancelled = true;
+                underlyingTima.write(newValue);
             }
-        };
+            case RELOADING -> {}
+            case NORMAL -> underlyingTima.write(newValue);
+        }
     }
 
     public void mCycle() {

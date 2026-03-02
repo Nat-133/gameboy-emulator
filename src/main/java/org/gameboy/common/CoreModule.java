@@ -9,6 +9,7 @@ import org.gameboy.common.annotations.*;
 import org.gameboy.components.DividerRegister;
 import org.gameboy.components.InternalTimerCounter;
 import org.gameboy.components.TacRegister;
+import org.gameboy.components.TimaRegister;
 import org.gameboy.components.Timer;
 
 public class CoreModule extends AbstractModule {
@@ -24,6 +25,7 @@ public class CoreModule extends AbstractModule {
 
         bind(SerialController.class).in(Singleton.class);
         bind(InterruptController.class).in(Singleton.class);
+        bind(Timer.class).in(Singleton.class);
     }
 
     @Provides
@@ -104,19 +106,9 @@ public class CoreModule extends AbstractModule {
 
     @Provides
     @Singleton
-    Timer provideTimer(InternalTimerCounter internalCounter,
-                       @Tma ByteRegister tma,
-                       @Tac TacRegister tac,
-                       InterruptController interruptController) {
-        ByteRegister unwrappedTima = new IntBackedRegister();
-        return new Timer(internalCounter, unwrappedTima, tma, tac, interruptController);
-    }
-
-    @Provides
-    @Singleton
     @Tima
-    ByteRegister provideTimaRegister(Timer timer) {
-        return timer.getTimaRegister();
+    ByteRegister provideTimaRegister(TimaRegister timaRegister) {
+        return timaRegister;
     }
 
 }
