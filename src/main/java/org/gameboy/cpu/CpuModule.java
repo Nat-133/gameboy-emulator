@@ -1,19 +1,17 @@
 package org.gameboy.cpu;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import org.gameboy.common.*;
+import org.gameboy.common.ByteRegister;
+import org.gameboy.common.Clock;
+import org.gameboy.common.Memory;
 import org.gameboy.common.annotations.InterruptEnable;
 import org.gameboy.common.annotations.InterruptFlags;
-import org.gameboy.components.Timer;
 import org.gameboy.cpu.annotations.Prefixed;
 import org.gameboy.cpu.annotations.Unprefixed;
 import org.gameboy.cpu.components.*;
-import org.gameboy.audio.Apu;
-import org.gameboy.display.PictureProcessingUnit;
 
 public class CpuModule extends AbstractModule {
     @Override
@@ -44,31 +42,6 @@ public class CpuModule extends AbstractModule {
     @Provides
     Decoder provideDecoder(@Unprefixed OpcodeTable unprefixedTable, @Prefixed OpcodeTable prefixedTable) {
         return new Decoder(unprefixedTable, prefixedTable);
-    }
-    
-    @Provides
-    @Singleton
-    @Named("cpuClock")
-    Clock provideCpuClock(Provider<PictureProcessingUnit> ppuProvider,
-                          Provider<Timer> timerProvider,
-                          Provider<DmaController> dmaControllerProvider,
-                          Provider<SerialController> serialControllerProvider,
-                          Provider<Apu> apuProvider) {
-        Timer timer = timerProvider.get();
-        PictureProcessingUnit ppu = ppuProvider.get();
-        DmaController dmaController = dmaControllerProvider.get();
-        SerialController serialController = serialControllerProvider.get();
-        Apu apu = apuProvider.get();
-
-        return new ClockWithParallelProcess(() -> {
-            timer.mCycle();
-            serialController.mCycle();
-            dmaController.mCycle();
-            for (int i = 0; i < 4; i++) {
-                ppu.tCycle();
-                apu.tCycle();
-            }
-        }, new RealTimeFramePacer());
     }
     
     @Provides
