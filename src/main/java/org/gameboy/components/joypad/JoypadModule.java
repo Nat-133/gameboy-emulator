@@ -3,13 +3,14 @@ package org.gameboy.components.joypad;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import org.gameboy.common.JoypadPort;
 import org.gameboy.components.joypad.annotations.*;
 
 public class JoypadModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        // ButtonGroups and JoypadController are auto-injected via @Inject constructors
+        bind(JoypadPort.class).to(JoypadController.class).in(Singleton.class);
     }
 
     // D-pad buttons

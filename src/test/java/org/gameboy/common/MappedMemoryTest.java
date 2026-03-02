@@ -1,12 +1,11 @@
 package org.gameboy.common;
 
-import org.gameboy.audio.ApuRegisters;
 import org.gameboy.cartridge.RomOnlyCartridge;
-import org.gameboy.components.TacRegister;
-import org.gameboy.components.joypad.JoypadController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -16,7 +15,7 @@ public class MappedMemoryTest {
     private ByteRegister divRegister;
     private ByteRegister timaRegister;
     private ByteRegister tmaRegister;
-    private TacRegister tacRegister;
+    private ByteRegister tacRegister;
     private ByteRegister dmaRegister;
     private ByteRegister interruptFlagsRegister;
     private ByteRegister interruptEnableRegister;
@@ -32,7 +31,7 @@ public class MappedMemoryTest {
     private ByteRegister obp0Register;
     private ByteRegister obp1Register;
     private SerialController serialController;
-    private JoypadController joypadController;
+    private JoypadPort joypadController;
     private MappedMemory memory;
 
     @BeforeEach
@@ -40,7 +39,7 @@ public class MappedMemoryTest {
         divRegister = new IntBackedRegister();
         timaRegister = new IntBackedRegister();
         tmaRegister = new IntBackedRegister();
-        tacRegister = new TacRegister();
+        tacRegister = new IntBackedRegister();
         dmaRegister = new IntBackedRegister();
         interruptFlagsRegister = new IntBackedRegister();
         interruptEnableRegister = new IntBackedRegister();
@@ -56,7 +55,7 @@ public class MappedMemoryTest {
         obp0Register = new IntBackedRegister();
         obp1Register = new IntBackedRegister();
         serialController = Mockito.mock(SerialController.class);
-        joypadController = Mockito.mock(JoypadController.class);
+        joypadController = Mockito.mock(JoypadPort.class);
         Cartridge cartridge = new RomOnlyCartridge(new byte[0]);
         memory = new MappedMemory(cartridge, divRegister, timaRegister, tmaRegister, tacRegister, dmaRegister,
                                  interruptFlagsRegister, interruptEnableRegister,
@@ -64,7 +63,7 @@ public class MappedMemoryTest {
                                  lyRegister, lycRegister, wyRegister, wxRegister,
                                  bgpRegister, obp0Register, obp1Register,
                                  serialController, joypadController,
-                                 new ApuRegisters());
+                                 Map.of());
     }
 
     @Test
@@ -120,7 +119,7 @@ public class MappedMemoryTest {
         byte writeValue = (byte) 0x07;
         tacRegister.write(writeValue);
 
-        assertEquals((byte) 0xFF, memory.read((short) 0xFF07));
+        assertEquals(writeValue, memory.read((short) 0xFF07));
     }
 
     @Test
@@ -128,7 +127,7 @@ public class MappedMemoryTest {
         byte writeValue = (byte) 0x05;
         memory.write((short) 0xFF07, writeValue);
 
-        assertEquals((byte) 0xFD, tacRegister.read());
+        assertEquals(writeValue, tacRegister.read());
     }
     
     @Test

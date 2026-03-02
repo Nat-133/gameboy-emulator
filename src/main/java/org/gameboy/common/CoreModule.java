@@ -76,6 +76,13 @@ public class CoreModule extends AbstractModule {
 
     @Provides
     @Singleton
+    @Tac
+    ByteRegister provideTacByteRegister(@Tac TacRegister tacRegister) {
+        return tacRegister;
+    }
+
+    @Provides
+    @Singleton
     @Dma
     ByteRegister provideDmaRegister() {
         return new IntBackedRegister();

@@ -3,10 +3,7 @@ package org.gameboy.common;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import org.gameboy.audio.ApuRegisters;
 import org.gameboy.common.annotations.*;
-import org.gameboy.components.TacRegister;
-import org.gameboy.components.joypad.JoypadController;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +24,7 @@ public class MappedMemory implements Memory {
                        @Div ByteRegister divRegister,
                        @Tima ByteRegister timaRegister,
                        @Tma ByteRegister tmaRegister,
-                       @Tac TacRegister tacRegister,
+                       @Tac ByteRegister tacRegister,
                        @Dma ByteRegister dmaRegister,
                        @InterruptFlags ByteRegister interruptFlagsRegister,
                        @InterruptEnable ByteRegister interruptEnableRegister,
@@ -43,11 +40,11 @@ public class MappedMemory implements Memory {
                        @Named("obp0") ByteRegister obp0Register,
                        @Named("obp1") ByteRegister obp1Register,
                        SerialController serialController,
-                       JoypadController joypadController,
-                       ApuRegisters apuRegisters) {
+                       JoypadPort joypadPort,
+                       @Named("apuRegisters") Map<Integer, ByteRegister> apuRegisters) {
         this.cartridge = cartridge;
 
-        memoryMap[0xFF00] = new JoypadMapping(joypadController);
+        memoryMap[0xFF00] = new JoypadMapping(joypadPort);
         memoryMap[0xFF01] = new SerialDataMapping(serialController);
         memoryMap[0xFF02] = new SerialControlMapping(serialController);
         
@@ -73,7 +70,7 @@ public class MappedMemory implements Memory {
         memoryMap[0xFFFF] = new ByteRegisterMapping(interruptEnableRegister);
 
         // APU registers (0xFF10-0xFF26 + wave RAM 0xFF30-0xFF3F)
-        for (Map.Entry<Integer, ByteRegister> entry : apuRegisters.getRegisterMap().entrySet()) {
+        for (Map.Entry<Integer, ByteRegister> entry : apuRegisters.entrySet()) {
             memoryMap[entry.getKey()] = new ByteRegisterMapping(entry.getValue());
         }
     }
@@ -158,15 +155,15 @@ public class MappedMemory implements Memory {
         }
     }
 
-    private record JoypadMapping(JoypadController joypadController) implements MemoryLocation {
+    private record JoypadMapping(JoypadPort joypadPort) implements MemoryLocation {
         @Override
         public byte read() {
-            return joypadController.read();
+            return joypadPort.read();
         }
 
         @Override
         public void write(byte value) {
-            joypadController.write(value);
+            joypadPort.write(value);
         }
     }
 }

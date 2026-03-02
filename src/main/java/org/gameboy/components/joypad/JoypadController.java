@@ -4,10 +4,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.gameboy.common.Interrupt;
 import org.gameboy.common.InterruptController;
+import org.gameboy.common.JoypadPort;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
 @Singleton
-public class JoypadController implements ButtonGroupListener {
+public class JoypadController implements ButtonGroupListener, JoypadPort {
     private static final int SELECTION_START_BIT = 4;
     private static final byte HIGH_BITS = (byte) 0xC0;
 
