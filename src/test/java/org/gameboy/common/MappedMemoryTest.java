@@ -31,7 +31,7 @@ public class MappedMemoryTest {
     private ByteRegister obp0Register;
     private ByteRegister obp1Register;
     private SerialController serialController;
-    private JoypadPort joypadController;
+    private ByteRegister joypadController;
     private MappedMemory memory;
 
     @BeforeEach
@@ -55,7 +55,7 @@ public class MappedMemoryTest {
         obp0Register = new IntBackedRegister();
         obp1Register = new IntBackedRegister();
         serialController = Mockito.mock(SerialController.class);
-        joypadController = Mockito.mock(JoypadPort.class);
+        joypadController = Mockito.mock(ByteRegister.class);
         Cartridge cartridge = new RomOnlyCartridge(new byte[0]);
         memory = new MappedMemory(cartridge, divRegister, timaRegister, tmaRegister, tacRegister, dmaRegister,
                                  interruptFlagsRegister, interruptEnableRegister,

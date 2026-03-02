@@ -40,11 +40,11 @@ public class MappedMemory implements Memory {
                        @Named("obp0") ByteRegister obp0Register,
                        @Named("obp1") ByteRegister obp1Register,
                        SerialController serialController,
-                       JoypadPort joypadPort,
+                       @org.gameboy.common.annotations.Joypad ByteRegister joypadRegister,
                        @Named("apuRegisters") Map<Integer, ByteRegister> apuRegisters) {
         this.cartridge = cartridge;
 
-        memoryMap[0xFF00] = new JoypadMapping(joypadPort);
+        memoryMap[0xFF00] = new ByteRegisterMapping(joypadRegister);
         memoryMap[0xFF01] = new SerialDataMapping(serialController);
         memoryMap[0xFF02] = new SerialControlMapping(serialController);
         
@@ -155,15 +155,4 @@ public class MappedMemory implements Memory {
         }
     }
 
-    private record JoypadMapping(JoypadPort joypadPort) implements MemoryLocation {
-        @Override
-        public byte read() {
-            return joypadPort.read();
-        }
-
-        @Override
-        public void write(byte value) {
-            joypadPort.write(value);
-        }
-    }
 }
