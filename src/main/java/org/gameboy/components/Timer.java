@@ -6,6 +6,7 @@ import org.gameboy.common.ByteRegister;
 import org.gameboy.common.IntBackedRegister;
 import org.gameboy.common.Interrupt;
 import org.gameboy.common.InterruptController;
+import org.gameboy.common.annotations.Tac;
 import org.gameboy.common.annotations.Tma;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
@@ -34,7 +35,7 @@ public class Timer {
     public Timer(InternalTimerCounter internalCounter,
                  IntBackedRegister rawTima,
                  @Tma ByteRegister tma,
-                 TacRegister tac,
+                 @Tac TacRegister tac,
                  InterruptController interruptController) {
         this.internalCounter = internalCounter;
         this.underlyingTima = rawTima;
