@@ -1,7 +1,7 @@
 package org.gameboy.io;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import org.gameboy.common.annotations.UnderlyingMemory;
 import org.gameboy.common.Memory;
 import org.gameboy.components.joypad.MultiSourceButton;
 import org.gameboy.components.joypad.annotations.*;
@@ -41,7 +41,7 @@ public class EmulatorWindow {
                           MouseInputHandler mouseInputHandler,
                           GameBoyShell gameBoyShell,
                           AudioOutput audioOutput,
-                          @Named("underlying") Memory memory,
+                          @UnderlyingMemory Memory memory,
                           PpuRegisters ppuRegisters,
                           @ButtonUp MultiSourceButton up,
                           @ButtonDown MultiSourceButton down,

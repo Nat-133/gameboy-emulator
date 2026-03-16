@@ -1,6 +1,8 @@
 package org.gameboy.display;
 
+import com.google.inject.Inject;
 import org.gameboy.common.Clock;
+import org.gameboy.display.annotations.PpuClock;
 
 import static org.gameboy.display.PpuRegisters.PpuRegister.LCDC;
 import static org.gameboy.display.PpuRegisters.PpuRegister.LY;
@@ -19,9 +21,10 @@ public class PictureProcessingUnit {
     private Step step;
     private boolean wasLcdEnabled = true;
 
+    @Inject
     public PictureProcessingUnit(ScanlineController scanlineController,
                                  PpuRegisters registers,
-                                 Clock clock,
+                                 @PpuClock Clock clock,
                                  OamScanController oamScanController,
                                  DisplayInterruptController displayInterruptController,
                                  Display display) {

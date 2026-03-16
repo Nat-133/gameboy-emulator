@@ -1,7 +1,11 @@
 package org.gameboy.display;
 
+import com.google.inject.Inject;
 import org.gameboy.common.Memory;
 import org.gameboy.common.SynchronisedClock;
+import org.gameboy.common.annotations.UnderlyingMemory;
+import org.gameboy.display.annotations.PpuClock;
+import org.gameboy.display.annotations.SpriteFifo;
 import org.gameboy.utils.BitUtilities;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
@@ -27,11 +31,12 @@ public class SpriteFetcher implements Fetcher {
     private Step currentStep;
     private SpriteData currentSpriteData;
 
+    @Inject
     public SpriteFetcher(SpriteBuffer spriteBuffer,
-                         Memory memory,
+                         @UnderlyingMemory Memory memory,
                          PpuRegisters registers,
-                         Fifo<SpritePixel> spriteFifo,
-                         SynchronisedClock clock) {
+                         @SpriteFifo Fifo<SpritePixel> spriteFifo,
+                         @PpuClock SynchronisedClock clock) {
         this.spriteBuffer = spriteBuffer;
         this.memory = memory;
         this.registers = registers;

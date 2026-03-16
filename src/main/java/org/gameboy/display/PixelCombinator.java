@@ -1,5 +1,6 @@
 package org.gameboy.display;
 
+import com.google.inject.Inject;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
 import static org.gameboy.display.PpuRegisters.PpuRegister.*;
@@ -7,6 +8,7 @@ import static org.gameboy.display.PpuRegisters.PpuRegister.*;
 public class PixelCombinator {
     private final PpuRegisters registers;
 
+    @Inject
     public PixelCombinator(PpuRegisters registers) {
         this.registers = registers;
     }

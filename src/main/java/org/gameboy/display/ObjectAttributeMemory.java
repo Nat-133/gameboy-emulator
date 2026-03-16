@@ -1,6 +1,8 @@
 package org.gameboy.display;
 
+import com.google.inject.Inject;
 import org.gameboy.common.Memory;
+import org.gameboy.common.annotations.UnderlyingMemory;
 import org.gameboy.utils.BitUtilities;
 
 public class ObjectAttributeMemory {
@@ -8,7 +10,8 @@ public class ObjectAttributeMemory {
     private final short START_ADDRESS = (short) 0xFE00;
     private final Memory memory;
 
-    public ObjectAttributeMemory(Memory memory) {
+    @Inject
+    public ObjectAttributeMemory(@UnderlyingMemory Memory memory) {
         // this pulls values from main memory. Really should be the other way around.
         this.memory = memory;
     }

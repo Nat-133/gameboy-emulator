@@ -1,5 +1,7 @@
 package org.gameboy.audio;
 
+import com.google.inject.Inject;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Apu {
@@ -24,6 +26,7 @@ public class Apu {
     private short[] sampleBuffer;
     private int bufferPosition;
 
+    @Inject
     public Apu(ApuRegisters registers, ConcurrentLinkedQueue<short[]> sampleQueue) {
         this.registers = registers;
         this.sampleQueue = sampleQueue;

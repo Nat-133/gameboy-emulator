@@ -3,8 +3,6 @@ package org.gameboy.common;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-import com.google.inject.name.Names;
 import org.gameboy.common.annotations.*;
 import org.gameboy.components.DividerRegister;
 import org.gameboy.components.InternalTimerCounter;
@@ -21,33 +19,21 @@ public class CoreModule extends AbstractModule {
     protected void configure() {
         bind(Clock.class).to(SynchronisedClock.class).in(Singleton.class);
 
-        bind(Memory.class).annotatedWith(Names.named("underlying")).to(MappedMemory.class).in(Singleton.class);
+        bind(Memory.class).annotatedWith(UnderlyingMemory.class).to(MappedMemory.class).in(Singleton.class);
+        bind(MemoryBus.class).in(Singleton.class);
+        bind(Memory.class).to(MemoryBus.class);
+        bind(DmaController.class).to(MemoryBus.class);
 
         bind(SerialController.class).in(Singleton.class);
         bind(InterruptController.class).in(Singleton.class);
         bind(Timer.class).in(Singleton.class);
+
+        bind(ByteRegister.class).annotatedWith(Tma.class).toInstance(new IntBackedRegister());
+        bind(ByteRegister.class).annotatedWith(Dma.class).toInstance(new IntBackedRegister());
+        bind(ByteRegister.class).annotatedWith(InterruptFlags.class).toInstance(new InterruptFlagsRegister());
+        bind(ByteRegister.class).annotatedWith(InterruptEnable.class).toInstance(new IntBackedRegister());
     }
 
-    @Provides
-    @Singleton
-    MemoryBus provideMemoryBus(@Named("underlying") Memory underlying) {
-        return new MemoryBus(underlying);
-    }
-
-    @Provides
-    @Singleton
-    Memory provideMemory(MemoryBus memoryBus) {
-        return memoryBus;
-    }
-
-    @Provides
-    @Singleton
-    DmaController provideDmaController(MemoryBus memoryBus) {
-        return memoryBus;
-    }
-    
-    
-    
     @Provides
     @Singleton
     InternalTimerCounter provideInternalTimerCounter() {
@@ -60,13 +46,6 @@ public class CoreModule extends AbstractModule {
     @Div
     ByteRegister provideDivRegister(InternalTimerCounter internalCounter) {
         return new DividerRegister(internalCounter);
-    }
-    
-    @Provides
-    @Singleton
-    @Tma
-    ByteRegister provideTmaRegister() {
-        return new IntBackedRegister();
     }
 
     @Provides
@@ -81,27 +60,6 @@ public class CoreModule extends AbstractModule {
     @Tac
     ByteRegister provideTacByteRegister(@Tac TacRegister tacRegister) {
         return tacRegister;
-    }
-
-    @Provides
-    @Singleton
-    @Dma
-    ByteRegister provideDmaRegister() {
-        return new IntBackedRegister();
-    }
-
-    @Provides
-    @Singleton
-    @InterruptFlags
-    ByteRegister provideInterruptFlagsRegister() {
-        return new InterruptFlagsRegister();
-    }
-
-    @Provides
-    @Singleton
-    @InterruptEnable
-    ByteRegister provideInterruptEnableRegister() {
-        return new IntBackedRegister();
     }
 
     @Provides

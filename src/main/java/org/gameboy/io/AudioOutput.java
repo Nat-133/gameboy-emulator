@@ -3,6 +3,8 @@ package org.gameboy.io;
 import org.lwjgl.openal.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import com.google.inject.Inject;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.openal.ALC10.*;
@@ -19,6 +21,7 @@ public class AudioOutput {
     private final int[] buffers = new int[BUFFER_COUNT];
     private boolean running;
 
+    @Inject
     public AudioOutput(ConcurrentLinkedQueue<short[]> sampleQueue) {
         this.sampleQueue = sampleQueue;
     }

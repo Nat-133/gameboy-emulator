@@ -3,7 +3,7 @@ package org.gameboy.cpu;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
+import org.gameboy.cpu.annotations.CpuClock;
 import org.gameboy.common.ByteRegister;
 import org.gameboy.common.Clock;
 import org.gameboy.common.Memory;
@@ -18,13 +18,16 @@ public class CpuModule extends AbstractModule {
     protected void configure() {
         bind(ArithmeticUnit.class).in(Singleton.class);
         bind(IncrementDecrementUnit.class).in(Singleton.class);
-        
+
         bind(OpcodeTable.class).annotatedWith(Unprefixed.class)
             .to(UnprefixedOpcodeTable.class).in(Singleton.class);
         bind(OpcodeTable.class).annotatedWith(Prefixed.class)
             .to(PrefixedOpcodeTable.class).in(Singleton.class);
+
+        bind(Decoder.class).in(Singleton.class);
+        bind(Cpu.class).in(Singleton.class);
     }
-    
+
     @Provides
     CpuRegisters provideCpuRegisters() {
         return new CpuRegisters(
@@ -38,26 +41,15 @@ public class CpuModule extends AbstractModule {
             false            // ime - disabled after boot ROM
         );
     }
-    
-    @Provides
-    Decoder provideDecoder(@Unprefixed OpcodeTable unprefixedTable, @Prefixed OpcodeTable prefixedTable) {
-        return new Decoder(unprefixedTable, prefixedTable);
-    }
-    
+
     @Provides
     @Singleton
     CpuStructure provideCpuStructure(CpuRegisters registers, Memory memory, ArithmeticUnit alu,
-                                     IncrementDecrementUnit idu, @Named("cpuClock") Clock clock,
+                                     IncrementDecrementUnit idu, @CpuClock Clock clock,
                                      Decoder decoder,
                                      @InterruptFlags ByteRegister interruptFlagsRegister,
                                      @InterruptEnable ByteRegister interruptEnableRegister) {
         InterruptBus interruptBus = new InterruptBus(clock, interruptFlagsRegister, interruptEnableRegister);
         return new CpuStructure(registers, memory, alu, idu, clock, interruptBus, decoder);
-    }
-    
-    @Provides
-    @Singleton
-    Cpu provideCpu(CpuStructure cpuStructure) {
-        return new Cpu(cpuStructure);
     }
 }

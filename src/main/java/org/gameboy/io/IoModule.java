@@ -5,14 +5,14 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import org.gameboy.display.Display;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 public class IoModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(KeyboardInputHandler.class).in(Singleton.class);
         bind(MouseInputHandler.class).in(Singleton.class);
         bind(GameBoyShell.class).in(Singleton.class);
+        bind(Display.class).to(WindowDisplay.class);
+        bind(AudioOutput.class).in(Singleton.class);
     }
 
     @Provides
@@ -25,17 +25,5 @@ public class IoModule extends AbstractModule {
             {  8f / 255f,  24f / 255f,  32f / 255f},   // darkest
         };
         return new WindowDisplay(palette);
-    }
-
-    @Provides
-    @Singleton
-    Display provideDisplay(WindowDisplay windowDisplay) {
-        return windowDisplay;
-    }
-
-    @Provides
-    @Singleton
-    AudioOutput provideAudioOutput(ConcurrentLinkedQueue<short[]> sampleQueue) {
-        return new AudioOutput(sampleQueue);
     }
 }

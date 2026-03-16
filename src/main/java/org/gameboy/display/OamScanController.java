@@ -1,6 +1,8 @@
 package org.gameboy.display;
 
+import com.google.inject.Inject;
 import org.gameboy.common.Clock;
+import org.gameboy.display.annotations.PpuClock;
 import org.gameboy.utils.BitUtilities;
 
 import static org.gameboy.display.LcdcParser.spriteSize;
@@ -19,7 +21,8 @@ public class OamScanController {
     private byte currentSpriteY;
     private byte currentSpriteX;
 
-    public OamScanController(ObjectAttributeMemory oam, Clock clock, SpriteBuffer spriteBuffer, PpuRegisters registers) {
+    @Inject
+    public OamScanController(ObjectAttributeMemory oam, @PpuClock Clock clock, SpriteBuffer spriteBuffer, PpuRegisters registers) {
         this.oam = oam;
         this.clock = clock;
         this.spriteBuffer = spriteBuffer;

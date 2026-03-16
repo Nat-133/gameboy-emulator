@@ -1,8 +1,12 @@
 package org.gameboy.display;
 
+import com.google.inject.Inject;
 import org.gameboy.common.Memory;
 import org.gameboy.common.MemoryMapConstants;
 import org.gameboy.common.SynchronisedClock;
+import org.gameboy.common.annotations.UnderlyingMemory;
+import org.gameboy.display.annotations.BackgroundFifo;
+import org.gameboy.display.annotations.PpuClock;
 import org.gameboy.utils.BitUtilities;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
@@ -26,10 +30,11 @@ public class BackgroundFetcher implements Fetcher {
     private boolean windowFetchMode;
     private int windowLineCounter = 0;
 
-    public BackgroundFetcher(Memory memory,
+    @Inject
+    public BackgroundFetcher(@UnderlyingMemory Memory memory,
                              PpuRegisters registers,
-                             Fifo<TwoBitValue> backgroundFifo,
-                             SynchronisedClock clock) {
+                             @BackgroundFifo Fifo<TwoBitValue> backgroundFifo,
+                             @PpuClock SynchronisedClock clock) {
         this.memory = memory;
         this.registers = registers;
         this.backgroundFifo = backgroundFifo;

@@ -3,7 +3,7 @@ package org.gameboy;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
+import org.gameboy.cpu.annotations.CpuClock;
 import org.gameboy.audio.Apu;
 import org.gameboy.audio.AudioModule;
 import org.gameboy.common.Cartridge;
@@ -38,7 +38,7 @@ public class EmulatorModule extends AbstractModule {
 
     @Provides
     @Singleton
-    @Named("cpuClock")
+    @CpuClock
     Clock provideCpuClock(PictureProcessingUnit ppu,
                           Timer timer,
                           DmaController dmaController,

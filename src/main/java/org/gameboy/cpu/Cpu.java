@@ -1,6 +1,7 @@
 package org.gameboy.cpu;
 
 import org.gameboy.common.Interrupt;
+import com.google.inject.Inject;
 import org.gameboy.cpu.components.CpuStructure;
 import org.gameboy.cpu.instructions.HardwareInterrupt;
 import org.gameboy.cpu.instructions.Instruction;
@@ -13,6 +14,7 @@ public class Cpu {
     private short currentInstructionAddress = 0;
     private boolean firstInstruction = true;
 
+    @Inject
     public Cpu(CpuStructure cpuStructure) {
         this.cpuStructure = cpuStructure;
     }

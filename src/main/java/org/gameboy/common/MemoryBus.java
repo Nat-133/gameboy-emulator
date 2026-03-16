@@ -2,7 +2,7 @@ package org.gameboy.common;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
+import org.gameboy.common.annotations.UnderlyingMemory;
 
 import static org.gameboy.common.MemoryMapConstants.OAM_SIZE;
 import static org.gameboy.common.MemoryMapConstants.OAM_START_ADDRESS;
@@ -28,7 +28,7 @@ public class MemoryBus implements Memory, DmaController {
     private int dmaByteIndex;
 
     @Inject
-    public MemoryBus(@Named("underlying") Memory underlying) {
+    public MemoryBus(@UnderlyingMemory Memory underlying) {
         this.underlying = underlying;
 
         this.dmaPhase = DmaPhase.INACTIVE;

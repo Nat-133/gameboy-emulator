@@ -2,8 +2,8 @@ package org.gameboy.common;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.gameboy.common.annotations.*;
+import org.gameboy.display.annotations.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,20 +28,20 @@ public class MappedMemory implements Memory {
                        @Dma ByteRegister dmaRegister,
                        @InterruptFlags ByteRegister interruptFlagsRegister,
                        @InterruptEnable ByteRegister interruptEnableRegister,
-                       @Named("lcdc") ByteRegister lcdcRegister,
-                       @Named("stat") ByteRegister statRegister,
-                       @Named("scy") ByteRegister scyRegister,
-                       @Named("scx") ByteRegister scxRegister,
-                       @Named("ly") ByteRegister lyRegister,
-                       @Named("lyc") ByteRegister lycRegister,
-                       @Named("wy") ByteRegister wyRegister,
-                       @Named("wx") ByteRegister wxRegister,
-                       @Named("bgp") ByteRegister bgpRegister,
-                       @Named("obp0") ByteRegister obp0Register,
-                       @Named("obp1") ByteRegister obp1Register,
+                       @Lcdc ByteRegister lcdcRegister,
+                       @Stat ByteRegister statRegister,
+                       @Scy ByteRegister scyRegister,
+                       @Scx ByteRegister scxRegister,
+                       @Ly ByteRegister lyRegister,
+                       @Lyc ByteRegister lycRegister,
+                       @Wy ByteRegister wyRegister,
+                       @Wx ByteRegister wxRegister,
+                       @Bgp ByteRegister bgpRegister,
+                       @Obp0 ByteRegister obp0Register,
+                       @Obp1 ByteRegister obp1Register,
                        SerialController serialController,
                        @org.gameboy.common.annotations.Joypad ByteRegister joypadRegister,
-                       @Named("apuRegisters") Map<Integer, ByteRegister> apuRegisters) {
+                       @org.gameboy.audio.annotations.ApuRegisters Map<Integer, ByteRegister> apuRegisters) {
         this.cartridge = cartridge;
 
         memoryMap[0xFF00] = new ByteRegisterMapping(joypadRegister);

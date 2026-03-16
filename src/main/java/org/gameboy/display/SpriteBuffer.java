@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.google.inject.Inject;
+
 import static org.gameboy.utils.BitUtilities.uint;
 
 public class SpriteBuffer {
     private final List<SpriteData> buffer;
 
+    @Inject
     public SpriteBuffer() {
         buffer = new ArrayList<>(10);
     }

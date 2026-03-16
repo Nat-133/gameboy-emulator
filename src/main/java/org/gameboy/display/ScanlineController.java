@@ -1,6 +1,10 @@
 package org.gameboy.display;
 
+import com.google.inject.Inject;
 import org.gameboy.common.Clock;
+import org.gameboy.display.annotations.BackgroundFifo;
+import org.gameboy.display.annotations.PpuClock;
+import org.gameboy.display.annotations.SpriteFifo;
 import org.gameboy.utils.MultiBitValue.TwoBitValue;
 
 import java.util.Optional;
@@ -25,10 +29,11 @@ public class ScanlineController {
 
     private int LX;
 
-    public ScanlineController(Clock ppuClock,
+    @Inject
+    public ScanlineController(@PpuClock Clock ppuClock,
                               Display display,
-                              Fifo<TwoBitValue> backgroundFifo,
-                              Fifo<SpritePixel> spriteFifo,
+                              @BackgroundFifo Fifo<TwoBitValue> backgroundFifo,
+                              @SpriteFifo Fifo<SpritePixel> spriteFifo,
                               PixelCombinator pixelCombinator,
                               PpuRegisters registers,
                               BackgroundFetcher backgroundFetcher,
