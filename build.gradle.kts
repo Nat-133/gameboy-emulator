@@ -8,7 +8,9 @@ version = "1.0-SNAPSHOT"
 
 application {
     mainClass.set("org.gameboy.Main")
-    applicationDefaultJvmArgs = listOf("-XstartOnFirstThread")
+    if (org.gradle.internal.os.OperatingSystem.current().isMacOsX) {
+        applicationDefaultJvmArgs = listOf("-XstartOnFirstThread")
+    }
 }
 
 repositories {
