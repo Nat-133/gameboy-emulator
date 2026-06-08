@@ -144,11 +144,6 @@ public class EmulatorWindow {
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
 
-        // Use framebuffer size for viewport (handles HiDPI)
-        int[] fbWidth = new int[1];
-        int[] fbHeight = new int[1];
-        glfwGetFramebufferSize(window, fbWidth, fbHeight);
-        glViewport(0, 0, fbWidth[0], fbHeight[0]);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         inputHandler.registerCallbacks(window);
@@ -156,8 +151,48 @@ public class EmulatorWindow {
         gameBoyShell.init(up, down, left, right, a, b, start, select);
         mouseInputHandler.setInteractiveElements(gameBoyShell.getInteractiveElements());
         mouseInputHandler.registerCallbacks(window);
+
+        updateViewport();
+        glfwSetFramebufferSizeCallback(window, (w, fw, fh) -> updateViewport());
+        glfwSetWindowSizeCallback(window, (w, ww, wh) -> updateViewport());
+
         debugWindow.init(window);
         audioOutput.start();
+    }
+
+    private void updateViewport() {
+        int[] fbW = new int[1], fbH = new int[1];
+        int[] winW = new int[1], winH = new int[1];
+        glfwGetFramebufferSize(window, fbW, fbH);
+        glfwGetWindowSize(window, winW, winH);
+
+        float designAspect = (float) WINDOW_WIDTH / WINDOW_HEIGHT;
+
+        // Letterbox/pillarbox in framebuffer coords for glViewport
+        int[] vp = letterbox(fbW[0], fbH[0], designAspect);
+        glViewport(vp[0], vp[1], vp[2], vp[3]);
+
+        // Same calculation in window coords for mouse normalization
+        int[] vpWin = letterbox(winW[0], winH[0], designAspect);
+        mouseInputHandler.setViewport(vpWin[0], vpWin[1], vpWin[2], vpWin[3]);
+    }
+
+    private static int[] letterbox(int containerW, int containerH, float aspect) {
+        if (containerW <= 0 || containerH <= 0) {
+            return new int[]{0, 0, Math.max(containerW, 1), Math.max(containerH, 1)};
+        }
+        float containerAspect = (float) containerW / containerH;
+        if (containerAspect > aspect) {
+            int vpH = containerH;
+            int vpW = Math.round(containerH * aspect);
+            int vpX = (containerW - vpW) / 2;
+            return new int[]{vpX, 0, vpW, vpH};
+        } else {
+            int vpW = containerW;
+            int vpH = Math.round(containerW / aspect);
+            int vpY = (containerH - vpH) / 2;
+            return new int[]{0, vpY, vpW, vpH};
+        }
     }
 
     private void cleanup() {

@@ -18,11 +18,12 @@ public final class ShellLayout {
     public static final float BODY_HALF_H = 0.47f;
     public static final float BODY_CORNER_RADIUS = 0.04f;
 
-    // Screen region (where game texture is composited)
-    public static final float SCREEN_LEFT = 0.13f;
-    public static final float SCREEN_RIGHT = 0.87f;
-    public static final float SCREEN_TOP = 0.105f;
-    public static final float SCREEN_BOTTOM = 0.40f;
+    // Screen region (where game texture is composited).
+    // Sized to 160:144 (Game Boy native) at the design viewport aspect; see ShellLayoutAspectTest.
+    public static final float SCREEN_LEFT = 0.16f;
+    public static final float SCREEN_RIGHT = 0.84f;
+    public static final float SCREEN_TOP = 0.086f;
+    public static final float SCREEN_BOTTOM = 0.43f;
 
     // Screen bezel (slightly larger than screen)
     public static final float BEZEL_LEFT = 0.09f;

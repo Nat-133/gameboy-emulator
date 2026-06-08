@@ -18,8 +18,19 @@ public class MouseInputHandler {
     private double mouseY;
     private boolean mousePressed;
 
+    private int viewportX, viewportY;
+    private int viewportW = WINDOW_WIDTH;
+    private int viewportH = WINDOW_HEIGHT;
+
     public void setInteractiveElements(List<ShellElement> elements) {
         this.interactiveElements = elements;
+    }
+
+    public void setViewport(int x, int y, int w, int h) {
+        this.viewportX = x;
+        this.viewportY = y;
+        this.viewportW = w > 0 ? w : WINDOW_WIDTH;
+        this.viewportH = h > 0 ? h : WINDOW_HEIGHT;
     }
 
     public void registerCallbacks(long window) {
@@ -40,8 +51,8 @@ public class MouseInputHandler {
     }
 
     private void handleCursorPos(long window, double xpos, double ypos) {
-        mouseX = xpos / WINDOW_WIDTH;
-        mouseY = (ypos / WINDOW_HEIGHT) * VIEW_SCALE;
+        mouseX = (xpos - viewportX) / viewportW;
+        mouseY = ((ypos - viewportY) / viewportH) * VIEW_SCALE;
 
         if (mousePressed) {
             updateHeldButtons();
