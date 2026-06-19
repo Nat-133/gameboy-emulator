@@ -15,7 +15,7 @@ import java.nio.file.Path;
 
 public class Main {
     private static final Path ROMS_DIR = Path.of("roms");
-    private static final Path DEFAULT_ROM = Path.of("shocklobster.gb");
+    private static final Path DEFAULT_ROM = ROMS_DIR.resolve("shocklobster.gb");
 
     public static void main(String[] args) {
         try {

@@ -46,3 +46,4 @@ bin/
 
 ### ROM Files ###
 roms/
+!roms/shocklobster.gb
